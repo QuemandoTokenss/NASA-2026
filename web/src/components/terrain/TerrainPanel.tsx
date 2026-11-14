@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import type { SiteId } from "@/lib/contract/constants";
+import { variantFamily, type SiteId } from "@/lib/contract/constants";
 import type { Core } from "@/lib/contract/schema";
 import { useChunk } from "@/lib/data/DataProvider";
 import { loadEphemerisClock, loadEphemerisSite, loadHorizonChunk, loadScenarioChunk } from "@/lib/data/loader";
@@ -13,7 +13,7 @@ import { HORIZON_SOURCE_RESOLUTION_M, horizonObstacle } from "@/lib/geospatial/h
 import { xyToLonLat } from "@/lib/geospatial/lunar";
 import { buildTerrainMesh, directionENU, localFrame, toLocal } from "@/lib/geospatial/mesh";
 import type { RasterGrid } from "@/lib/geospatial/raster";
-import { TERRAIN_BOUNDS, loadTerrainLayer } from "@/lib/geospatial/terrain";
+import { TERRAIN_BOUNDS, ensembleMember, loadEnsembleMember, loadTerrainLayer } from "@/lib/geospatial/terrain";
 import { L } from "@/lib/i18n";
 import { SITE_META, VARIANT_LABEL } from "@/lib/labels";
 import { earthVisible, sunVisible } from "@/lib/science/states";
@@ -40,18 +40,26 @@ export function TerrainPanel({ core }: { core: Core }) {
   const { selection, dispatch, query, restored } = useSelection();
   const { focusSite, windowId, heightM, variant, timeIndex } = selection;
   const isNominal = variant === "nominal";
-  const [grid, setGrid] = useState<RasterGrid | null>(null);
+  const [grids, setGrids] = useState<Record<string, RasterGrid>>({});
   const [gridError, setGridError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("sun");
   const [manualAz, setManualAz] = useState(0);
   const [exaggeration, setExaggeration] = useState(1);
   const [preset, setPreset] = useState<{ view: ViewPreset; nonce: number }>({ view: "overview", nonce: 0 });
 
+  // Malla: DEM nominal, o el recorte del clon publicado si esa es la superficie elegida
+  // (las hipótesis propias no se reconstruyen en la web: se dibuja el nominal y se avisa).
+  const meshSurface = variantFamily(variant) === "published" && ensembleMember(variant) ? variant : "nominal";
   useEffect(() => {
-    loadTerrainLayer("elevation")
-      .then(setGrid)
-      .catch((e: Error) => setGridError(e.message));
-  }, []);
+    let alive = true;
+    (meshSurface === "nominal" ? loadTerrainLayer("elevation") : loadEnsembleMember(meshSurface))
+      .then((g) => alive && setGrids((p) => ({ ...p, [meshSurface]: g })))
+      .catch((e: Error) => alive && setGridError(e.message));
+    return () => {
+      alive = false;
+    };
+  }, [meshSurface]);
+  const grid = grids[meshSurface] ?? null;
 
   const horizon = useChunk(restored ? () => loadHorizonChunk(focusSite, heightM) : null, [focusSite, heightM]);
   const eph = useChunk(restored && isNominal ? () => loadEphemerisSite(windowId, focusSite, heightM) : null, [windowId, focusSite, heightM, isNominal]);
@@ -61,7 +69,9 @@ export function TerrainPanel({ core }: { core: Core }) {
   const site = getSite(core, focusSite)!;
   const nominalGround = site.nominal_height_m;
   const groundZ = core.horizons_index[focusSite].observer_ground_height_m[variant];
-  const frame = useMemo(() => localFrame({ x: site.x_m, y: site.y_m }, nominalGround), [site.x_m, site.y_m, nominalGround]);
+  // Origen vertical en el suelo de la superficie dibujada (para el nominal, nominal_height_m).
+  const frameGround = meshSurface === "nominal" ? nominalGround : groundZ;
+  const frame = useMemo(() => localFrame({ x: site.x_m, y: site.y_m }, frameGround), [site.x_m, site.y_m, frameGround]);
   const mesh = useMemo(() => (grid ? buildTerrainMesh(grid, frame, MESH_STEP) : null), [grid, frame]);
 
   const ephData = eph.status === "ready" ? eph.data.value : null;
@@ -138,7 +148,7 @@ export function TerrainPanel({ core }: { core: Core }) {
         </>
       }
     >
-      <div className="flex flex-col gap-4" data-testid="terrain-panel">
+      <div className="flex flex-col gap-4" data-testid="terrain-panel" data-mesh-surface={meshSurface} data-mesh-ready={mesh ? "true" : "false"}>
         <div className="flex flex-wrap items-end gap-4">
           <Segmented
             label={L("¿Qué tapa…?", "What blocks…?")}
@@ -191,8 +201,8 @@ export function TerrainPanel({ core }: { core: Core }) {
         {!isNominal ? (
           <Callout tone="uncertainty" icon="info">
             {L(
-              `Superficie «${VARIANT_LABEL[variant]}»: el paquete solo trae direcciones de Sol y Tierra para la superficie nominal, así que aquí se consulta el horizonte de esta superficie por azimut. La malla dibujada es siempre el DEM nominal.`,
-              `Surface “${VARIANT_LABEL[variant]}”: the package only carries Sun and Earth directions for the nominal surface, so here this surface's horizon is queried by azimuth. The mesh drawn is always the nominal DEM.`,
+              `Superficie «${VARIANT_LABEL[variant]}»: el paquete solo trae direcciones de Sol y Tierra para la superficie nominal, así que aquí se consulta el horizonte de esta superficie por azimut. ${meshSurface === "nominal" ? "La malla dibujada es el DEM nominal: esta hipótesis propia no se reconstruye en la web." : "La malla dibujada es el recorte de este clon publicado (verificado con SHA-256)."}`,
+              `Surface “${VARIANT_LABEL[variant]}”: the package only carries Sun and Earth directions for the nominal surface, so here this surface's horizon is queried by azimuth. ${meshSurface === "nominal" ? "The mesh drawn is the nominal DEM: this team hypothesis is not reconstructed on the web." : "The mesh drawn is the crop of this published clone (verified with SHA-256)."}`,
             )}
           </Callout>
         ) : null}

@@ -143,3 +143,16 @@ describe("Δ horizonte variante − nominal (leído del paquete)", () => {
     expect(local).toBeGreaterThan(0);
   });
 });
+
+describe("subGrid (recortes del Comparador)", () => {
+  it("copia exacta centrada en el sitio, 800 m de lado, con el valor del sitio en su píxel", async () => {
+    const { subGrid } = await import("@/lib/geospatial/raster");
+    for (const s of C.sites) {
+      const sub = subGrid(nominal, s.x_m, s.y_m, 400);
+      expect(sub.width).toBe(160);
+      expect(sub.height).toBe(160);
+      expect(sampleBilinear(sub, s.x_m, s.y_m)).toBe(s.nominal_height_m);
+      expect(sub.data.every((v) => Number.isFinite(v))).toBe(true);
+    }
+  });
+});

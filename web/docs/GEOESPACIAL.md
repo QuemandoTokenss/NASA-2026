@@ -17,6 +17,8 @@ Fecha: 2026-11-14 · rama `feat/geo-real-terrain`. Primera entrega vertical del 
 | Productos y huellas PDS (ODE) | `src/lib/geospatial/ode.ts`, `src/components/maps/OdePanel.tsx` | ODE REST `query=product` (PDS Geosciences Node) | Vitest sobre respuestas reales grabadas; E2E; ejecución en vivo con captura (`docs/capturas/live-ode.png`) | PASS (253 productos NAC en la caja de los sitios) | Caja fija de los sitios; 3 tipos de producto; sin carga como capa; sin GDS |
 | Clones PGDA78 y diferencias (G15) | `data/derived/terrain/clones/`, `src/lib/geospatial/difference.ts`, `src/components/regret/TerrainDiffLab.tsx` | PGDA78 Site01 Clones 0001–0005 (pasaporte) | Vitest `ensemble.test.ts` (hash, altura en A/B = paquete, estadísticas reproducidas, Δ horizonte); E2E `regret-terrain.spec.ts` | PASS (Vitest) | Hipótesis propias no reconstruibles en la web; la diferencia describe el terreno, no atribuye la inversión |
 | Geometría Sol–Tierra–Luna en Timeline (bloque B) | `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx` | Efemérides topocéntricas del paquete (SPICE DE421, MOON_ME_DE421) | Vitest `sky.test.ts` (libración de la Tierra, vuelta solar, ida y vuelta); E2E `timeline-orbital.spec.ts` | PASS | Esquema no a escala; direcciones del observador nominal; color = estado del motor |
+| Comparador con terreno real (bloque C) | `src/components/comparador/PairTerrain.tsx`, `raster.ts` (`subGrid`) | Moon Trek NAC + recortes PGDA78 | E2E `comparador-terrain.spec.ts` (lecturas = paquete); Vitest `subGrid` | PASS | Recortes de 800 m; luz del relieve sintética |
+| Malla 3D del clon publicado en Engineer (bloque D) | `src/components/terrain/TerrainPanel.tsx` | Recortes de clones PGDA78 | E2E `geo.spec.ts` (`data-mesh-surface`) | PASS | Hipótesis propias: malla nominal con aviso |
 | Procedencia por capa | `src/components/evidence/GeoEvidence.tsx` | Registro y manifiesto | E2E (enlace desde la leyenda, hash completo) | PASS | — |
 
 Batería completa (PC-10, tras corregistro y ODE): `tsc` y ESLint limpios, Vitest 98/98, build correcto, Playwright 62/62 + 1 omitida (en vivo), con 2 procesos. Con 4 procesos fallaban 5 por tiempo (WebGL por software).
@@ -30,7 +32,7 @@ Batería completa (PC-10, tras corregistro y ODE): `tsc` y ESLint limpios, Vites
 | Polígonos ROI de Site01 | Explore | 2 · producto publicado | Nuevo |
 | Relieve sombreado del DEM | Explore (fondo sin red) | 3 · derivado SITE REGRET, luz sintética | Nuevo, rotulado |
 | Perfil de elevación, distancias | Explore | 3 · derivado SITE REGRET | Nuevo |
-| Malla 3D y línea al obstáculo | Engineer | 3 · derivado SITE REGRET | Nuevo; sustituye a `MastScene` como vista principal |
+| Malla 3D y línea al obstáculo | Engineer | 3 · derivado SITE REGRET | Nuevo; sustituye a `MastScene` como vista principal; desde PC-15 en primera fila y con la malla del clon publicado si se elige |
 | Mapa de diferencia clon − nominal, Δ horizonte, miniaturas RMS por bloque | Regret Lab | 3 · derivado SITE REGRET de productos publicados | Nuevo (PC-13) |
 | Mástil de 2 y 10 m | Engineer | 4 · escenario hipotético | Rotulado SIMULATED |
 | Figura `figuras/mapa_sitios.svg` (`ContextMap`, `SiteThumb`, `PairMap`) | Explore (plegada), Dashboard, Comparador, Timeline, Historia | 3 · derivado del DEM por el motor (no es foto ni IA) | Conservada y rotulada |

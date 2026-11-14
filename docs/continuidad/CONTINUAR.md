@@ -24,7 +24,7 @@ Preparación, dentro de web/:
   npm ci
 Los originales NASA (web/data/raw/, ≈410 MB con los 5 clones) no están en Git y NO hacen falta para trabajar ni para las pruebas: los recortes derivados (incluidos clones/) sí están versionados. Solo si vas a regenerarlos: npm run geo:fetch && npm run geo:build.
 
-Bloque activo: el de «Siguiente tarea exacta» del HANDOFF. Tras PC-14 es el bloque C (Comparador A/B con cartografía real). Orden pendiente: C (Comparador) → D (Engineer) → E (Dashboard/Evidence/Historia) → F (pendientes científicos). Un bloque cada vez: inspeccionar, implementar, probar, revisar visualmente, documentar, seguir.
+Bloque activo: el de «Siguiente tarea exacta» del HANDOFF. Tras PC-15 es el bloque E (Dashboard como Mission Control, Evidence y Historia). Orden pendiente: E → F (pendientes científicos). A, B, C y D están hechos. Un bloque cada vez: inspeccionar, implementar, probar, revisar visualmente, documentar, seguir.
 
 Reglas que no puedes romper:
 - No tocar web/data/source/. No inventar terreno, texturas, trayectorias, métricas, fechas ni coordenadas. Solo sitios A (ROI 4) y B (ROI 6), ventanas W1/W2, alturas 0/2/10 m, 10 superficies.

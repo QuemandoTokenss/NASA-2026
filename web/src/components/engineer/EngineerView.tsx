@@ -300,12 +300,13 @@ function EngineerBody({ core }: { core: Core }) {
         <VariantControl />
       </ControlBar>
 
-      <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)]">
-        <HeightSelector />
-        <MetricsAtHeight core={core} />
+      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_360px]" data-testid="engineer-hero">
+        <TerrainPanel core={core} />
+        <div className="flex flex-col gap-5">
+          <HeightSelector />
+          <MetricsAtHeight core={core} />
+        </div>
       </div>
-
-      <TerrainPanel core={core} />
 
       <details className="group rounded-2xl border border-line bg-surface/85">
         <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-sm font-semibold text-ink">

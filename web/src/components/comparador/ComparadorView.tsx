@@ -1,7 +1,9 @@
 "use client";
 
-import { HEIGHTS_M, SITE_IDS, WINDOW_IDS, variantFamily, type SiteId } from "@/lib/contract/constants";
-import type { Core, CriterionResult, MetricKey, ScenarioSummary, Site } from "@/lib/contract/schema";
+import { useMemo, useState } from "react";
+import { HEIGHTS_M, SITE_IDS, WINDOW_IDS, variantFamily, type SiteId, type Variant } from "@/lib/contract/constants";
+import type { Core, CriterionResult, HorizonChunk, MetricKey, ScenarioSummary, Site } from "@/lib/contract/schema";
+import { horizonDelta } from "@/lib/geospatial/difference";
 import { useChunk } from "@/lib/data/DataProvider";
 import { loadHorizonChunk } from "@/lib/data/loader";
 import { getCriterionResult, getScenarioSummary, getSite, getWindow } from "@/lib/data/selectors";
@@ -17,7 +19,8 @@ import { ControlBar } from "../data/ControlBar";
 import { CriterionPicker } from "../data/CriterionPicker";
 import { ExportButtons } from "../data/ExportButtons";
 import { CriterionControl, HeightControl, VariantControl, WindowControl } from "../data/SelectionControls";
-import { SiteThumb } from "../explore/SiteThumb";
+import { HorizonDeltaChart } from "../charts/HorizonDeltaChart";
+import { PairTerrain } from "./PairTerrain";
 import { Badge, Callout, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
@@ -66,7 +69,6 @@ function SiteCard({
       </header>
       <div className="relative grid gap-x-6 gap-y-4 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
         <div className="flex flex-col items-center gap-2">
-          <SiteThumb site={site} size={124} scale={0.85} />
           <span className="inline-flex items-center gap-1 rounded-lg border border-line bg-bg-2 px-2 py-1 text-[11px] text-ink-muted tabular">
             <Icon name="pin" className="size-3.5" />
             {formatLatitude(site.latitude_deg, 3)}, {formatLongitudeEast(site.longitude_east_deg, 2)}
@@ -341,6 +343,36 @@ function AllCombinations({ core }: { core: Core }) {
   );
 }
 
+function HorizonPairDelta({ ha, hb, variant }: { ha: HorizonChunk; hb: HorizonChunk; variant: Variant }) {
+  const d = useMemo(() => horizonDelta(ha.variants[variant], hb.variants[variant], 0.1), [ha, hb, variant]);
+  const [sel, setSel] = useState<number | null>(null);
+  const i = sel ?? Math.max(0, d.maxIndex);
+  return (
+    <div className="mt-4 flex flex-col gap-2" data-testid="horizon-ab-delta">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint">{L("Diferencia de horizonte A − B", "Horizon difference A − B")}</p>
+      <HorizonDeltaChart
+        azimuthDeg={ha.azimuth_deg}
+        selected={i}
+        onSelect={setSel}
+        title={L("Horizonte de A menos horizonte de B por azimut", "Horizon of A minus horizon of B by azimuth")}
+        series={[{ key: "AB", label: L("A − B (positivo: A tiene el horizonte más alto)", "A − B (positive: A has the higher horizon)"), color: "#e8eef8", delta: d.delta }]}
+        upLabel={L("▲ A más tapado que B", "▲ A more obstructed than B")}
+        downLabel={L("▼ B más tapado que A", "▼ B more obstructed than A")}
+        caption={L(
+          "Δ = horizonte de A − horizonte de B (°) en el mismo azimut y con la misma superficie, leído del paquete. Huecos = desconocido en algún sitio. Flechas para mover el azimut.",
+          "Δ = horizon of A − horizon of B (°) at the same azimuth and with the same surface, read from the package. Gaps = unknown at either site. Arrow keys move the azimuth.",
+        )}
+      />
+      <p className="tabular text-xs text-ink-muted">
+        {L(
+          `Azimut ${formatNumber(ha.azimuth_deg[i], 2)}°: A ${formatNumber(ha.variants[variant].elevation_deg[i], 3)}°, B ${formatNumber(hb.variants[variant].elevation_deg[i], 3)}°. A tiene el horizonte más alto en ${d.raised} azimuts y B en ${d.lowered} (diferencia > 0,1°) de ${d.known} comparables.`,
+          `Azimuth ${formatNumber(ha.azimuth_deg[i], 2)}°: A ${formatNumber(ha.variants[variant].elevation_deg[i], 3)}°, B ${formatNumber(hb.variants[variant].elevation_deg[i], 3)}°. A has the higher horizon at ${d.raised} azimuths and B at ${d.lowered} (difference > 0.1°) out of ${d.known} comparable.`,
+        )}
+      </p>
+    </div>
+  );
+}
+
 function HorizonPair() {
   const { selection, restored } = useSelection();
   const { heightM, variant } = selection;
@@ -352,6 +384,7 @@ function HorizonPair() {
         {(ha) => (
           <ChunkGate state={b} label={L("horizonte de B", "horizon of B")}>
             {(hb) => (
+              <>
               <HorizonChart
                 title={L(`Horizonte de A y B a ${heightM} m`, `Horizon of A and B at ${heightM} m`)}
                 series={[ha, hb].map((h) => ({
@@ -363,6 +396,8 @@ function HorizonPair() {
                   unknown: h.variants[variant].unknown,
                 }))}
               />
+              <HorizonPairDelta ha={ha} hb={hb} variant={variant} />
+              </>
             )}
           </ChunkGate>
         )}
@@ -400,6 +435,8 @@ export function ComparadorView() {
                 <VariantControl />
                 <CriterionControl />
               </ControlBar>
+
+              <PairTerrain sites={core.sites} />
 
               <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.85fr)] xl:grid-cols-2">
                 <SiteCard site={siteA} summary={a} winner={winner} ringMetric={metric ?? "sun_hours"} highlightMetric={metric} />

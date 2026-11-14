@@ -29,12 +29,21 @@ export function HorizonDeltaChart({
   selected,
   onSelect,
   title,
+  upLabel = L("▲ horizonte más alto en la variante", "▲ horizon higher in the variant"),
+  downLabel = L("▼ más bajo", "▼ lower"),
+  caption = L(
+    "Δ = horizonte de la variante − horizonte nominal (°), leído de los 1 440 azimuts del paquete. Huecos = desconocido. Flechas para mover el azimut.",
+    "Δ = variant horizon − nominal horizon (°), read from the package's 1,440 azimuths. Gaps = unknown. Arrow keys move the azimuth.",
+  ),
 }: {
   azimuthDeg: number[];
   series: DeltaSeries[];
   selected: number;
   onSelect: (i: number) => void;
   title: string;
+  upLabel?: string;
+  downLabel?: string;
+  caption?: string;
 }) {
   const descId = useId();
   const n = azimuthDeg.length;
@@ -125,10 +134,10 @@ export function HorizonDeltaChart({
         <line x1={x(sel)} x2={x(sel)} y1={M.top} y2={H - M.bottom} stroke="#a78bfa" strokeWidth={1.5} />
         {series.map((s) => (s.delta[selected] === null ? null : <circle key={s.key} cx={x(sel)} cy={y(s.delta[selected]!)} r={4} fill={s.color} stroke="#050912" strokeWidth={1.5} />))}
         <text x={M.left + 6} y={M.top + 12} className="fill-ink-faint text-[11px]">
-          {L("▲ horizonte más alto en la variante", "▲ horizon higher in the variant")}
+          {upLabel}
         </text>
         <text x={M.left + 6} y={H - M.bottom - 6} className="fill-ink-faint text-[11px]">
-          {L("▼ más bajo", "▼ lower")}
+          {downLabel}
         </text>
       </svg>
       <figcaption id={descId} className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-ink-faint">
@@ -138,12 +147,7 @@ export function HorizonDeltaChart({
             {s.label}
           </span>
         ))}
-        <span>
-          {L(
-            "Δ = horizonte de la variante − horizonte nominal (°), leído de los 1 440 azimuts del paquete. Huecos = desconocido. Flechas para mover el azimut.",
-            "Δ = variant horizon − nominal horizon (°), read from the package's 1,440 azimuths. Gaps = unknown. Arrow keys move the azimuth.",
-          )}
-        </span>
+        <span>{caption}</span>
       </figcaption>
     </figure>
   );

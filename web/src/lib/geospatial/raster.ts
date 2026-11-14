@@ -118,3 +118,21 @@ export function profileAlong(g: RasterGrid, line: XY[], distance: (a: XY, b: XY)
   }
   return out;
 }
+
+/**
+ * Subventana cuadrada de lado 2·halfM centrada en (x, y), alineada a píxeles.
+ * Copia exacta de las muestras (sin remuestrear); fuera de la rejilla → NaN.
+ */
+export function subGrid(g: RasterGrid, x: number, y: number, halfM: number): RasterGrid {
+  const n = Math.round((2 * halfM) / g.pixelSizeM);
+  const c0 = Math.round((x - halfM - g.xmin) / g.pixelSizeM);
+  const r0 = Math.round((g.ymax - (y + halfM)) / g.pixelSizeM);
+  const data = new Float32Array(n * n);
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) {
+      const rr = r0 + r;
+      const cc = c0 + c;
+      data[r * n + c] = rr >= 0 && cc >= 0 && rr < g.height && cc < g.width ? g.data[rr * g.width + cc] : NaN;
+    }
+  return { width: n, height: n, pixelSizeM: g.pixelSizeM, xmin: g.xmin + c0 * g.pixelSizeM, ymax: g.ymax - r0 * g.pixelSizeM, data };
+}

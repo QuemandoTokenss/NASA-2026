@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-14 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A y B terminados; siguiente: bloque C · Comparador)**
+**Punto de control:** PC-15 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A, B, C y D terminados; siguiente: bloque E · Dashboard/Evidence/Historia)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/mission-control-v2`, creada desde `main` = `6e41690` («Merge #18: integrate real lunar terrain and geospatial layers») |
-| HEAD | ver `git log -2`: `ca684bf` (bloque A, PC-13) y el commit de PC-14 (bloque B). **Sin push, sin PR, sin despliegue** |
+| HEAD | ver `git log -3`: `ca684bf` (A, PC-13), `0785e45` (B, PC-14) y el commit de PC-15 (C + D). **Sin push, sin PR, sin despliegue** |
 | Otra copia | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` (rama `feat/geo-real-terrain`, `47844ba`, ya fusionada en `main` por el PR #18). No se ha tocado; sus originales NASA de `web/data/raw/` se COPIARON a esta carpeta |
 
 **Reconciliación de documentos antiguos:** el HANDOFF anterior (PC-11/12) decía que `feat/geo-real-terrain` no estaba fusionada. Ya lo está: `main` contiene el PR #18 (`6e41690`). En `main` SÍ está la capa geoespacial (G0–G10). `01_REANUDAR_IMPLEMENTACION.md` es histórico (relevo Hugo → Asier) y sus referencias de rama/HEAD están superadas.
@@ -34,9 +34,9 @@ Encargo vigente: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md) §A.5 («Mission C
 |---|---|---|---|
 | A · G15 | Regret Lab con clones reales, capas de diferencia y enlace al mapa | **HECHO (PC-13)**, verificado con Vitest + E2E + revisión visual en navegador | ver §4 |
 | B | Timeline orbital con efemérides reales | **HECHO (PC-14)**, Vitest + E2E + revisión visual | ver §4 bis |
-| C | Comparador A/B con cartografía real | PENDIENTE (siguiente) | ver §5 |
-| D | Engineer con 3D protagonista y alturas 0/2/10 | PENDIENTE (el 3D existe desde PC-03; falta reordenar la vista y revisar lecturas por altura) | `src/components/terrain/` |
-| E | Dashboard → Mission Control, Evidence, Historia | PENDIENTE | — |
+| C | Comparador A/B con cartografía real | **HECHO (PC-15)** | ver §4 ter |
+| D | Engineer con 3D protagonista y alturas 0/2/10 | **HECHO (PC-15)** | ver §4 ter |
+| E | Dashboard → Mission Control, Evidence, Historia | PENDIENTE (siguiente) | ver §5 |
 | F | G9 mosaico, G11 NAC, G10 mejoras ODE, G12 IAU, G13 PGDA90 | PENDIENTE (sin cambios desde PC-11) | — |
 
 Tabla G0–G18 heredada: G0–G8 VERIFICADO, G9 PARCIAL, G10 VERIFICADO en lo implementado, **G15 HECHO**, G11–G14 PENDIENTE, G16 no autorizado, G17 actualizado en PC-13 para G15, G18: rama nueva sin subir.
@@ -66,7 +66,28 @@ Hecho:
 - `TimelineView.tsx`: primera fila física = «Geometría Sol–Tierra–Luna» (esquema) + «Cielo local del observador» (horizonte del paquete con trayectorias nominales: geometría real), luego el reproductor y debajo las curvas/franjas existentes. Las efemérides se cargan siempre para la vista orbital; las curvas sobre el horizonte siguen solo con la nominal (no se mezclan con horizontes de variantes).
 - Tres niveles rotulados: esquema no a escala / geometría real del observador / visibilidad respecto al horizonte (estado del motor).
 
-## 5. Siguiente tarea exacta: bloque C · Comparador A/B
+## 4 ter. Bloques C y D terminados (PC-15)
+
+**C · Comparador** (`src/components/comparador/PairTerrain.tsx`, `ComparadorView.tsx`):
+- Nuevo primer panel «Terreno real del par A · B»: `GeoMap` compacto de Explore (teselas reales Moon Trek LRO NAC, proyección polar lunar) con la línea A→B y su distancia sobre la esfera; recortes del DEM PGDA78 de 800 × 800 m centrados en A y B a la MISMA escala (muestras exactas con `subGrid`, relieve sombreado de luz sintética + capa elegida: pendiente / retornos LOLA / solo relieve, ROI publicadas, barra de 200 m); tabla de lecturas de las 5 capas en A y B y A − B (iguales al paquete; enlaces a Evidencia). Rotulado: propiedades del terreno, no métricas de decisión.
+- Se retiró `SiteThumb` de las tarjetas de sitio (el terreno real está en el panel nuevo).
+- «Horizontes»: además de las dos curvas, Δ horizonte A − B por azimut (`HorizonDeltaChart` con rótulos configurables) y resumen de azimuts donde cada sitio está más tapado (> 0,1°).
+- Se conservan conclusión dependiente del criterio, empates, UNKNOWN, 24 combinaciones y D por superficie.
+
+**D · Engineer** (`EngineerView.tsx`, `terrain/TerrainPanel.tsx`):
+- El panel 3D del DEM pasa a ser la vista principal (primera fila, ancho completo) con el selector de altura 0/2/10 m y «Rendimiento geométrico» a su lado: cambiar la altura actualiza a la vez el mástil, el obstáculo y las métricas del escenario.
+- Con un clon publicado la malla 3D es el recorte de ESE clon (verificado con SHA-256) y el origen vertical es la altura de suelo del clon del paquete; con hipótesis propias se dibuja el nominal con aviso explícito. `data-mesh-surface` en el panel.
+- `MastScene` sigue plegado y rotulado como ilustración.
+
+## 5. Siguiente tarea exacta: bloque E · Dashboard, Evidence, Historia
+
+En `web/`:
+1. Dashboard (`src/components/home/HomeView.tsx`): sustituir la luna ilustrada del héroe por un mapa real (GeoMap compacto con NAC o el relieve del DEM) de Connecting Ridge con A/B; convertir el resto en «Mission Control»: estado del escenario seleccionado (ventana, altura, superficie, criterio), accesos directos a cada vista con su estado real (p. ej. ganador si hay criterio, número de clones verificados, instante de Timeline) y al caso demostrativo. Las tarjetas `SiteThumb` del Dashboard son derivados del motor: sustituir por recortes del DEM (`subGrid`) o rotular.
+2. Evidence (`src/components/evidence/`): sección de procedencia de los 5 clones (ya hay entradas en el registro → comprobar que `GeoEvidence` las lista con hash) y de las nuevas vistas (diferencias, efemérides convertidas, recortes del Comparador); anclas `#geo-…` enlazables desde Regret Lab, Timeline y Comparador.
+3. Historia (`src/components/story/`): actualizar escenas para enseñar mapa real, terreno 3D, diferencias de clones y vista orbital; las estrellas/luna ilustradas se rotulan o se sustituyen.
+4. Pruebas E2E por vista y revisión visual.
+
+### Antiguo §5 (bloque C) — HECHO en PC-15
 
 En `web/`:
 1. Leer `src/components/comparador/ComparadorView.tsx` (Conclusión, matriz de 24 combinaciones, `HorizonPair`, `PairMap`).
@@ -89,7 +110,7 @@ Después: bloque C (Comparador con `GeoMap` compacto o recortes A/B), D (Enginee
 ## 6. Cambios locales y archivos de PC-13
 
 Archivos nuevos o modificados (todo en `web/` salvo docs):
-`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), PC-14: `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx`, `src/components/timeline/TimelineView.tsx`, `tests/sky.test.ts`, `e2e/timeline-orbital.spec.ts`, `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
+`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), PC-15: `src/components/comparador/PairTerrain.tsx` (nuevo), `ComparadorView.tsx`, `charts/HorizonDeltaChart.tsx`, `src/lib/geospatial/raster.ts` (`subGrid`), `engineer/EngineerView.tsx`, `terrain/TerrainPanel.tsx`, `e2e/comparador-terrain.spec.ts` (nuevo), `e2e/geo.spec.ts`, `tests/ensemble.test.ts`; PC-14: `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx`, `src/components/timeline/TimelineView.tsx`, `tests/sky.test.ts`, `e2e/timeline-orbital.spec.ts`, `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
 
 No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales + 5 clones, ~410 MB), `web/node_modules`, `web/out`, `web/public/data`.
 
@@ -120,6 +141,10 @@ npm run verify                      # typecheck → lint → test → build → 
 | PC-14 · `npm run lint`, `tsc`, `npm run build` | PASS |
 | PC-14 · E2E Timeline (`timeline-orbital.spec.ts` 2 + 3 de `app.spec.ts`) | 5/5 PASS |
 | PC-14 · E2E `a11y.spec.ts` (axe WCAG A/AA, 8 rutas) + `responsive.spec.ts` (375 px) + `i18n.spec.ts` | 20/20 PASS |
+| PC-15 · `npm test` | **113/113 PASS** (+1 `subGrid`) |
+| PC-15 · batería E2E completa tras C (2 procesos, 3,6 min) | **69 PASS, 0 FAIL, 1 omitida** |
+| PC-15 · E2E Engineer/superficies tras D (`geo.spec.ts` + `app.spec.ts`) | 11/11 PASS (incluye la nueva «hipótesis propia») |
+| PC-15 · revisión visual Comparador y Engineer (dev, 1600×1000) | HECHO: mapa NAC del par, recortes A/B, tabla, Δ A − B; 3D de Engineer en primera fila con malla del clon. **Pendiente revisión humana** |
 | PC-14 · revisión visual Timeline (dev, 1600×1000) | HECHO: esquema orbital, trayectorias coloreadas por estado, hemisferio iluminado orientado al Sol, cielo local. **Pendiente revisión humana**. Batería E2E completa no re-ejecutada tras PC-14 (sí las afectadas) |
 
 Resultados históricos (no re-ejecutados aquí antes de PC-13): Vitest 98/98 y Playwright 62 + 1 omitida (PC-10/11).

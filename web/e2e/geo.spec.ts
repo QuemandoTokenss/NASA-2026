@@ -268,11 +268,25 @@ test.describe("Engineer · terreno 3D y obstáculo", () => {
     const panel = page.getByTestId("terrain-panel");
     await expect(panel.getByRole("radio", { name: "el Sol" })).toBeDisabled();
     await expect(panel.getByRole("radio", { name: "un azimut" })).toHaveAttribute("aria-checked", "true");
-    await expect(panel.getByText(/La malla dibujada es siempre el DEM nominal/)).toBeVisible();
+    // PC-15: con un clon publicado la malla es la de ese clon (recorte verificado).
+    await expect(panel.getByText(/La malla dibujada es el recorte de este clon publicado/)).toBeVisible();
+    await expect(panel).toHaveAttribute("data-mesh-surface", "published_0001");
+    await expect(panel).toHaveAttribute("data-mesh-ready", "true");
     const hz = chunk("horizons/A_h0.json");
     const z = core.horizons_index.A.observer_ground_height_m.published_0001;
     const o = horizonObstacle(hz.azimuth_deg, hz.variants.published_0001, { lonEastDeg: A.longitude_east_deg, latDeg: A.latitude_deg }, z, 0);
     await expect(page.getByTestId("obstacle-readout")).toContainText(o.distanceM >= 1000 ? `${es(o.distanceM / 1000, 2)} km` : `${es(o.distanceM, 1)} m`);
+  });
+});
+
+test.describe("Engineer · hipótesis propia", () => {
+  test("no se inventa su terreno: malla nominal con aviso", async ({ page }) => {
+    await page.goto("/engineer/?s=B&w=W1&h=2&v=correlated_minus&t=100");
+    await waitForData(page);
+    const panel = page.getByTestId("terrain-panel");
+    await expect(panel).toHaveAttribute("data-mesh-surface", "nominal");
+    await expect(panel.getByText(/esta hipótesis propia no se reconstruye en la web/)).toBeVisible();
+    await expect(page.getByTestId("engineer-hero")).toBeVisible();
   });
 });
 
