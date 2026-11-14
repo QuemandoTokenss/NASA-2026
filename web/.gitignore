@@ -46,3 +46,6 @@ next-env.d.ts
 /playwright-report/
 
 .vercel
+
+# Originales NASA descargados (no versionar; ver AGENTS.md)
+/data/raw/

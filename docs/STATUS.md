@@ -2,6 +2,8 @@
 
 Updated 2026-11-14. Detail: [TRABAJO_REALIZADO.md](TRABAJO_REALIZADO.md).
 
+In progress on branch `feat/geo-real-terrain` (not in `main`, not deployed): real georeferenced map and 3D DEM terrain. It is **not finished**; see [continuidad/HANDOFF.md](continuidad/HANDOFF.md) and `web/docs/GEOESPACIAL.md`.
+
 | Gate | Status | Acceptance | Current evidence |
 | --- | --- | --- | --- |
 | DATA-00 | Partly done · needs human check | Verify an exact NASA challenge resource, terms, metadata and checksum. | Transfer package hashes verified (`web/data/source/SHA256_TRANSFERENCIA.txt`, 47 files) and 18 NASA source assets with URL and hash in the passport. The challenge *Resources* tab entry and its terms are not yet checked by a person. |

@@ -1,2 +1,5 @@
 # Originales científicos: bytes exactos (sus SHA-256 deben coincidir siempre)
 data/source/** -text
+data/derived/** -text
+tests/fixtures/** -text
+e2e/fixtures/** -text

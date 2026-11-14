@@ -1,0 +1,443 @@
+{
+  "schema": "site-regret-geo-registry/1",
+  "updated_utc": "2026-11-14",
+  "assets": [
+    {
+      "id": "pgda78.site01.elevation",
+      "passport_id": "SITE01_surf",
+      "class": "published_science_product",
+      "kind": "numeric_raster",
+      "layer": "elevation",
+      "title": {
+        "es": "Altura del terreno sobre la esfera de 1 737 400 m",
+        "en": "Terrain height above the 1,737,400 m sphere"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 (Connecting Ridge)",
+      "original_id": "Site01_final_adj_5mpp_surf.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif",
+      "bytes": 40980810,
+      "sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "Rejilla de 5 m. No es un error de 5 m ni implica un retorno láser por píxel: ver la capa de retornos LOLA.",
+        "en": "5 m grid. Not a 5 m error, and not one laser return per pixel: see the LOLA returns layer."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Fri, 05 Jun 2020 18:39:35 GMT",
+        "first_downloaded_utc": "2026-11-13T23:05:29.145043+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.lola_count",
+      "passport_id": "SITE01_ldec",
+      "class": "published_science_product",
+      "kind": "numeric_raster",
+      "layer": "lola_count",
+      "title": {
+        "es": "Retornos LOLA por píxel (0 = altura interpolada)",
+        "en": "LOLA returns per pixel (0 = interpolated height)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 (Connecting Ridge)",
+      "original_id": "Site01_final_adj_5mpp_ldec.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_ldec.tif",
+      "bytes": 40980744,
+      "sha256": "16d6ed21020ad48fa71d94e7437492acf5bf04118f52bcd292f57f22ead4cd23",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": null,
+      "units": "count",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "Rejilla de 5 m. No es un error de 5 m ni implica un retorno láser por píxel: ver la capa de retornos LOLA.",
+        "en": "5 m grid. Not a 5 m error, and not one laser return per pixel: see the LOLA returns layer."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Fri, 05 Jun 2020 18:39:41 GMT",
+        "first_downloaded_utc": "2026-11-13T23:05:27.845371+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.vertical_rms",
+      "passport_id": "SITE01_toterr",
+      "class": "published_science_product",
+      "kind": "numeric_raster",
+      "layer": "vertical_rms",
+      "title": {
+        "es": "Incertidumbre vertical RMS publicada",
+        "en": "Published vertical RMS uncertainty"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 (Connecting Ridge)",
+      "original_id": "Site01_final_adj_5mpp_toterr.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_toterr.tif",
+      "bytes": 40980810,
+      "sha256": "cf2cf52f52d2aa51e60d058010d10b0ebfb1d3e920f5a2b9a46eb6c51054ab1c",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": null,
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "Rejilla de 5 m. No es un error de 5 m ni implica un retorno láser por píxel: ver la capa de retornos LOLA.",
+        "en": "5 m grid. Not a 5 m error, and not one laser return per pixel: see the LOLA returns layer."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Fri, 05 Jun 2020 18:39:48 GMT",
+        "first_downloaded_utc": "2026-11-13T23:05:26.433872+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.slope",
+      "passport_id": "SITE01_slp",
+      "class": "published_science_product",
+      "kind": "numeric_raster",
+      "layer": "slope",
+      "title": {
+        "es": "Pendiente publicada",
+        "en": "Published slope"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 (Connecting Ridge)",
+      "original_id": "Site01_final_adj_5mpp_slp.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_slp.tif",
+      "bytes": 40980776,
+      "sha256": "3a90035a4946b4a04b7332c52f0b2b1cff71648bd8c105e14d8a7e15c6bcfe8e",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": null,
+      "units": "deg",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "Rejilla de 5 m. No es un error de 5 m ni implica un retorno láser por píxel: ver la capa de retornos LOLA.",
+        "en": "5 m grid. Not a 5 m error, and not one laser return per pixel: see the LOLA returns layer."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Mon, 08 Jun 2020 22:05:45 GMT",
+        "first_downloaded_utc": "2026-11-13T23:05:29.529962+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.slope_rms",
+      "passport_id": "SITE01_slperr",
+      "class": "published_science_product",
+      "kind": "numeric_raster",
+      "layer": "slope_rms",
+      "title": {
+        "es": "Incertidumbre RMS de la pendiente publicada",
+        "en": "Published slope RMS uncertainty"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 (Connecting Ridge)",
+      "original_id": "Site01_final_adj_5mpp_slperr.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_slperr.tif",
+      "bytes": 40980810,
+      "sha256": "52bc3b239f61605e6bb98bab6d6b17acd22389c59e57336862157f2fbd643a33",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": null,
+      "units": "deg",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "Rejilla de 5 m. No es un error de 5 m ni implica un retorno láser por píxel: ver la capa de retornos LOLA.",
+        "en": "5 m grid. Not a 5 m error, and not one laser return per pixel: see the LOLA returns layer."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Fri, 05 Jun 2020 18:39:55 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:01.865278+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.rois",
+      "passport_id": "SITE01_ROIS",
+      "class": "published_science_product",
+      "kind": "vector",
+      "layer": "rois",
+      "title": {
+        "es": "Regiones de interés publicadas de Site01",
+        "en": "Published regions of interest of Site01"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · Site01 ROIs (shapefile)",
+      "original_id": "Site01_ROIs.tgz",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_ROIs.tgz",
+      "bytes": 2934,
+      "sha256": "40b961417a344ce0274aecbab522e171a22f658507d82e8fb4d7bc97526ffc4f",
+      "signature": "gzip",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": null,
+      "units": "m",
+      "nodata": null,
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Polígonos definidos por los autores del producto; no son observaciones fechadas.",
+          "en": "Polygons defined by the product authors; not dated observations."
+        },
+        "server_last_modified": "Tue, 01 Dec 2020 13:05:29 GMT",
+        "first_downloaded_utc": "2026-11-13T23:05:28.421327+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker et al. (2021), table 2",
+      "terms": {
+        "es": "Citar Barker et al. 2021.",
+        "en": "Cite Barker et al. 2021."
+      },
+      "note": {
+        "es": "Una región de interés publicada no es un lugar de alunizaje aprobado por la NASA.",
+        "en": "A published region of interest is not a NASA-approved landing site."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "trek.sp.LRO_NAC_Mosaic_1mpp_SP",
+      "class": "published_science_product",
+      "kind": "wmts_tiles",
+      "layer": "LRO_NAC_Mosaic_1mpp_SP",
+      "title": {
+        "es": "Mosaico de imágenes LRO NAC del polo sur",
+        "en": "LRO NAC image mosaic of the south pole"
+      },
+      "provider": "NASA Solar System Treks (Moon Trek), JPL",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Reconnaissance Orbiter Camera · Narrow Angle Camera (NAC)",
+      "product": "LRO_NAC_Mosaic_1mpp_SP",
+      "original_id": "LRO_NAC_Mosaic_1mpp_SP",
+      "product_page": "https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon",
+      "capabilities_url": "https://trek.nasa.gov/tiles/Moon/SP/LRO_NAC_Mosaic_1mpp_SP/1.0.0/WMTSCapabilities.xml",
+      "crs": "South polar stereographic in metres (Moon Trek catalogue: urn:ogc:def:crs:IAU2000::30120). The WMTS document declares the ambiguous urn:ogc:def:crs:EPSG::0, so the projection is taken from the catalogue and checked against control points; it is never treated as a terrestrial CRS.",
+      "vertical_reference": null,
+      "units": "8-bit display values (not radiometric, not elevation)",
+      "nodata": "transparent pixels",
+      "max_zoom": 12,
+      "finest_tile_resolution_m": 2.0903,
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Mosaico multitemporal: el servicio no publica una fecha única de adquisición. Sus sombras son las de cada adquisición, no las del instante seleccionado en la aplicación.",
+          "en": "Multi-temporal mosaic: the service publishes no single acquisition date. Its shadows are those of each acquisition, not of the instant selected in the app."
+        }
+      },
+      "credit": "NASA/JPL Solar System Treks · NASA/GSFC/Arizona State University (LROC)",
+      "terms": {
+        "es": "Servicio WMTS público y documentado; su documentación no declara una licencia explícita.",
+        "en": "Public, documented WMTS service; its documentation states no explicit licence."
+      },
+      "note": {
+        "es": "Imágenes orbitales reales en mosaico. Las teselas más finas servidas tienen unos 2,09 m/píxel; ampliar más no añade detalle.",
+        "en": "Real orbital images in a mosaic. The finest served tiles are about 2.09 m/pixel; zooming further adds no detail."
+      },
+      "verification": {
+        "status": "live_tile_verified",
+        "checked_utc": "2026-11-14",
+        "method": "GetCapabilities leído; tesela real sobre el sitio A recibida con firma PNG válida y Access-Control-Allow-Origin: *",
+        "example_tile": "https://trek.nasa.gov/tiles/Moon/SP/LRO_NAC_Mosaic_1mpp_SP/1.0.0//default/default028mm/12/2070/2026.png"
+      }
+    },
+    {
+      "id": "trek.sp.LRO_WAC_Mosaic_SPole60_100m_v02",
+      "class": "published_science_product",
+      "kind": "wmts_tiles",
+      "layer": "LRO_WAC_Mosaic_SPole60_100m_v02",
+      "title": {
+        "es": "Mosaico LRO WAC del polo sur (contexto regional)",
+        "en": "LRO WAC mosaic of the south pole (regional context)"
+      },
+      "provider": "NASA Solar System Treks (Moon Trek), JPL",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Reconnaissance Orbiter Camera · Wide Angle Camera (WAC)",
+      "product": "LRO_WAC_Mosaic_SPole60_100m_v02",
+      "original_id": "LRO_WAC_Mosaic_SPole60_100m_v02",
+      "product_page": "https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon",
+      "capabilities_url": "https://trek.nasa.gov/tiles/Moon/SP/LRO_WAC_Mosaic_SPole60_100m_v02/1.0.0/WMTSCapabilities.xml",
+      "crs": "South polar stereographic in metres (Moon Trek catalogue: urn:ogc:def:crs:IAU2000::30120). The WMTS document declares the ambiguous urn:ogc:def:crs:EPSG::0, so the projection is taken from the catalogue and checked against control points; it is never treated as a terrestrial CRS.",
+      "vertical_reference": null,
+      "units": "8-bit display values (not radiometric, not elevation)",
+      "nodata": "transparent pixels",
+      "max_zoom": 5,
+      "finest_tile_resolution_m": 267.561,
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Mosaico multitemporal: el servicio no publica una fecha única de adquisición. Sus sombras son las de cada adquisición, no las del instante seleccionado en la aplicación.",
+          "en": "Multi-temporal mosaic: the service publishes no single acquisition date. Its shadows are those of each acquisition, not of the instant selected in the app."
+        }
+      },
+      "credit": "NASA/JPL Solar System Treks · NASA/GSFC/Arizona State University (LROC)",
+      "terms": {
+        "es": "Servicio WMTS público y documentado; su documentación no declara una licencia explícita.",
+        "en": "Public, documented WMTS service; its documentation states no explicit licence."
+      },
+      "note": {
+        "es": "Contexto regional de baja resolución (teselas de unos 268 m/píxel).",
+        "en": "Low-resolution regional context (tiles of about 268 m/pixel)."
+      },
+      "verification": {
+        "status": "live_tile_verified",
+        "checked_utc": "2026-11-14",
+        "method": "GetCapabilities leído; tesela real sobre el sitio A recibida con firma PNG válida y Access-Control-Allow-Origin: *",
+        "example_tile": "https://trek.nasa.gov/tiles/Moon/SP/LRO_WAC_Mosaic_SPole60_100m_v02/1.0.0//default/default028mm/5/16/15.png"
+      }
+    }
+  ]
+}

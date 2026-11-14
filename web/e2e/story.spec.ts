@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { core, hm, noHorizontalOverflow, trackErrors, waitForData } from "./helpers";
 
 test.describe("Historia (modo presentación)", () => {

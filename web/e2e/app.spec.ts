@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { ROUTES, core, hm, noHorizontalOverflow, panel, trackErrors, waitForData } from "./helpers";
 
 const DEMO = "?w=W2&h=0&v=nominal&c=min_longest_dark_hours";
@@ -172,9 +172,12 @@ test.describe("Explore, Engineer y Evidencia", () => {
   test("Explore: zoom y cambio de sitio desde el mapa", async ({ page }) => {
     await page.goto("/explore/?s=A&w=W1&h=0&v=nominal");
     await waitForData(page);
-    await page.getByRole("button", { name: "Acercar" }).click();
-    await expect(page.getByText(/zoom ×1,5/)).toBeVisible();
-    await page.getByRole("button", { name: /^Sitio B: Connecting Ridge/ }).click();
+    // La figura original del motor se conserva como referencia, plegada.
+    const figure = page.locator("details").filter({ hasText: "Figura original del motor" });
+    await figure.locator("summary").click();
+    await figure.getByRole("button", { name: "Acercar" }).click();
+    await expect(figure.getByText(/zoom ×1,5/)).toBeVisible();
+    await figure.getByRole("button", { name: /^Sitio B: Connecting Ridge/ }).click();
     await expect(page).toHaveURL(/s=B/);
     await expect(panel(page, "Ficha del sitio").getByText("Connecting Ridge · ROI 6")).toBeVisible();
   });

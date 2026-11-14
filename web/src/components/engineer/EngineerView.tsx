@@ -22,6 +22,7 @@ import { Badge, Callout, Legend, NatureBadge, SiteDot, WinnerTag } from "../ui/D
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { TerrainPanel } from "../terrain/TerrainPanel";
 import { MastScene } from "./MastScene";
 import { L } from "@/lib/i18n";
 
@@ -299,25 +300,30 @@ function EngineerBody({ core }: { core: Core }) {
         <VariantControl />
       </ControlBar>
 
-      <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_380px]">
+      <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)]">
         <HeightSelector />
-        <Panel
-          title={L("Vista ilustrativa", "Illustrative view")}
-          icon="engineer"
-          actions={
-            <>
-              <Badge tone="warn">{L("Ilustración", "Illustration")}</Badge>
-              <InfoTip>{L("Dibujo explicativo: no representa el relieve real, la posición real del Sol ni sombras calculadas. Los resultados están en los paneles de datos.", "Explanatory drawing: it does not show the real relief, the real Sun position or computed shadows. Results are in the data panels.")}</InfoTip>
-            </>
-          }
-          bodyClassName="p-0 sm:p-0 overflow-hidden rounded-b-2xl"
-        >
-          <MastScene heightM={heightM} site={focusSite} />
-        </Panel>
-        <div className="xl:col-span-2 2xl:col-span-1">
-          <MetricsAtHeight core={core} />
-        </div>
+        <MetricsAtHeight core={core} />
       </div>
+
+      <TerrainPanel core={core} />
+
+      <details className="group rounded-2xl border border-line bg-surface/85">
+        <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-sm font-semibold text-ink">
+          <Icon name="engineer" className="size-5 text-ink-muted" />
+          {L("Esquema didáctico del mástil", "Explanatory mast sketch")}
+          <Badge tone="warn">{L("Ilustración · no es terreno real", "Illustration · not real terrain")}</Badge>
+          <Icon name="chevronDown" className="ml-auto size-4 text-ink-muted transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="border-t border-line">
+          <p className="px-5 pt-3 text-xs text-ink-faint">
+            {L(
+              "Dibujo explicativo conservado como referencia: sus crestas, el Sol y la Tierra están dibujados a mano y no representan el relieve ni las posiciones reales. El terreno real es el panel 3D de arriba.",
+              "Explanatory drawing kept for reference: its ridges, Sun and Earth are hand-drawn and do not represent the real relief or positions. The real terrain is the 3D panel above.",
+            )}
+          </p>
+          <MastScene heightM={heightM} site={focusSite} />
+        </div>
+      </details>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Panel

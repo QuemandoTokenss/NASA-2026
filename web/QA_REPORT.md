@@ -1,5 +1,7 @@
 # QA_REPORT — SITE REGRET web
 
+> Las secciones de abajo describen `main` (commit `3801c17`). Los resultados de la rama `feat/geo-real-terrain` están al final, en «Capa geoespacial».
+
 Fecha: 2026-11-14. Entorno: Windows 11, Node 24.19, Next 16.4.6, Microsoft Edge (Playwright `channel: "msedge"`).
 Solo se declara lo que se ha ejecutado. Comando completo: `npm run verify` (typecheck → lint → tests → build → E2E).
 
@@ -58,3 +60,22 @@ Solo se declara lo que se ha ejecutado. Comando completo: `npm run verify` (type
 - Auditoría con lector de pantalla real — no ejecutada (la auditoría automática axe-core sí).
 - Rendimiento medido (Lighthouse) — no ejecutado; los trozos pesados se cargan bajo demanda y las franjas se dibujan por tramos.
 - Despliegue público: ver `README.md` (sección Despliegue).
+
+## Capa geoespacial (rama `feat/geo-real-terrain`, 2026-11-14)
+
+Ejecutado sobre el commit `54cda05` + `workers: 2` (equipo de Hugo, Windows 11, Node 24.19, Edge):
+
+| Comprobación | Resultado |
+|---|---|
+| `tsc --noEmit`, ESLint | 0 errores |
+| Vitest (10 archivos) | **89/89** (63 anteriores + 21 `geospatial` + 5 `terrain-mesh`) |
+| `next build` | Correcto |
+| Playwright, 2 procesos | **59/59**, 1 omitida (en vivo). Con 4 procesos: 54/59, 5 fallos por tiempo |
+
+Qué establecen las pruebas nuevas: originales y recortes con SHA-256 = pasaporte/manifiesto; recorte = subconjunto exacto del TIFF; lectura en A y B = valores del paquete; proyección ida/vuelta, base local, distancias con radio lunar; lector WMTS sobre documentos reales y rechazo de respuestas no válidas; el DEM en el punto que el motor señala como obstáculo reproduce su horizonte (4 636 direcciones, máx. 1,1e-7°); horizonte interpolado = el guardado para Sol y Tierra; malla 3D = muestras del raster; en navegador, teselas pedidas según capacidades, cambio de capa y leyenda, lectura por clic, medida A–B, fuera de cobertura, sin red, HTML con 200, escena 3D dibujada y lectura del obstáculo = cálculo independiente, procedencia por capa.
+
+No verificado: alineación imagen↔DEM con puntos de control (solo a la vista), prueba en vivo automatizada, segundo portátil sin red, lector de pantalla. Lista completa de pendientes: [docs/GEOESPACIAL.md](docs/GEOESPACIAL.md).
+
+### Actualización PC-10 (2026-11-14, corregistro y ODE)
+
+`npm test`: **98/98**. `npx playwright test` (2 procesos): **62/62**, 1 omitida. `tsc` y ESLint: 0 errores. Añadidos: corregistro medido teselas ↔ DEM (rejilla verificada, NCC 0,95; mosaico NAC no concluyente) y adaptador ODE REST con panel de productos y huellas (respuestas reales grabadas; además ejecutado una vez contra el servicio real: 253 productos, captura en `docs/capturas/live-ode.png`).
