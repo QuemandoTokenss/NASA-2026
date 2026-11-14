@@ -1,7 +1,14 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-26 en rama (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-26 fusionado en `main` (§0-septies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-septies. PC-26 fusionado en producción — estado actual (leer primero)
+
+- **PR #22 fusionada en `main`** con commit de merge `00cd602` («Merge #22: Timeline two-row layout with a larger local sky»), a petición de Hugo, tras comprobar: checks de Vercel en verde, sin conflictos, base `main`.
+- **Producción**: estado Vercel = success para `00cd602`. https://site-regret.vercel.app/timeline/ responde 200 y sirve la nueva composición (`timeline-sky`).
+- **Rollback** si hiciera falta: promover en Vercel el despliegue anterior (merge de la #21, `31f38f1`), o revertir `00cd602` en Git.
+- **Pendiente humano**: revisión visual en producción del Timeline a 1440×900, 1280×720 y 390 px (la captura de `web/docs/capturas/pc26/` es de la compilación local).
 
 ## 0-sexies. PC-26 · Timeline en dos filas con el Cielo local ampliado — EN RAMA, sin fusionar (leer primero)
 
