@@ -9,8 +9,12 @@ test.describe("Comparador · terreno real del par (bloque C)", () => {
     const errors = trackErrors(page);
     await page.goto("/comparador/?w=W2&h=0&v=nominal&c=min_longest_dark_hours");
     await waitForData(page);
-    const pt = page.getByTestId("pair-terrain");
-    await expect(pt.getByTestId("geomap")).toBeVisible();
+    // Contexto compacto con la imagen orbital conjunta (fuera de las fichas gemelas).
+    await expect(page.getByTestId("pair-terrain-table").locator("xpath=ancestor::section[1]").getByTestId("geomap")).toBeVisible();
+    // Las fichas abren con relieve neutro y muestran la lectura del criterio bajo cada terreno.
+    await expect(page.getByTestId("pair-terrain").getByRole("radio", { name: "Relieve" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByTestId("twin-reading-A")).toHaveText("38 h 40 min");
+    await expect(page.getByTestId("twin-reading-B")).toHaveText("14 h 40 min");
     await expect(page.getByTestId("site-crop-A")).toBeVisible();
     await expect(page.getByTestId("site-crop-B")).toBeVisible();
     const table = page.getByTestId("pair-terrain-table");

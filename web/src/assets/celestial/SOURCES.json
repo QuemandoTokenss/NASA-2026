@@ -1,0 +1,71 @@
+{
+  "description": "Imágenes NASA optimizadas para el esquema orbital del Timeline (apariencia de los cuerpos; posiciones y estados salen del motor).",
+  "generator": "make_celestial.py (Pillow + NumPy); se documenta en docs/continuidad/HANDOFF.md",
+  "assets": [
+    {
+      "file": "moon-lroc-southpole.webp",
+      "sha256": "b86f42104a8d348a10e13edbd46383a6ec771b9a1707d3e31f63baab82e8a6ba",
+      "source": {
+        "title": "CGI Moon Kit · LROC color map (2k JPEG)",
+        "page": "https://svs.gsfc.nasa.gov/4720/",
+        "url": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg",
+        "sha256": "f7130a1822681fa7512d7dcfd40db8c10b9ba4f06777910348698260ed7a2170",
+        "bytes": 457942
+      },
+      "credit": "NASA's Scientific Visualization Studio · LROC WAC (Arizona State University)",
+      "processing": "Reproyección ortográfica desde debajo del polo sur (lon 0° arriba, 90° E a la derecha, como el mapa de la app), 512 px, borde con alfa. El proveedor indica que el mapa está optimizado para estética, no para ciencia."
+    },
+    {
+      "file": "earth-bluemarble-as17.webp",
+      "sha256": "cb8db58379cb55055256c6ba4bf0d5c078ecb5eaf3ecfd403fc106a9a2763005",
+      "source": {
+        "title": "The Blue Marble (AS17-148-22727)",
+        "page": "https://science.nasa.gov/resource/the-blue-marble/",
+        "url": "https://assets.science.nasa.gov/content/dam/science/psd/solar/2023/09/i/IMG004849.jpg",
+        "sha256": "adbdbbc70c864e2041fef3bc3e6784a989d4620b239469c3636b292f66e2445e",
+        "bytes": 344828
+      },
+      "credit": "NASA Johnson Space Center · Apollo 17 (7 dic 1972)",
+      "processing": "Recorte al disco, 256 px, máscara circular. Fotografía histórica: no representa nubes ni fase del instante simulado.",
+      "geometry": {
+        "center_px": [
+          930.5,
+          870.0
+        ],
+        "radius_px": 879.5,
+        "crop_box_px": [
+          51,
+          -9,
+          1810,
+          1749
+        ]
+      }
+    },
+    {
+      "file": "sun-sdo-aia171.webp",
+      "sha256": "77b8cc92d17aa63f2163c220e7fc6a108df5e24ae8cb37e76c731fec2a9000bf",
+      "source": {
+        "title": "Image of Sun from NASA’s Solar Dynamics Observatory (PIA26681)",
+        "page": "https://science.nasa.gov/photojournal/image-of-sun-from-nasas-solar-dynamics-observatory/",
+        "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia26/pia26681/PIA26681.jpg",
+        "sha256": "8b829280455d14fa7bbeac4d5ebe18fabacb74221344634947359ed0efd28a82",
+        "bytes": 1316280
+      },
+      "credit": "NASA/GSFC/Solar Dynamics Observatory",
+      "processing": "Recorte al disco con 12 % de corona y desvanecido radial, 256 px. La propia imagen rotula «SDO/AIA 171 2025-09-10 15:55:22 UT»: ultravioleta extremo (171 Å) en falso color; el rótulo queda fuera del recorte. No representa la actividad solar del instante simulado.",
+      "geometry": {
+        "center_px": [
+          2169.0,
+          1835.5
+        ],
+        "radius_px": 1918.0,
+        "crop_box_px": [
+          20,
+          -312,
+          4317,
+          3983
+        ]
+      }
+    }
+  ]
+}

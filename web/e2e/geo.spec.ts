@@ -266,8 +266,8 @@ test.describe("Engineer · terreno 3D y obstáculo", () => {
     await page.goto("/engineer/?s=A&w=W2&h=0&v=published_0001&t=3200");
     await waitForData(page);
     const panel = page.getByTestId("terrain-panel");
-    await expect(panel.getByRole("radio", { name: "el Sol" })).toBeDisabled();
-    await expect(panel.getByRole("radio", { name: "un azimut" })).toHaveAttribute("aria-checked", "true");
+    await expect(panel.getByRole("radio", { name: "Sol", exact: true })).toBeDisabled();
+    await expect(panel.getByRole("radio", { name: "Azimut", exact: true })).toHaveAttribute("aria-checked", "true");
     // PC-15: con un clon publicado la malla es la de ese clon (recorte verificado).
     await expect(panel.getByText(/La malla dibujada es el recorte de este clon publicado/)).toBeVisible();
     await expect(panel).toHaveAttribute("data-mesh-surface", "published_0001");

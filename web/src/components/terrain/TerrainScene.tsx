@@ -3,7 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { LAYER_STYLE, rampColor } from "@/lib/geospatial/colormap";
+import { rampColor, type Rgb } from "@/lib/geospatial/colormap";
+
+const MINERAL: Rgb[] = [
+  [58, 60, 64],
+  [96, 97, 99],
+  [138, 137, 134],
+  [178, 175, 168],
+];
 import type { Vec3 } from "@/lib/geospatial/lunar";
 import type { TerrainMesh } from "@/lib/geospatial/mesh";
 import { L } from "@/lib/i18n";
@@ -85,7 +92,8 @@ export function TerrainScene({
     const out = new Float32Array(mesh.heights.length * 3);
     const span = mesh.maxHeight - mesh.minHeight || 1;
     for (let i = 0; i < mesh.heights.length; i++) {
-      const c = rampColor(LAYER_STYLE.elevation.stops, (mesh.heights[i] - mesh.minHeight) / span);
+      // Gris mineral: la altura solo matiza el tono; la forma la da la luz rasante.
+      const c = rampColor(MINERAL, (mesh.heights[i] - mesh.minHeight) / span);
       out[3 * i] = c[0] / 255;
       out[3 * i + 1] = c[1] / 255;
       out[3 * i + 2] = c[2] / 255;
@@ -113,8 +121,10 @@ export function TerrainScene({
     const dynamic = new THREE.Group();
     world.add(dynamic);
     scene.add(world);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.32));
-    const light = new THREE.DirectionalLight(0xffffff, 2.3);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.16));
+    scene.add(new THREE.HemisphereLight(0x9fb3d6, 0x15171b, 0.35));
+    scene.fog = new THREE.Fog(0x03060d, 2200, 9000);
+    const light = new THREE.DirectionalLight(0xfff4e0, 3.1);
     scene.add(light);
 
     const geometry = new THREE.BufferGeometry();
@@ -259,11 +269,12 @@ export function TerrainScene({
       // se ven la estructura, su remate y el arranque del rayo.
       const h = observerHeightM * exaggeration;
       // En pantallas estrechas (móvil) la cámara se aleja para que quepan torre y visual.
-      const d = Math.max(7, observerHeightM * 1.9 + 6) * (t.camera.aspect < 0.9 ? 1.7 : 1);
+      const d = Math.max(8, observerHeightM * 2.3 + 7) * (t.camera.aspect < 0.9 ? 1.6 : 1);
       const look = sightLine ? toScene(sightLine.end).setY(0).normalize() : azimuthDeg !== null ? azimuthDir(azimuthDeg) : new THREE.Vector3(0, 0, -1);
       const side = new THREE.Vector3(-look.z, 0, look.x);
-      pos = look.clone().multiplyScalar(-d * 0.85).add(side.multiplyScalar(d * 0.6)).setY(h * 0.75 + d * 0.32 + 1.2);
-      target = new THREE.Vector3(0, h * 0.55 + 0.4, 0).add(look.clone().multiplyScalar(d * 0.35));
+      pos = look.clone().multiplyScalar(-d * 0.8).add(side.multiplyScalar(d * 0.62)).setY(h * 0.62 + d * 0.26 + 1.2);
+      // Objetivo a media torre y algo por delante: base, remate y arranque de la visual en cuadro.
+      target = new THREE.Vector3(0, h * 0.42 + 0.3, 0).add(look.clone().multiplyScalar(d * 0.3));
     } else if (preset.view === "near") pos = new THREE.Vector3(-70, 28 + observerHeightM, 95);
     else if (preset.view === "behind" && sightLine) {
       // Detrás del observador, mirando hacia el extremo de la visual.
@@ -285,5 +296,5 @@ export function TerrainScene({
         {L("Este navegador no ha podido iniciar WebGL. Los datos del obstáculo y el mapa siguen disponibles; no se muestra ninguna imagen de sustitución.", "This browser could not start WebGL. The obstacle data and the map remain available; no substitute image is shown.")}
       </Callout>
     );
-  return <div ref={hostRef} role="img" aria-label={label} data-testid="terrain-scene" data-observer-height={observerHeightM} data-view={preset.view} className="h-[420px] w-full overflow-hidden rounded-xl border border-line-strong bg-[#03060d] sm:h-[520px]" />;
+  return <div ref={hostRef} role="img" aria-label={label} data-testid="terrain-scene" data-observer-height={observerHeightM} data-view={preset.view} className="h-[clamp(380px,calc(100dvh-250px),620px)] w-full overflow-hidden bg-[radial-gradient(120%_90%_at_50%_0%,#0c1424,#03060d)]" />;
 }

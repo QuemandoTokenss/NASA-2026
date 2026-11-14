@@ -19,11 +19,9 @@ import { SITE_META, VARIANT_LABEL } from "@/lib/labels";
 import { earthVisible, sunVisible } from "@/lib/science/states";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { evidenceHref } from "../maps/GeoMap";
-import { Segmented } from "../ui/Controls";
 import { Badge, Callout, NatureBadge } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { InfoTip } from "../ui/Interactive";
-import { Panel } from "../ui/Panel";
 import { CompassBadge } from "./CompassBadge";
 import type { SceneDirection, SceneLabels, SceneSightLine, ViewPreset } from "./TerrainScene";
 
@@ -36,6 +34,21 @@ const EARTH_HEX = "#4f7cff";
 /** 1 de cada 2 muestras del DEM de 5 m: vértices reales cada 10 m. */
 const MESH_STEP = 2;
 type Mode = "sun" | "earth" | "manual";
+
+const toolBtn = (active: boolean, disabled = false) =>
+  `rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${active ? "bg-ink text-bg" : disabled ? "cursor-not-allowed text-ink-faint/50" : "text-ink-muted hover:bg-surface-3 hover:text-ink"}`;
+function Tool<T extends string | number>({ label, value, options, onChange }: { label: string; value: T; options: Array<{ v: T; text: string; disabled?: boolean }>; onChange: (v: T) => void }) {
+  return (
+  <div role="radiogroup" aria-label={label} className="flex items-center gap-0.5 rounded-lg border border-line-strong bg-bg/80 p-0.5">
+    {options.map((o) => (
+      <button key={String(o.v)} type="button" role="radio" aria-checked={value === o.v} disabled={o.disabled} onClick={() => onChange(o.v)} className={toolBtn(value === o.v, o.disabled)}>
+        {o.text}
+      </button>
+    ))}
+  </div>
+);
+}
+
 
 export function TerrainPanel({ core }: { core: Core }) {
   const { selection, dispatch, query, restored } = useSelection();
@@ -132,14 +145,17 @@ export function TerrainPanel({ core }: { core: Core }) {
 
   const directions = useMemo<SceneDirection[]>(() => {
     if (!ephData) return [];
+    // Si un cuerpo está a < 12° de la dirección de mirada, su etiqueta se integra en la de la visual.
+    const near = (az: number) => azimuth !== null && Math.abs(((az - azimuth + 540) % 360) - 180) < 12;
     const s = ephData.series.bodies;
     return [
-      { enu: directionENU(s.SUN.azimuth_deg[timeIndex], s.SUN.elevation_deg[timeIndex]), color: SUN_HEX, label: L("Sol", "Sun") },
-      { enu: directionENU(s.EARTH.azimuth_deg[timeIndex], s.EARTH.elevation_deg[timeIndex]), color: EARTH_HEX, label: L("Tierra", "Earth") },
+      { enu: directionENU(s.SUN.azimuth_deg[timeIndex], s.SUN.elevation_deg[timeIndex]), color: SUN_HEX, label: near(s.SUN.azimuth_deg[timeIndex]) ? undefined : L("Sol", "Sun") },
+      { enu: directionENU(s.EARTH.azimuth_deg[timeIndex], s.EARTH.elevation_deg[timeIndex]), color: EARTH_HEX, label: near(s.EARTH.azimuth_deg[timeIndex]) ? undefined : L("Tierra", "Earth") },
     ];
-  }, [ephData, timeIndex]);
+  }, [ephData, timeIndex, azimuth]);
   // Luz de la escena: desde el azimut real del Sol pero a 25° de altura fija, para que el relieve se lea.
-  const lightEnu = useMemo(() => (ephData ? directionENU(ephData.series.bodies.SUN.azimuth_deg[timeIndex], 25) : null), [ephData, timeIndex]);
+  // Luz de la escena: rasante y lateral respecto a la dirección de mirada, solo para leer el relieve y la torre.
+  const lightEnu = useMemo(() => directionENU((azimuth ?? 0) + 115, 15), [azimuth]);
 
   const overlay = useMemo(() => (obstacle ? { line: [{ x: site.x_m, y: site.y_m }, obstacle.point], point: obstacle.point, label: L("Obstáculo", "Obstacle") } : undefined), [obstacle, site.x_m, site.y_m]);
 
@@ -151,8 +167,11 @@ export function TerrainPanel({ core }: { core: Core }) {
   const step = (d: number) => dispatch({ type: "setTimeIndex", value: Math.max(0, Math.min(4319, timeIndex + d)) });
 
   const sceneLabels = useMemo<SceneLabels>(
-    () => ({ observer: heightM > 0 ? `${L("Observador", "Observer")} · ${heightM} m` : `${L("Observador", "Observer")} · ${L("a ras del suelo", "at ground level")}`, sight: `${L("Dirección de mirada", "Viewing direction")} · ${azimuth === null ? "—" : formatDeg(azimuth, 1)}` }),
-    [heightM, azimuth],
+    () => ({
+      observer: heightM > 0 ? `${L("Observador", "Observer")} · ${heightM} m` : `${L("Observador", "Observer")} · ${L("a ras del suelo", "at ground level")}`,
+      sight: `${L("Dirección de mirada", "Viewing direction")}${effectiveMode === "manual" ? "" : effectiveMode === "sun" ? L(" (Sol)", " (Sun)") : L(" (Tierra)", " (Earth)")} · ${azimuth === null ? "—" : formatDeg(azimuth, 1)}`,
+    }),
+    [heightM, azimuth, effectiveMode],
   );
   const explain = (() => {
     if (!obstacle || azimuth === null) return null;
@@ -186,42 +205,51 @@ export function TerrainPanel({ core }: { core: Core }) {
     rows.push([L("Posición del obstáculo", "Obstacle position"), `X ${formatNumber(obstacle.point.x, 0)} m · Y ${formatNumber(obstacle.point.y, 0)} m (${formatNumber(Math.abs(obstacleLonLat!.latDeg), 4)}° S, ${formatNumber(obstacleLonLat!.lonEastDeg, 3)}° E)`]);
   }
 
+  const conclusion = (() => {
+    if (!obstacle || azimuth === null) return null;
+    const title =
+      effectiveMode === "manual"
+        ? `${L("Azimut", "Azimuth")} ${formatDeg(azimuth, 1)}`
+        : engineVisible === null
+          ? `${bodyName} · ${formatDeg(azimuth, 1)}`
+          : engineVisible
+            ? L(`${effectiveMode === "sun" ? "Sol visible" : "Tierra visible"}`, `${bodyName} visible`)
+            : L(`${effectiveMode === "sun" ? "Sol tapado" : "Tierra tapada"}`, `${bodyName} hidden`);
+    if (obstacle.unknown) return { title, tone: "neutral" as const, line: L("Horizonte desconocido en este azimut", "Unknown horizon at this azimuth") };
+    const hz = obstacle.horizonDeg === null ? "—" : formatDeg(obstacle.horizonDeg, 2);
+    return {
+      title,
+      tone: engineVisible === null ? ("neutral" as const) : engineVisible ? ("ok" as const) : ("hidden" as const),
+      line: `${L("Horizonte", "Horizon")} ${hz} · ${L("relieve a", "terrain at")} ${fmtDist(obstacle.distanceM)}${insideWindow ? "" : ` · ${L("fuera del recorte", "outside the crop")}`}`,
+      margin: bodyEl !== null && engineHorizon !== null ? bodyEl - engineHorizon : null,
+    };
+  })();
+
   return (
-    <Panel
-      title={`${L("Terreno 3D del DEM y obstáculo del horizonte", "3D DEM terrain and horizon obstacle")} · ${SITE_META[focusSite].label} · ${heightM} m`}
-      icon="mountain"
-      actions={
-        <>
-          <NatureBadge nature="DERIVED" />
-          <InfoTip>
-            {L(
-              "Malla construida con muestras reales del DEM PGDA78 (una de cada dos: vértices cada 10 m), en su posición física con curvatura lunar. La visibilidad no se calcula aquí: se lee del motor.",
-              "Mesh built from real PGDA78 DEM samples (every other one: vertices every 10 m), at their physical position with lunar curvature. Visibility is not computed here: it is read from the engine.",
-            )}
-          </InfoTip>
-        </>
-      }
-    >
-      <div className="flex flex-col gap-4" data-testid="terrain-panel" data-preset={preset.view} data-mesh-surface={meshSurface} data-mesh-ready={mesh ? "true" : "false"}>
-        <div className="flex flex-wrap items-end gap-4">
-          <Segmented
-            label={L("¿Qué tapa…?", "What blocks…?")}
+    <section aria-label={L("Terreno 3D, torre y línea de visión", "3D terrain, tower and line of sight")} className="flex flex-col gap-4" data-testid="terrain-panel" data-preset={preset.view} data-mesh-surface={meshSurface} data-mesh-ready={mesh ? "true" : "false"}>
+      <div className="overflow-hidden rounded-2xl border border-line bg-[#03060d]">
+        {/* Barra compacta: lo que cambia la escena, junto a la escena */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-surface/80 px-3 py-2">
+          <Tool label={L("Sitio", "Site")} value={focusSite} onChange={(v) => dispatch({ type: "setFocusSite", value: v as SiteId })} options={(["A", "B"] as const).map((s) => ({ v: s, text: SITE_META[s].label }))} />
+          <Tool label={L("Altura del observador", "Observer height")} value={heightM} onChange={(v) => dispatch({ type: "setHeight", value: v as 0 | 2 | 10 })} options={([0, 2, 10] as const).map((h) => ({ v: h, text: `${h} m` }))} />
+          <Tool
+            label={L("Dirección", "Direction")}
             value={effectiveMode}
-            onChange={setMode}
+            onChange={(v) => setMode(v as Mode)}
             options={[
-              { value: "sun", label: L("el Sol", "the Sun"), disabled: !isNominal },
-              { value: "earth", label: L("la Tierra", "the Earth"), disabled: !isNominal },
-              { value: "manual", label: L("un azimut", "an azimuth") },
+              { v: "sun" as Mode, text: L("Sol", "Sun"), disabled: !isNominal },
+              { v: "earth" as Mode, text: L("Tierra", "Earth"), disabled: !isNominal },
+              { v: "manual" as Mode, text: L("Azimut", "Azimuth") },
             ]}
           />
           {effectiveMode === "manual" ? (
-            <label className="flex min-w-56 flex-1 items-center gap-3 text-xs text-ink-muted">
-              {L("Azimut", "Azimuth")}
-              <input type="range" min={0} max={359.75} step={0.25} value={manualAz} onChange={(e) => setManualAz(Number(e.target.value))} className="flex-1 accent-[#a78bfa]" aria-valuetext={`${manualAz}°`} />
-              <span className="tabular w-16 text-right text-ink">{formatDeg(manualAz, 2)}</span>
+            <label className="flex min-w-48 flex-1 items-center gap-2 text-xs text-ink-muted">
+              <span className="sr-only">{L("Azimut", "Azimuth")}</span>
+              <input type="range" min={0} max={359.75} step={0.25} value={manualAz} onChange={(e) => setManualAz(Number(e.target.value))} className="flex-1 accent-[#a78bfa]" aria-label={L("Azimut", "Azimuth")} aria-valuetext={`${manualAz}°`} />
+              <span className="tabular w-14 text-right font-semibold text-ink">{formatDeg(manualAz, 1)}</span>
             </label>
           ) : (
-            <div className="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted">
+            <div className="flex flex-wrap items-center gap-1 text-xs text-ink-muted">
               <span className="tabular mr-1 text-ink">{times ? formatUtc(times[timeIndex]) : "…"}</span>
               {(
                 [
@@ -231,7 +259,7 @@ export function TerrainPanel({ core }: { core: Core }) {
                   [144, L("+1 día", "+1 day")],
                 ] as const
               ).map(([d, label]) => (
-                <button key={d} type="button" onClick={() => step(d)} className="rounded-lg border border-line-strong bg-surface-2 px-2 py-1 font-medium text-ink hover:bg-surface-3">
+                <button key={d} type="button" onClick={() => step(d)} className="rounded-md border border-line-strong px-1.5 py-0.5 font-medium text-ink hover:bg-surface-3">
                   {label}
                 </button>
               ))}
@@ -240,9 +268,9 @@ export function TerrainPanel({ core }: { core: Core }) {
               </Link>
             </div>
           )}
-          <label className="ml-auto flex items-center gap-2 text-xs text-ink-muted">
-            {L("Exageración vertical", "Vertical exaggeration")}
-            <select value={exaggeration} onChange={(e) => setExaggeration(Number(e.target.value))} className="rounded-lg border border-line-strong bg-surface-2 px-2 py-1 text-ink">
+          <label className="ml-auto flex items-center gap-1.5 text-xs text-ink-faint">
+            {L("Exag.", "Exag.")}
+            <select value={exaggeration} onChange={(e) => setExaggeration(Number(e.target.value))} className="rounded-md border border-line-strong bg-surface-2 px-1.5 py-0.5 text-ink" aria-label={L("Exageración vertical", "Vertical exaggeration")}>
               {[1, 2, 5].map((x) => (
                 <option key={x} value={x}>
                   ×{x}
@@ -252,126 +280,148 @@ export function TerrainPanel({ core }: { core: Core }) {
           </label>
         </div>
 
-        {explain ? (
-          <p className="rounded-xl border border-accent/30 bg-accent-surface/40 px-4 py-3 text-base leading-relaxed text-ink" data-testid="terrain-explain" aria-live="polite">
-            {explain}
-          </p>
-        ) : null}
-
-        {!isNominal ? (
-          <Callout tone="uncertainty" icon="info">
-            {L(
-              `Superficie «${VARIANT_LABEL[variant]}»: el paquete solo trae direcciones de Sol y Tierra para la superficie nominal, así que aquí se consulta el horizonte de esta superficie por azimut. ${meshSurface === "nominal" ? "La malla dibujada es el DEM nominal: esta hipótesis propia no se reconstruye en la web." : "La malla dibujada es el recorte de este clon publicado (verificado con SHA-256)."}`,
-              `Surface “${VARIANT_LABEL[variant]}”: the package only carries Sun and Earth directions for the nominal surface, so here this surface's horizon is queried by azimuth. ${meshSurface === "nominal" ? "The mesh drawn is the nominal DEM: this team hypothesis is not reconstructed on the web." : "The mesh drawn is the crop of this published clone (verified with SHA-256)."}`,
-            )}
+        {gridError ? (
+          <Callout tone="danger" icon="alert" title={L("DEM no disponible", "DEM unavailable")}>
+            {gridError} {L("No se dibuja un terreno de sustitución.", "No substitute terrain is drawn.")}
           </Callout>
-        ) : null}
-
-        <div className="grid gap-4 2xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-          <div className="flex min-w-0 flex-col gap-2">
-            {gridError ? (
-              <Callout tone="danger" icon="alert" title={L("DEM no disponible", "DEM unavailable")}>
-                {gridError} {L("No se dibuja un terreno de sustitución.", "No substitute terrain is drawn.")}
-              </Callout>
-            ) : mesh ? (
-              <div className="relative">
-              <TerrainScene
-                mesh={mesh}
-                observerHeightM={heightM}
-                siteColor={SITE_HEX[focusSite]}
-                directions={directions}
-                sightLine={sightLine}
-                exaggeration={exaggeration}
-                preset={preset}
-                lightEnu={lightEnu}
-                azimuthDeg={azimuth}
-                labels={sceneLabels}
-                label={L(
-                  `Terreno 3D real de Connecting Ridge alrededor de ${SITE_META[focusSite].label}, con el observador a ${heightM} m y la línea de visión hacia el obstáculo del horizonte.`,
-                  `Real 3D terrain of Connecting Ridge around ${SITE_META[focusSite].label}, with the observer at ${heightM} m and the line of sight to the horizon obstacle.`,
-                )}
-              />
-              <CompassBadge azimuthDeg={azimuth} sunAz={ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null} earthAz={ephData ? ephData.series.bodies.EARTH.azimuth_deg[timeIndex] : null} />
-              </div>
-            ) : (
-              <div className="h-[520px] animate-pulse rounded-xl border border-line bg-bg-2" aria-busy="true" />
-            )}
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              {(
-                [
-                  ["tower", L("Torre y visual", "Tower and sightline")],
-                  ["overview", L("Vista amplia del recorte", "Wide view of the crop")],
-                  ["behind", L("Mirar hacia el relieve", "Look towards the terrain")],
-                ] as const
-              ).map(([v, label]) => (
-                <button key={v} type="button" aria-pressed={preset.view === v} onClick={() => setPreset((p) => ({ view: v, nonce: p.nonce + 1 }))} className={`rounded-lg border px-2.5 py-1.5 font-medium text-ink hover:bg-surface-3 ${preset.view === v ? "border-accent bg-accent-surface" : "border-line-strong bg-surface-2"}`}>
-                  {label}
-                </button>
-              ))}
-              <span className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-muted">
-                <span className="flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: SUN_HEX }} />{L("hacia el Sol", "to the Sun")}</span>
-                <span className="flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: EARTH_HEX }} />{L("hacia la Tierra", "to the Earth")}</span>
-                <span className="flex items-center gap-1.5"><span className="inline-block h-0.5 w-4 bg-uncertainty" />{L("dirección de mirada hasta el relieve que limita la vista", "viewing direction to the terrain that limits the view")}</span>
-              </span>
-            </div>
-            <p className="text-[11px] leading-relaxed text-ink-faint">
-              {mesh
-                ? L(
-                    `${formatNumber(mesh.cols * mesh.rows, 0)} vértices = muestras reales del DEM cada ${mesh.spacingM} m (ventana de 4 × 4 km, ${mesh.nodataVertices} sin dato). Color por altura (${formatNumber(mesh.minHeight, 0)}–${formatNumber(mesh.maxHeight, 0)} m). Exageración ×${exaggeration}${exaggeration > 1 ? " solo en el dibujo" : " (escala real)"}. La torre en celosía es infraestructura ilustrativa (forma estilizada); su remate está a la altura real del observador, ${heightM} m, que es el origen de la visual. El anillo y la brújula son marcadores. La luz de la escena viene del azimut solar con altura fija y no proyecta sombras: no es el cálculo de visibilidad. Las flechas indican direcciones; el Sol y la Tierra no están a esa distancia.`,
-                    `${formatNumber(mesh.cols * mesh.rows, 0)} vertices = real DEM samples every ${mesh.spacingM} m (4 × 4 km window, ${mesh.nodataVertices} without data). Colour by height (${formatNumber(mesh.minHeight, 0)}–${formatNumber(mesh.maxHeight, 0)} m). Exaggeration ×${exaggeration}${exaggeration > 1 ? " in the drawing only" : " (true scale)"}. The lattice tower is illustrative infrastructure (stylised shape); its top is at the real observer height, ${heightM} m, which is where the sightline starts. The ring and compass are markers. The scene light comes from the solar azimuth at a fixed height and casts no shadows: it is not the visibility computation. Arrows show directions; the Sun and Earth are not at that distance.`,
-                  )
-                : null}{" "}
-              <Link href={evidenceHref("pgda78.site01.elevation")} className="text-accent underline-offset-2 hover:underline">
-                {L("Procedencia del DEM", "DEM provenance")}
-              </Link>
-            </p>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-3">
-            <div className="rounded-xl border border-uncertainty/40 bg-uncertainty-soft p-4" data-testid="obstacle-readout" aria-live="polite">
-              <p className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-uncertainty">
-                <Icon name="eye" className="size-4" />
-                {effectiveMode === "manual" ? L("Horizonte en el azimut elegido", "Horizon at the chosen azimuth") : L(`Qué limita la visión de ${bodyName}`, `What limits the view of the ${bodyName}`)}
-                {engineVisible === null ? null : engineVisible ? <Badge tone="ok" icon="check">{L("Centro visible (motor)", "Centre visible (engine)")}</Badge> : <Badge tone="neutral">{L("Centro oculto (motor)", "Centre hidden (engine)")}</Badge>}
-              </p>
-              {obstacle ? (
-                obstacle.unknown ? (
-                  <p className="mt-2 text-sm text-ink-muted">{L("El motor marca este azimut como desconocido: no se señala ningún obstáculo.", "The engine marks this azimuth as unknown: no obstacle is shown.")}</p>
-                ) : (
-                  <dl className="mt-2 flex flex-col text-sm">
-                    {rows.map(([k, v]) => (
-                      <div key={k} className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-uncertainty/15 py-1.5 last:border-b-0">
-                        <dt className="text-ink-muted">{k}</dt>
-                        <dd className="tabular text-right font-semibold text-ink">{v}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )
-              ) : (
-                <p className="mt-2 text-sm text-ink-muted">{L("Cargando horizonte y direcciones…", "Loading horizon and directions…")}</p>
+        ) : mesh ? (
+          <div className="relative">
+            <TerrainScene
+              mesh={mesh}
+              observerHeightM={heightM}
+              siteColor={SITE_HEX[focusSite]}
+              directions={directions}
+              sightLine={sightLine}
+              exaggeration={exaggeration}
+              preset={preset}
+              lightEnu={lightEnu}
+              azimuthDeg={azimuth}
+              labels={sceneLabels}
+              label={L(
+                `Terreno 3D real de Connecting Ridge alrededor de ${SITE_META[focusSite].label}, con el observador a ${heightM} m y la línea de visión hacia el obstáculo del horizonte.`,
+                `Real 3D terrain of Connecting Ridge around ${SITE_META[focusSite].label}, with the observer at ${heightM} m and the line of sight to the horizon obstacle.`,
               )}
-              {obstacle && !obstacle.unknown ? (
-                <p className="mt-2 text-[11px] leading-relaxed text-ink-faint">
-                  {insideWindow
-                    ? L("El obstáculo está dentro del recorte 3D: la línea violeta llega hasta él.", "The obstacle is inside the 3D crop: the violet line reaches it.")
-                    : L("El obstáculo está FUERA del recorte 3D de 4 km: la línea discontinua solo indica la dirección; su posición real aparece en el mapa.", "The obstacle is OUTSIDE the 4 km 3D crop: the dashed line only shows the direction; its real position is on the map.")}{" "}
-                  {L(
-                    `Se usa la muestra del horizonte del motor más cercana (azimut ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), localizada con su mismo rayo curvo.`,
-                    `The nearest engine horizon sample is used (azimuth ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), located with the same curved ray.`,
-                  )}
-                </p>
-              ) : null}
-            </div>
-            {overlay && !obstacle?.unknown ? <GeoMap key={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} compact sites={core.sites} focusSite={focusSite} overlay={overlay} initialBasemap={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} /> : null}
-            <p className="text-[11px] text-ink-faint">
-              {L("Mapa: imágenes orbitales reales (NASA Moon Trek) con la visual desde el sitio hasta el obstáculo.", "Map: real orbital images (NASA Moon Trek) with the line from the site to the obstacle.")}{" "}
-              <Link href={`/explore/?${query}`} className="text-accent underline-offset-2 hover:underline">
-                {L("Abrir en Explore", "Open in Explore")}
-              </Link>
-            </p>
+            />
+            {conclusion ? (
+              <div className="pointer-events-none absolute top-3 left-3 max-w-[min(22rem,70%)] rounded-xl border border-line-strong bg-[#050912d9] px-3 py-2 backdrop-blur-sm" data-testid="terrain-conclusion" aria-live="polite">
+                <p className={`text-base font-bold sm:text-lg ${conclusion.tone === "ok" ? "text-ok" : conclusion.tone === "hidden" ? "text-warn" : "text-ink"}`}>{conclusion.title}</p>
+                <p className="tabular text-xs text-ink-muted sm:text-sm">{conclusion.line}</p>
+                {"margin" in conclusion && conclusion.margin !== null && conclusion.margin !== undefined ? (
+                  <p className="tabular text-[11px] text-ink-faint">
+                    {L("Margen sobre el horizonte", "Margin above the horizon")} {conclusion.margin >= 0 ? "+" : "−"}
+                    {formatDeg(Math.abs(conclusion.margin), 2)}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+            <CompassBadge azimuthDeg={azimuth} sunAz={ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null} earthAz={ephData ? ephData.series.bodies.EARTH.azimuth_deg[timeIndex] : null} />
           </div>
+        ) : (
+          <div className="h-[clamp(360px,calc(100dvh-250px),600px)] animate-pulse bg-bg-2" aria-busy="true" />
+        )}
+
+        <div className="flex flex-wrap items-center gap-2 border-t border-line bg-surface/80 px-3 py-2 text-xs">
+          {(
+            [
+              ["tower", L("Torre y visual", "Tower and sightline")],
+              ["overview", L("Vista amplia del recorte", "Wide view of the crop")],
+              ["behind", L("Mirar hacia el relieve", "Look towards the terrain")],
+            ] as const
+          ).map(([v, label]) => (
+            <button key={v} type="button" aria-pressed={preset.view === v} onClick={() => setPreset((p) => ({ view: v, nonce: p.nonce + 1 }))} className={toolBtn(preset.view === v)}>
+              {label}
+            </button>
+          ))}
+          <span className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-muted">
+            <span className="flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: SUN_HEX }} />{L("Sol", "Sun")}</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: EARTH_HEX }} />{L("Tierra", "Earth")}</span>
+            <span className="flex items-center gap-1.5"><span className="inline-block h-1 w-4 rounded bg-uncertainty" />{L("visual hasta el relieve que fija el horizonte", "sightline to the terrain that sets the horizon")}</span>
+            <NatureBadge nature="DERIVED" />
+          </span>
         </div>
       </div>
-    </Panel>
+
+      {explain ? (
+        <p className="text-sm leading-relaxed text-ink-muted" data-testid="terrain-explain">
+          {explain}
+        </p>
+      ) : null}
+
+      {!isNominal ? (
+        <Callout tone="uncertainty" icon="info">
+          {L(
+            `Superficie «${VARIANT_LABEL[variant]}»: el paquete solo trae direcciones de Sol y Tierra para la superficie nominal, así que aquí se consulta el horizonte de esta superficie por azimut. ${meshSurface === "nominal" ? "La malla dibujada es el DEM nominal: esta hipótesis propia no se reconstruye en la web." : "La malla dibujada es el recorte de este clon publicado (verificado con SHA-256)."}`,
+            `Surface “${VARIANT_LABEL[variant]}”: the package only carries Sun and Earth directions for the nominal surface, so here this surface's horizon is queried by azimuth. ${meshSurface === "nominal" ? "The mesh drawn is the nominal DEM: this team hypothesis is not reconstructed on the web." : "The mesh drawn is the crop of this published clone (verified with SHA-256)."}`,
+          )}
+        </Callout>
+      ) : null}
+
+      {/* 1º mapa orbital real con la dirección hasta el relieve; 2º el bloque completo de lecturas */}
+      <figure className="flex flex-col gap-2" data-testid="terrain-map">
+        {overlay && !obstacle?.unknown ? (
+          <GeoMap key={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} compact compactHeightClass="h-[320px] sm:h-[380px]" sites={core.sites} focusSite={focusSite} overlay={overlay} initialBasemap={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} />
+        ) : (
+          <div className="grid h-40 place-items-center rounded-xl border border-line text-sm text-ink-faint">{L("Sin obstáculo que situar en el mapa.", "No obstacle to place on the map.")}</div>
+        )}
+        <figcaption className="text-[11px] text-ink-faint">
+          {L("Imágenes orbitales reales (NASA Moon Trek). La línea sigue la dirección de mirada desde el sitio hasta el relieve que fija el horizonte, también cuando está fuera del recorte 3D.", "Real orbital images (NASA Moon Trek). The line follows the viewing direction from the site to the terrain that sets the horizon, also when it lies outside the 3D crop.")}{" "}
+          <Link href={`/explore/?${query}`} className="text-accent underline-offset-2 hover:underline">
+            {L("Abrir en Explore", "Open in Explore")}
+          </Link>
+        </figcaption>
+      </figure>
+
+      <div className="rounded-xl border border-uncertainty/40 bg-uncertainty-soft p-4" data-testid="obstacle-readout" aria-live="polite">
+        <p className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-uncertainty">
+          <Icon name="eye" className="size-4" />
+          {effectiveMode === "manual" ? L("Horizonte en el azimut elegido", "Horizon at the chosen azimuth") : L(`Qué limita la visión de ${bodyName}`, `What limits the view of the ${bodyName}`)}
+          {engineVisible === null ? null : engineVisible ? <Badge tone="ok" icon="check">{L("Centro visible (motor)", "Centre visible (engine)")}</Badge> : <Badge tone="neutral">{L("Centro oculto (motor)", "Centre hidden (engine)")}</Badge>}
+          <InfoTip>
+            {L(
+              "Malla construida con muestras reales del DEM PGDA78 (una de cada dos: vértices cada 10 m), en su posición física con curvatura lunar. La visibilidad no se calcula aquí: se lee del motor.",
+              "Mesh built from real PGDA78 DEM samples (every other one: vertices every 10 m), at their physical position with lunar curvature. Visibility is not computed here: it is read from the engine.",
+            )}
+          </InfoTip>
+        </p>
+        {obstacle ? (
+          obstacle.unknown ? (
+            <p className="mt-2 text-sm text-ink-muted">{L("El motor marca este azimut como desconocido: no se señala ningún obstáculo.", "The engine marks this azimuth as unknown: no obstacle is shown.")}</p>
+          ) : (
+            <dl className="mt-2 grid text-sm sm:grid-cols-2 sm:gap-x-8">
+              {rows.map(([k, v]) => (
+                <div key={k} className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-uncertainty/15 py-1.5">
+                  <dt className="text-ink-muted">{k}</dt>
+                  <dd className="tabular text-right font-semibold text-ink">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          )
+        ) : (
+          <p className="mt-2 text-sm text-ink-muted">{L("Cargando horizonte y direcciones…", "Loading horizon and directions…")}</p>
+        )}
+        {obstacle && !obstacle.unknown ? (
+          <p className="mt-2 text-[11px] leading-relaxed text-ink-faint">
+            {insideWindow
+              ? L("El obstáculo está dentro del recorte 3D: la línea violeta llega hasta él.", "The obstacle is inside the 3D crop: the violet line reaches it.")
+              : L("El obstáculo está FUERA del recorte 3D de 4 km: la línea discontinua termina en el borde del recorte; su posición real aparece en el mapa.", "The obstacle is OUTSIDE the 4 km 3D crop: the dashed line ends at the crop edge; its real position is on the map.")}{" "}
+            {L(
+              `Se usa la muestra del horizonte del motor más cercana (azimut ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), localizada con su mismo rayo curvo.`,
+              `The nearest engine horizon sample is used (azimuth ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), located with the same curved ray.`,
+            )}
+          </p>
+        ) : null}
+        <p className="mt-2 text-[11px] leading-relaxed text-ink-faint">
+          {mesh
+            ? L(
+                `${formatNumber(mesh.cols * mesh.rows, 0)} vértices = muestras reales del DEM cada ${mesh.spacingM} m (ventana de 4 × 4 km, ${mesh.nodataVertices} sin dato), sombreado en gris mineral por una luz de escena rasante y lateral a la mirada, que no proyecta sombras ni representa al Sol: no es el cálculo de visibilidad. Exageración ×${exaggeration}${exaggeration > 1 ? " solo en el dibujo" : " (escala real)"}. La torre en celosía es infraestructura ilustrativa (forma estilizada); su remate está a la altura real del observador, ${heightM} m, que es el origen de la visual. Las flechas indican direcciones; el Sol y la Tierra no están a esa distancia.`,
+                `${formatNumber(mesh.cols * mesh.rows, 0)} vertices = real DEM samples every ${mesh.spacingM} m (4 × 4 km window, ${mesh.nodataVertices} without data), shaded in mineral grey by a grazing scene light from the side of the view, which casts no shadows and does not represent the Sun: it is not the visibility computation. Exaggeration ×${exaggeration}${exaggeration > 1 ? " in the drawing only" : " (true scale)"}. The lattice tower is illustrative infrastructure (stylised shape); its top is at the real observer height, ${heightM} m, which is where the sightline starts. Arrows show directions; the Sun and Earth are not at that distance.`,
+              )
+            : null}{" "}
+          <Link href={evidenceHref("pgda78.site01.elevation")} className="text-accent underline-offset-2 hover:underline">
+            {L("Procedencia del DEM", "DEM provenance")}
+          </Link>
+        </p>
+      </div>
+    </section>
   );
 }

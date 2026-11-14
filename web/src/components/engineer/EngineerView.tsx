@@ -16,7 +16,7 @@ import { StateStrips } from "../charts/TimeCharts";
 import { ChunkGate, DataGate } from "../data/DataGate";
 import { ControlBar } from "../data/ControlBar";
 import { ExportButtons } from "../data/ExportButtons";
-import { FocusSiteControl, VariantControl, WindowControl } from "../data/SelectionControls";
+import { VariantControl, WindowControl } from "../data/SelectionControls";
 import { SelectField } from "../ui/Controls";
 import { Badge, Callout, Legend, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon } from "../ui/Icon";
@@ -27,39 +27,6 @@ import { MastScene } from "./MastScene";
 import { L } from "@/lib/i18n";
 
 const heightColor = (h: HeightM, selected: HeightM, site: SiteId) => (h === selected ? SITE_META[site].colorVar : h === 0 ? "#64748f" : h === 2 ? "#9aaac4" : "#d6deeb");
-
-function HeightSelector() {
-  const { selection, dispatch } = useSelection();
-  return (
-    <Panel title={L("Altura del observador", "Observer height")} icon="height" actions={<InfoTip>{L("Solo existen tres alturas precalculadas por el motor (configuration.heights_m). No se interpolan valores intermedios.", "Only three heights are precomputed by the engine (configuration.heights_m). Intermediate values are not interpolated.")}</InfoTip>}>
-      <div role="radiogroup" aria-label={L("Altura del observador", "Observer height")} className="flex flex-col gap-2">
-        {[...HEIGHTS_M].reverse().map((h) => {
-          const active = selection.heightM === h;
-          return (
-            <button
-              key={h}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              onClick={() => dispatch({ type: "setHeight", value: h })}
-              className={`group flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
-                active ? "border-uncertainty/70 bg-gradient-to-r from-uncertainty-soft to-transparent shadow-[0_0_28px_-12px_#a78bfa]" : "border-line bg-bg-2/70 hover:border-line-strong"
-              }`}
-            >
-              <span className={`grid size-9 place-items-center rounded-full border text-xs font-bold ${active ? "border-uncertainty bg-uncertainty text-[#14092e]" : "border-line-strong text-ink-muted"}`}>{h}</span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-lg font-bold text-ink">{h} m</span>
-                <span className="block text-xs text-ink-faint">{h === 0 ? L("Sobre el terreno", "On the ground") : L(`Mástil simulado de ${h} m`, `Simulated ${h} m mast`)}</span>
-              </span>
-              {h > 0 ? <NatureBadge nature="SIMULATED" /> : null}
-            </button>
-          );
-        })}
-      </div>
-      <p className="mt-4 text-xs text-ink-faint">No hay deslizador continuo: otras alturas requerirían nuevos cálculos de horizonte, estados y métricas.</p>
-    </Panel>
-  );
-}
 
 function MetricsAtHeight({ core }: { core: Core }) {
   const { selection } = useSelection();
@@ -294,19 +261,17 @@ function EngineerBody({ core }: { core: Core }) {
 
   return (
     <>
-      <ControlBar aside={<Badge tone="neutral">Alturas calculadas: 0 · 2 · 10 m</Badge>}>
-        <FocusSiteControl />
-        <WindowControl core={core} />
-        <VariantControl />
-      </ControlBar>
-
-      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_360px]" data-testid="engineer-hero">
+      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_340px]" data-testid="engineer-hero">
         <TerrainPanel core={core} />
         <div className="flex flex-col gap-5">
-          <HeightSelector />
           <MetricsAtHeight core={core} />
         </div>
       </div>
+
+      <ControlBar aside={<Badge tone="neutral">{L("Alturas calculadas: 0 · 2 · 10 m", "Computed heights: 0 · 2 · 10 m")}</Badge>}>
+        <WindowControl core={core} />
+        <VariantControl />
+      </ControlBar>
 
       <details className="group rounded-2xl border border-line bg-surface/85">
         <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-sm font-semibold text-ink">

@@ -66,7 +66,7 @@ export function PairBars({ a, b, max, unitLabel = "h" }: { a: number; b: number;
           <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-surface-3/70">
             <div
               className="h-full rounded-full transition-[width] duration-500 ease-out"
-              style={{ width: w(v), background: `linear-gradient(90deg, ${color}99, ${color})`, boxShadow: `0 0 10px -2px ${color}` }}
+              style={{ width: w(v), background: `linear-gradient(90deg, color-mix(in srgb, ${color} 60%, transparent), ${color})`, boxShadow: `0 0 10px -2px ${color}` }}
             />
           </div>
           <span className="tabular w-16 shrink-0 text-right text-[11px] text-ink-muted">

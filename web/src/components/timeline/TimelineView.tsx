@@ -246,11 +246,15 @@ function TimelineBody({ core }: { core: Core }) {
         <VariantControl />
       </ControlBar>
 
-      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]" data-testid="timeline-physical">
+      <ChunkGate state={clock} label={L("reloj", "clock")}>
+        {(c: EphemerisClockChunk) => <TimePlayer times={c.times_utc} />}
+      </ChunkGate>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]" data-testid="timeline-physical">
         <Panel
           title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
           icon="orbit"
-          actions={<Badge tone="neutral">{L("Esquema no a escala", "Not to scale")}</Badge>}
+          bodyClassName="p-3 sm:p-4"
           footer={L(
             "Direcciones reales del paquete (SPICE DE421, MOON_ME_DE421, observador nominal) convertidas al marco lunar; distancias del dibujo simbólicas, las reales se rotulan. El color de las trayectorias es el estado calculado por el motor, no una decisión de esta vista.",
             "Real directions from the package (SPICE DE421, MOON_ME_DE421, nominal observer) converted to the lunar frame; drawing distances are symbolic, real ones are labelled. Path colour is the state computed by the engine, not a decision of this view.",
@@ -315,10 +319,6 @@ function TimelineBody({ core }: { core: Core }) {
           </ChunkGate>
         </Panel>
       </div>
-
-      <ChunkGate state={clock} label={L("reloj", "clock")}>
-        {(c: EphemerisClockChunk) => <TimePlayer times={c.times_utc} />}
-      </ChunkGate>
 
       <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_360px]">
         <SiteSidebar core={core} horizon={horizonData} />

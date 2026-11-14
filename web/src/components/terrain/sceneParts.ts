@@ -34,7 +34,8 @@ export function latticeTower(heightM: number, color: number): THREE.Group {
   const base = big ? 1.5 : 0.75;
   const top = base * 0.42;
   const r = big ? 0.055 : 0.03;
-  const steel = new THREE.MeshBasicMaterial({ color });
+  // Metal claro que recibe la luz de la escena (sombreado por cara) con un mínimo emisivo para no perderse en sombra.
+  const steel = new THREE.MeshLambertMaterial({ color, emissive: 0x58627a });
   const levels = big ? 5 : 2;
   const deckY = heightM - (big ? 0.35 : 0.18);
   const half = (y: number) => base + (top - base) * (y / deckY);

@@ -186,7 +186,7 @@ test.describe("Explore, Engineer y Evidencia", () => {
     await page.goto("/engineer/?s=A&w=W2&h=0&v=nominal");
     await waitForData(page);
     await expect(page.getByRole("heading", { name: "Rendimiento geométrico (altura 0 m)" })).toBeVisible();
-    await page.getByRole("radio", { name: /^10 10 m/ }).click();
+    await page.getByRole("radiogroup", { name: "Altura del observador" }).getByRole("radio", { name: "10 m", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Rendimiento geométrico (altura 10 m)" })).toBeVisible();
     await expect(panel(page, "Conclusión de ingeniería").getByText("cambia con la altura").first()).toBeVisible();
   });

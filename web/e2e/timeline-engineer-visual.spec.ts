@@ -59,10 +59,10 @@ test.describe("Engineer · torre, brújula y visual", () => {
     const ry = (await page.getByTestId("obstacle-readout").boundingBox())!.y;
     expect(ey).toBeLessThan(ry);
     await expect(page.getByTestId("terrain-compass")).toContainText("θ =");
-    await page.getByRole("radiogroup", { name: "Altura del observador" }).getByRole("radio", { name: /Mástil simulado de 2 m/ }).click();
+    await page.getByRole("radiogroup", { name: "Altura del observador" }).getByRole("radio", { name: "2 m", exact: true }).click();
     await expect(scene).toHaveAttribute("data-observer-height", "2");
     await expect(explain).toContainText("torre de 2 m");
-    await page.getByRole("radiogroup", { name: "Altura del observador" }).getByRole("radio", { name: /Sobre el terreno/ }).click();
+    await page.getByRole("radiogroup", { name: "Altura del observador" }).getByRole("radio", { name: "0 m", exact: true }).click();
     await expect(scene).toHaveAttribute("data-observer-height", "0");
     await expect(explain).toContainText("Desde el suelo en Sitio A");
     await noHorizontalOverflow(page);
@@ -72,7 +72,7 @@ test.describe("Engineer · torre, brújula y visual", () => {
   test("azimut manual: orientación, origen y relieve que limita la vista (o fin del recorte)", async ({ page }) => {
     await page.goto("/engineer/?s=A&w=W2&h=2&v=nominal&t=3200");
     await waitForData(page);
-    await page.getByTestId("terrain-panel").getByRole("radio", { name: "un azimut" }).click();
+    await page.getByTestId("terrain-panel").getByRole("radio", { name: "Azimut", exact: true }).click();
     await page.getByTestId("terrain-panel").locator('input[type="range"]').fill("60");
     await expect(page.getByTestId("terrain-compass")).toContainText("θ = 60,0°");
     const explain = page.getByTestId("terrain-explain");

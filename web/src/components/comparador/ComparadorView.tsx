@@ -2,140 +2,30 @@
 
 import { useMemo, useState } from "react";
 import { HEIGHTS_M, SITE_IDS, WINDOW_IDS, variantFamily, type SiteId, type Variant } from "@/lib/contract/constants";
-import type { Core, CriterionResult, HorizonChunk, MetricKey, ScenarioSummary, Site } from "@/lib/contract/schema";
+import type { Core, CriterionResult, HorizonChunk, ScenarioSummary } from "@/lib/contract/schema";
 import { horizonDelta } from "@/lib/geospatial/difference";
 import { useChunk } from "@/lib/data/DataProvider";
 import { loadHorizonChunk } from "@/lib/data/loader";
 import { getCriterionResult, getScenarioSummary, getSite, getWindow } from "@/lib/data/selectors";
-import { formatHoursMinutes, formatLatitude, formatLongitudeEast, formatNumber, formatUtcDate } from "@/lib/format";
+import { formatHoursMinutes, formatNumber, formatUtcDate } from "@/lib/format";
 import { CRITERION_META, FAMILY_META, SITE_META, VARIANT_LABEL, WINNER_LABEL } from "@/lib/labels";
 import { advantage } from "@/lib/science/decision";
 import { CRITERION_METRIC, DISPLAY_METRICS, METRIC_META } from "@/lib/science/metrics";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { HorizonChart } from "../charts/HorizonChart";
-import { DivergingBar, PairBars, WindowRing } from "../charts/Bars";
+import { DivergingBar, PairBars } from "../charts/Bars";
 import { ChunkGate, DataGate } from "../data/DataGate";
 import { ControlBar } from "../data/ControlBar";
 import { CriterionPicker } from "../data/CriterionPicker";
 import { ExportButtons } from "../data/ExportButtons";
 import { CriterionControl, HeightControl, VariantControl, WindowControl } from "../data/SelectionControls";
 import { HorizonDeltaChart } from "../charts/HorizonDeltaChart";
-import { PairTerrain } from "./PairTerrain";
+import { PairAtlas, PairContext } from "./PairTerrain";
 import { Badge, Callout, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
 import { L, R } from "@/lib/i18n";
-
-function roleOf(site: SiteId, winner: string | undefined) {
-  if (!winner) return { label: L("Criterio sin elegir", "No criterion chosen"), tone: "neutral" as const };
-  if (winner === "TIE") return { label: L("Empate", "Tie"), tone: "neutral" as const };
-  if (winner === "UNKNOWN") return { label: L("No determinable", "Not determinable"), tone: "warn" as const };
-  return winner === site
-    ? { label: L("Ganador con este criterio", "Winner with this criterion"), tone: site === "A" ? ("a" as const) : ("b" as const) }
-    : { label: L("Alternativa", "Alternative"), tone: "neutral" as const };
-}
-
-function SiteCard({
-  site,
-  summary,
-  winner,
-  ringMetric,
-  highlightMetric,
-}: {
-  site: Site;
-  summary: ScenarioSummary;
-  winner: string | undefined;
-  ringMetric: MetricKey;
-  highlightMetric: string | null;
-}) {
-  const id = site.id as SiteId;
-  const role = roleOf(id, winner);
-  const isWinner = winner === id;
-  const m = summary.metrics;
-  return (
-    <section
-      aria-label={`${SITE_META[id].label}: ${site.name}`}
-      className={`relative flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-surface/85 transition-shadow duration-500 ${
-        isWinner ? SITE_META[id].borderClass : "border-line"
-      }`}
-      style={isWinner ? { boxShadow: `0 0 44px -14px ${id === "A" ? "#ff8a1f" : "#22d3ee"}` } : undefined}
-    >
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-24 opacity-30" style={{ background: `radial-gradient(60% 100% at 20% 0%, ${SITE_META[id].colorVar}, transparent)` }} />
-      <header className="relative flex items-center gap-3 border-b border-line px-5 py-3.5">
-        <SiteDot site={id} className="size-3.5 shadow-[0_0_10px_currentColor]" />
-        <h2 className={`flex-1 text-xl font-bold ${SITE_META[id].textClass}`}>{SITE_META[id].label}</h2>
-        <Badge tone={role.tone}>{role.label}</Badge>
-      </header>
-      <div className="relative grid gap-x-6 gap-y-4 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-        <div className="flex flex-col items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-lg border border-line bg-bg-2 px-2 py-1 text-[11px] text-ink-muted tabular">
-            <Icon name="pin" className="size-3.5" />
-            {formatLatitude(site.latitude_deg, 3)}, {formatLongitudeEast(site.longitude_east_deg, 2)}
-          </span>
-        </div>
-        <div className="flex flex-col items-center">
-          <WindowRing value={m[ringMetric]} total={m.duration_hours} color={SITE_META[id].colorVar} label={METRIC_META[ringMetric].short} size={148} />
-          <p className="mt-1 max-w-44 text-center text-[11px] text-ink-faint">{L(`Fracción real de la ventana (${METRIC_META[ringMetric].label.toLowerCase()}), no una puntuación`, `Actual fraction of the window (${METRIC_META[ringMetric].label.toLowerCase()}), not a score`)}</p>
-        </div>
-        <ul className="min-w-0 sm:col-span-2">
-          {DISPLAY_METRICS.map((k) => (
-            <li key={k} className={`flex items-center gap-2.5 border-b border-line/60 py-2 last:border-b-0 ${highlightMetric === k ? "rounded-md bg-accent-surface/60 px-2" : ""}`}>
-              <Icon name={METRIC_META[k].icon} className="size-4 shrink-0 text-ink-faint" />
-              <span className="min-w-0 flex-1 text-sm text-ink-muted">{METRIC_META[k].label}</span>
-              <span className="tabular text-right text-sm font-semibold text-ink">
-                {formatHoursMinutes(m[k])}
-                <span className="block text-[10px] font-normal text-ink-faint">{formatNumber((m[k] / m.duration_hours) * 100, 1)} % {L("de la ventana", "of the window")}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <footer className="relative mt-auto flex flex-wrap gap-x-5 gap-y-1 border-t border-line px-5 py-2.5 text-xs text-ink-faint">
-        <span>{site.name}</span>
-        <span>{L("Suelo", "Ground")} {formatNumber(site.nominal_height_m, 1)} m</span>
-        <span>{L("Pendiente", "Slope")} {formatNumber(site.values.slp, 2)}° (±{formatNumber(site.values.slperr, 2)}° RMS)</span>
-      </footer>
-    </section>
-  );
-}
-
-function KeyDifferences({ a, b, tol }: { a: ScenarioSummary; b: ScenarioSummary; tol: number }) {
-  return (
-    <Panel title={L("Diferencias clave", "Key differences")} icon="compare" actions={<InfoTip>{L("Δ = A − B con valores completos. La flecha indica qué sitio queda mejor solo en métricas con sentido definido por un criterio del motor.", "Δ = A − B with full values. The tag shows which site is better only for metrics whose direction is defined by an engine criterion.")}</InfoTip>}>
-      <ul className="flex flex-col">
-        {DISPLAY_METRICS.map((k) => {
-          const d = a.metrics[k] - b.metrics[k];
-          const meta = METRIC_META[k];
-          const within = Math.abs(d) <= tol + 1e-12;
-          const favored: SiteId | null = !meta.better || within ? null : (meta.better === "higher" ? d > 0 : d < 0) ? "A" : "B";
-          return (
-            <li key={k} className="flex items-center gap-3 border-b border-line/60 py-2.5 last:border-b-0">
-              <Icon name={meta.icon} className="size-[18px] shrink-0 text-ink-faint" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm text-ink">{meta.label}</p>
-                <p className="text-[11px] text-ink-faint">{meta.better ? (meta.better === "higher" ? L("Más es mejor (criterio del motor)", "Higher is better (engine criterion)") : L("Menos es mejor (criterio del motor)", "Lower is better (engine criterion)")) : L("Sin sentido de decisión definido", "No defined decision direction")}</p>
-              </div>
-              <span className="tabular w-24 text-right text-sm font-semibold text-ink">
-                {d > 0 ? "+" : d < 0 ? "−" : ""}
-                {formatHoursMinutes(Math.abs(d))}
-              </span>
-              <span className="w-24 text-right">
-                {within ? (
-                  <Badge tone="neutral">≤ 10 min</Badge>
-                ) : favored ? (
-                  <Badge tone={favored === "A" ? "a" : "b"}>{L(`${favored} mejor`, `${favored} better`)}</Badge>
-                ) : (
-                  <Badge tone="neutral">{L("informativa", "informative")}</Badge>
-                )}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-    </Panel>
-  );
-}
 
 function MetricTable({ a, b, criterionMetric }: { a: ScenarioSummary; b: ScenarioSummary; criterionMetric: string | null }) {
   const scale = a.metrics.duration_hours;
@@ -425,7 +315,6 @@ export function ComparadorView() {
           const siteB = getSite(core, "B");
           if (!a || !b || !siteA || !siteB) return <Callout tone="danger">{L("Selección no disponible en el paquete.", "Selection not available in the package.")}</Callout>;
           const result = criterion ? getCriterionResult(core, windowId, heightM, criterion) : undefined;
-          const winner = result?.cases[variant].winner;
           const metric = criterion ? CRITERION_METRIC[criterion] : null;
           return (
             <>
@@ -436,20 +325,25 @@ export function ComparadorView() {
                 <CriterionControl />
               </ControlBar>
 
-              <PairTerrain sites={core.sites} />
-
-              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.85fr)] xl:grid-cols-2">
-                <SiteCard site={siteA} summary={a} winner={winner} ringMetric={metric ?? "sun_hours"} highlightMetric={metric} />
-                <SiteCard site={siteB} summary={b} winner={winner} ringMetric={metric ?? "sun_hours"} highlightMetric={metric} />
-                <div className="xl:col-span-2 2xl:col-span-1">
-                  <KeyDifferences a={a} b={b} tol={core.configuration.tie_tolerance_hours} />
-                </div>
-              </div>
-
-              <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-                <MetricTable a={a} b={b} criterionMetric={metric} />
+              <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+                <PairAtlas
+                  sites={core.sites}
+                  reading={{
+                    label: metric ? METRIC_META[metric].label : METRIC_META.sun_hours.label,
+                    a: formatHoursMinutes(a.metrics[metric ?? "sun_hours"]),
+                    b: formatHoursMinutes(b.metrics[metric ?? "sun_hours"]),
+                    note:
+                      a.metrics.unknown_hours > 0 || b.metrics.unknown_hours > 0
+                        ? L(`Horas desconocidas: A ${formatHoursMinutes(a.metrics.unknown_hours)}, B ${formatHoursMinutes(b.metrics.unknown_hours)} (no cuentan como sombra).`, `Unknown hours: A ${formatHoursMinutes(a.metrics.unknown_hours)}, B ${formatHoursMinutes(b.metrics.unknown_hours)} (not counted as shadow).`)
+                        : undefined,
+                  }}
+                />
                 <Conclusion result={result} query={query} />
               </div>
+
+              <MetricTable a={a} b={b} criterionMetric={metric} />
+
+              <PairContext sites={core.sites} />
 
               <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
                 <HorizonPair />
