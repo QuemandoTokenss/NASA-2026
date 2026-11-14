@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · capa geoespacial real
 
-**Punto de control:** PC-06 · 2026-11-14 11:20 (+01:00, Europe/Madrid) · **Estado: EN_CURSO**
+**Punto de control:** PC-08 · 2026-11-14 11:45 (+01:00, Europe/Madrid) · **Estado: EN_CURSO**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/geo-real-terrain` — subida a GitHub el 2026-11-14 (PC-07); sin PR ni despliegue |
-| HEAD | `4b77455` o un commit posterior solo de documentos (código: `54cda05`; base `main` = `987899d`). Comprobar con `git log -1` |
+| HEAD | remoto `2ca0a66` (PC-07); puede haber commits locales posteriores sin subir: comprobar con `git status -sb` y `git log -3`. Base `main` = `987899d` |
 | Worktree | único (no hay worktrees separados) |
 | Otra copia que NO es la activa | `…\NASA-SpaceApps-2026\site-regret\` (copia antigua previa al repo del equipo; no editar) |
 
@@ -49,26 +49,26 @@ Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.
 | G14 | Contraste Horizons/SPICE nuevo (§12) | PENDIENTE (se conserva el del paquete) | — |
 | G15 | Regret Lab conectado al mapa; clones descargados (§13) | PENDIENTE | — |
 | G16 | Escenarios nuevos calculados (§14, fase 5) | PENDIENTE (requiere servicio de cómputo; no autorizado) | — |
-| G17 | Documentación (`web/README`, `QA_REPORT`, `DECISIONS`, `docs/GEOESPACIAL.md`) | EN_CURSO: hecho `web/docs/GEOESPACIAL.md`; faltan `web/README.md`, `QA_REPORT.md`, `DECISIONS.md`, `docs/VALIDATION.md`, `docs/STATUS.md` | — |
-| G18 | PR a `main` | PENDIENTE (no hay push) | — |
+| G17 | Documentación (`web/README`, `QA_REPORT`, `DECISIONS`, `docs/GEOESPACIAL.md`) | VERIFICADO a mano en PC-08 (documentos actualizados con resultados reales) | `web/README.md`, `web/QA_REPORT.md`, `web/DECISIONS.md` D20–D24, `docs/VALIDATION.md`, `docs/STATUS.md` |
+| G18 | PR a `main` | PARCIAL: rama subida (PC-07); PR y despliegue pendientes de autorización humana | — |
 
 ## 4. Tarea activa
 
-**G17 · documentación.** G7 terminada en PC-06: la batería completa pasa con 2 procesos.
+**G9 · corregistro cuantitativo imagen orbital ↔ DEM.** (G17 documentación: terminada en PC-08; ver `web/README.md`, `QA_REPORT.md`, `DECISIONS.md` D20–D24, `docs/VALIDATION.md`, `docs/STATUS.md`.)
 
-Última acción: fijado `workers: 2` en `web/playwright.config.ts` y creado `web/docs/GEOESPACIAL.md` (tabla función/fuente/prueba, inventario de recursos visuales, pendientes).
+Qué se intenta (PC-08, 11:45): script `web/scripts/geospatial/check-coregistration.ts` que
+1. descarga las teselas reales `LRO_NAC_Mosaic_1mpp_SP` (zoom 11, ~4,18 m/px) que cubren la ventana de 4 × 4 km a `web/data/raw/trek/` (no versionado), verificando firma PNG;
+2. las decodifica y remuestrea a la rejilla del DEM a 10 m;
+3. calcula la correlación normalizada entre la imagen y el relieve sombreado del DEM para varios azimuts de luz y desplazamientos de ±80 m, y localiza el máximo (desplazamiento estimado) en la ventana completa y por cuadrantes;
+4. escribe `web/data/derived/coregistration.json` con procedencia, y se muestra en Evidencia.
 
-Siguiente acción: actualizar con los resultados de PC-06 (sin inventar cifras):
-- `web/README.md`: sección de mapa y terreno, `npm run geo:fetch` / `geo:build`, 89 tests y 59 E2E.
-- `web/QA_REPORT.md`: tabla de resultados y lo no verificado.
-- `web/DECISIONS.md`: D20 (OpenLayers + Three.js), D21 (derivados versionados, originales fuera de Git), D22 (E2E con respuestas grabadas de Moon Trek, 2 procesos).
-- `docs/VALIDATION.md` y `docs/STATUS.md` (raíz).
+Límite conocido de antemano: el mosaico es multitemporal y con luz rasante; el sombreado simple no modela sombras arrojadas. Si la correlación no es concluyente, se documenta como NO CONCLUYENTE, no se fuerza un número.
 
-Tarea terminada cuando esos cinco archivos reflejan PC-06 y `npm run lint` sigue limpio.
+Tarea terminada cuando: el JSON existe con resultado (o «no concluyente» razonado), hay prueba Vitest sobre él, aparece en `/evidencia/` y G9 queda actualizado en §3.
 
 ## 5. Cambios locales
 
-- Confirmados en la rama (sin push): `bdf6c2e`, `2751a55`, `54cda05`.
+- En el remoto hasta `2ca0a66`: `bdf6c2e`, `2751a55`, `54cda05`, `4b77455`, `b4ced8b`, `2ca0a66`.
 - Tras PC-06 se hace un commit local con archivos explícitos (`web/playwright.config.ts`, `web/docs/GEOESPACIAL.md`, `docs/continuidad/*`, `CLAUDE.md`); comprobar con `git status` y `git log -1`.
 - No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales NASA, ~205 MB), `web/node_modules`, `web/out`, `web/public/data`.
 - Cambios de otras personas: ninguno en esta rama. PR #7 y #8 de aritzgsc siguen abiertos en GitHub y no se han tocado.
