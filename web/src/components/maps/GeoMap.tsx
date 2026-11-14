@@ -120,6 +120,7 @@ export function GeoMap({
   focusSite,
   onSelectSite,
   overlay,
+  footprint,
   compact = false,
   initialBasemap = "nac",
 }: {
@@ -127,6 +128,8 @@ export function GeoMap({
   focusSite: SiteId;
   onSelectSite?: (s: SiteId) => void;
   overlay?: GeoMapOverlay;
+  /** Huella de un producto (anillos en X/Y) que se dibuja y encuadra. */
+  footprint?: { rings: XY[][]; label: string } | null;
   compact?: boolean;
   initialBasemap?: BasemapId;
 }) {
@@ -134,7 +137,7 @@ export function GeoMap({
   const scaleRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<OlMap | null>(null);
   const layersRef = useRef<{ base?: TileLayer | ImageLayer<ImageStatic>; analytic?: ImageLayer<ImageStatic> }>({});
-  const sourcesRef = useRef({ sites: new VectorSource(), rois: new VectorSource(), measure: new VectorSource(), overlay: new VectorSource(), inspect: new VectorSource() });
+  const sourcesRef = useRef({ sites: new VectorSource(), rois: new VectorSource(), measure: new VectorSource(), overlay: new VectorSource(), inspect: new VectorSource(), footprint: new VectorSource() });
   const onSelectRef = useRef(onSelectSite);
   const toolRef = useRef<"inspect" | "measure">("inspect");
 
@@ -174,7 +177,7 @@ export function GeoMap({
       target: el,
       keyboardEventTarget: el,
       controls: scaleRef.current ? [new ScaleLine({ target: scaleRef.current, units: "metric", minWidth: 90 })] : [],
-      layers: [vector(s.rois, 10), vector(s.overlay, 11), vector(s.measure, 12), vector(s.inspect, 13), vector(s.sites, 14)],
+      layers: [vector(s.footprint, 9), vector(s.rois, 10), vector(s.overlay, 11), vector(s.measure, 12), vector(s.inspect, 13), vector(s.sites, 14)],
       view: new View({ projection: PROJECTION, center: [mid.x, mid.y], resolution: compact ? 6 : 2.5, minResolution: 0.4, maxResolution: 400, extent: [-160000, -160000, 160000, 160000] }),
     });
     mapRef.current = map;
@@ -392,6 +395,26 @@ export function GeoMap({
     src.addFeature(f);
   }, [inspected]);
 
+  const footprintKey = footprint ? `${footprint.label}|${footprint.rings.length}|${footprint.rings[0]?.[0]?.x}` : "";
+  useEffect(() => {
+    const src = sourcesRef.current.footprint;
+    src.clear();
+    if (!footprint || !footprint.rings.length) return;
+    const f = new Feature({ geometry: new Polygon(footprint.rings.map((r) => r.map((p) => [p.x, p.y]))) });
+    f.setStyle(
+      new Style({
+        stroke: new Stroke({ color: "#f5c518", width: 2 }),
+        fill: new Fill({ color: "#f5c51814" }),
+        text: new Text({ text: footprint.label, font: "600 11px Inter, sans-serif", fill: new Fill({ color: "#f5c518" }), stroke: new Stroke({ color: "#050912", width: 3 }), overflow: true }),
+      }),
+    );
+    src.addFeature(f);
+    const ext = src.getExtent();
+    if (ext) mapRef.current?.getView().fit(ext, { padding: [30, 30, 30, 30], duration: 250 });
+    // `footprintKey` resume el contenido de `footprint`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [footprintKey]);
+
   const overlayKey = overlay ? JSON.stringify(overlay) : "";
   useEffect(() => {
     const src = sourcesRef.current.overlay;
@@ -537,6 +560,7 @@ export function GeoMap({
       data-analytic={analytic}
       data-analytic-ready={analytic !== "none" && analyticGrid ? "true" : "false"}
       data-tiles-loaded={tiles.key === basemap ? tiles.loaded : 0}
+      data-footprint={footprint?.label ?? ""}
       className="grid gap-5 lg:grid-cols-[290px_minmax(0,1fr)]"
     >
       <div className="flex min-w-0 flex-col gap-5">

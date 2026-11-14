@@ -129,6 +129,56 @@ test.describe("Explore · mapa georreferenciado", () => {
   });
 });
 
+test.describe("Explore · productos del archivo PDS (ODE)", () => {
+  test("busca en la región, pagina y dibuja la huella real de un producto", async ({ page }) => {
+    const errors = trackErrors(page);
+    const queries: URL[] = [];
+    page.on("request", (r) => r.url().includes("oderest.rsl.wustl.edu") && queries.push(new URL(r.url())));
+    await page.goto("/explore/?s=A");
+    await waitForData(page);
+    const ode = page.getByTestId("ode-panel");
+    await expect(ode.getByText("Aún no se ha consultado el archivo")).toBeVisible();
+    await ode.getByRole("button", { name: "Buscar productos" }).click();
+    await expect(ode.getByTestId("ode-summary")).toContainText("253 productos");
+    await expect(ode.getByTestId("ode-summary")).toContainText("mostrando 1–5");
+    await expect(ode.getByText("nac.m101350392lc")).toBeVisible();
+    expect(queries.every((q) => q.searchParams.get("query") === "product" && q.searchParams.get("westernlon") === "222.4")).toBe(true);
+    await ode.getByRole("button", { name: "Siguientes" }).click();
+    await expect(ode.getByTestId("ode-summary")).toContainText("mostrando 6–10");
+    await expect(ode.getByText("nac.m105688564rc")).toBeVisible();
+    expect(queries.some((q) => q.searchParams.get("offset") === "6")).toBe(true);
+    await ode.getByRole("listitem").filter({ hasText: "nac.m105688564rc" }).getByRole("button", { name: "Ver huella en el mapa" }).click();
+    await expect(page.getByTestId("geomap").first()).toHaveAttribute("data-footprint", "nac.m105688564rc");
+    await expect(ode.getByRole("link", { name: "Etiqueta PDS" }).first()).toHaveAttribute("href", /^https:\/\/pds\.lroc\./);
+    await noHorizontalOverflow(page);
+    expect(errors).toEqual([]);
+  });
+
+  test("un tipo de producto que ODE rechaza se muestra como error del servicio", async ({ page }) => {
+    await page.goto("/explore/?s=A");
+    await waitForData(page);
+    const ode = page.getByTestId("ode-panel");
+    await ode.getByRole("combobox", { name: "Tipo de producto" }).selectOption("GDRDEM");
+    await ode.getByRole("button", { name: "Buscar productos" }).click();
+    await expect(ode.getByText("ODE rechazó la consulta")).toBeVisible();
+    await expect(ode.getByText(/No se muestra ningún producto de sustitución/)).toBeVisible();
+  });
+
+  test.describe("sin red", () => {
+    test.use({ trek: "offline" });
+    test("ODE no disponible no bloquea el mapa ni inventa productos", async ({ page }) => {
+      await page.goto("/explore/?s=A");
+      await waitForData(page);
+      const ode = page.getByTestId("ode-panel");
+      await ode.getByRole("button", { name: "Buscar productos" }).click();
+      await expect(ode.getByText("ODE no disponible")).toBeVisible();
+      await expect(ode.getByRole("listitem")).toHaveCount(0);
+      await page.getByRole("button", { name: "Ir y leer en Sitio A" }).click();
+      await expect(page.getByTestId("geomap-inspector").getByText("Dentro de la ventana del DEM")).toBeVisible();
+    });
+  });
+});
+
 test.describe("Explore · fallos del servicio de mapas", () => {
   test.describe("sin red", () => {
     test.use({ trek: "offline" });

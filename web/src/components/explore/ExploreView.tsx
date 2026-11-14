@@ -17,6 +17,9 @@ import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel, PanelSection } from "../ui/Panel";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import type { XY } from "@/lib/geospatial/lunar";
+import { OdePanel } from "../maps/OdePanel";
 import { ContextMap } from "./ContextMap";
 import { L } from "@/lib/i18n";
 
@@ -150,6 +153,7 @@ function HorizonSummary() {
 export function ExploreView() {
   const { selection, dispatch, query, restored } = useSelection();
   const { heightM, variant, focusSite } = selection;
+  const [footprint, setFootprint] = useState<{ rings: XY[][]; label: string } | null>(null);
 
   const horizonA = useChunk(restored ? () => loadHorizonChunk("A", heightM) : null, [heightM]);
   const horizonB = useChunk(restored ? () => loadHorizonChunk("B", heightM) : null, [heightM]);
@@ -175,7 +179,10 @@ export function ExploreView() {
                     </>
                   }
                 >
-                  <GeoMap sites={core.sites} focusSite={focusSite} onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
+                  <GeoMap sites={core.sites} focusSite={focusSite} footprint={footprint} onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
+                  <div className="mt-5 border-t border-line pt-5">
+                    <OdePanel sites={core.sites} selected={footprint?.label ?? null} onSelect={setFootprint} />
+                  </div>
                 </Panel>
 
                 <Panel title={L("Ficha del sitio", "Site sheet")} icon="pin" actions={<NatureBadge nature="DERIVED" />}>
