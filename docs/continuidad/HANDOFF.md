@@ -1,7 +1,14 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-25 (ver §0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** #20 fusionada (§0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-quater. Fusión de la PR #20 (2026-11-14, a petición de Hugo) — leer primero
+
+- **PR #20 fusionada en `main`** con commit de merge `9d0f09b` («Merge #20: guided demo in three steps ending in the regret; heights package evidence»), sobre `aae19b2`. Comprobado antes: estado limpio, sin conflictos, checks de Vercel en verde.
+- **Producción**: el commit de `main` tiene estado Vercel = success (despliegue `8cZv4dTRkZh7BnFkF7CCDfeCtH6o` en el proyecto `site-regret` de Hugo). https://site-regret.vercel.app/ y `/historia/` responden 200 y el código servido contiene la demo de tres pasos de PC-23. El conector de Vercel de la sesión pertenece a otra cuenta, así que el ID y el alias de producción no se pudieron consultar directamente; se leyeron del estado del commit en GitHub.
+- **Rollback** si hiciera falta: promover en Vercel el despliegue anterior `dpl_9htxT2H2dz7jRCQvWMikpJu28hGt` (`aae19b2`) y revertir el merge `9d0f09b` en Git.
+- **PR #21** (rediseño PC-24 + PC-25): base cambiada a `main`; 8 commits propios (`6491f1e` … `59fa7a4` y el de este apunte). **Sin fusionar**: fusionarla publica en producción.
 
 ## 0-ter. PC-25 · ajustes finales para el jurado — IMPLEMENTADO Y VERIFICADO EN LOCAL (leer primero)
 
