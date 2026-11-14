@@ -76,3 +76,4 @@
 - **Accesibilidad**: auditoría axe-core WCAG 2.1 A/AA en las 8 rutas (E2E); contraste del texto tenue elevado a ≥ 4,5:1; lista con desplazamiento accesible por teclado.
 - Correcciones visuales: rótulos de las miniaturas DEM ya no salen cortados; botón del caso demostrativo sin salto de línea; cabecera más compacta.
 - Verificación: tsc y ESLint limpios; Vitest 63/63; Playwright 47/47 (escritorio, móvil, accesibilidad, historia, idioma).
+- Despliegue: `vercel deploy --prod` → https://site-regret.vercel.app. Comprobado: 8 rutas 200, 404 propio, SHA-256 del paquete servido = `e7c8984b…`, `qa_entradas.json` no publicado (404); Playwright 47/47 con `E2E_BASE_URL` contra producción.
