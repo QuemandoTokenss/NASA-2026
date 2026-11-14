@@ -98,9 +98,9 @@ Con Chrome en lugar de Edge: `PW_CHANNEL=chrome npm run test:e2e`. Contra produc
 
 ## 9. Despliegue
 
-- Vercel, proyecto `site-regret` (cuenta de Hugo), desplegado desde la CLI con `web/` como raíz: `vercel.json` define `npm ci`, `npm run build` y la carpeta `out/`.
+- Vercel, proyecto `site-regret` (cuenta de Hugo), con `web/` como raíz: `vercel.json` define `npm ci`, `npm run build` y la carpeta `out/`. Los primeros despliegues se hicieron desde la CLI.
 - `.vercelignore` excluye `qa_entradas.json` (contiene rutas locales de un equipo). Aun así ese archivo **está en el repo** (privado) dentro de los originales.
-- Aún no hay despliegue automático desde GitHub (ver issues).
+- **Actualizado el 14-11-2026 (PC-23):** el proyecto está conectado a GitHub y **cada push a `main` se publica en producción**; las ramas reciben vista previa. Estado vigente del despliegue y del proyecto: [`continuidad/HANDOFF.md`](continuidad/HANDOFF.md) §0. Las secciones 1–8 y 10 de este documento describen la primera entrega (commits `2120890` … `3801c17`) y no recogen la capa geoespacial, Mission Control v2, la demo guiada ni el paquete de alturas de Engineer.
 
 ## 10. Qué falta / límites conocidos
 
