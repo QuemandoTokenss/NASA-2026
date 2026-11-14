@@ -118,6 +118,9 @@ function Body({ core }: { core: Core }) {
               <LinkButton href={`/explore/?${query}`} variant="secondary" icon="map">
                 Explorar los sitios
               </LinkButton>
+              <LinkButton href="/historia/" variant="ghost" icon="play">
+                Ver la historia en 7 escenas
+              </LinkButton>
             </div>
             <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
               {facts.map((f) => (
@@ -155,7 +158,7 @@ function Body({ core }: { core: Core }) {
           return (
             <Panel key={id} title={`${SITE_META[id].label} · ROI ${s.roi}`} icon="pin" actions={<NatureBadge nature="OBSERVED" />}>
               <div className="flex gap-4">
-                <SiteThumb site={s} size={112} />
+                <SiteThumb site={s} size={112} scale={0.85} />
                 <div className="min-w-0 flex-1 text-sm">
                   <p className={`font-semibold ${SITE_META[id].textClass}`}>{s.name}</p>
                   <p className="tabular text-ink-muted">

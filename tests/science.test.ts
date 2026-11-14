@@ -9,15 +9,17 @@ import { getCriterionResult, getScenarioSummary } from "@/lib/data/selectors";
 import { chunkPath } from "@/lib/data/split";
 import { advantage, familyCounts, outcomeOf, regretOfKeeping } from "@/lib/science/decision";
 import { CRITERION_METRIC } from "@/lib/science/metrics";
-import { booleanRuns, countStates, indexIntervals, intervalAt, samplesToHours, sunVisible, earthVisible } from "@/lib/science/states";
+import { countStates, indexIntervals, intervalAt, longestHiddenRun, samplesToHours, sunVisible, earthVisible } from "@/lib/science/states";
 import { core, readChunk } from "./helpers";
 
 const C = core();
 const chunks = new Map<string, ScenarioChunk>();
 for (const w of WINDOW_IDS) for (const h of HEIGHTS_M) chunks.set(`${w}|${h}`, readChunk(chunkPath.scenarios(w, String(h))));
 
-const longestRun = (codes: number[], visible: (c: number) => boolean) =>
-  Math.max(0, ...booleanRuns(codes, visible).filter((r) => !r.value).map((r) => r.end - r.start));
+const longestRun = (codes: number[], visible: (c: number) => boolean) => {
+  const r = longestHiddenRun(codes, visible);
+  return r ? r.end - r.start : 0;
+};
 
 describe("métricas = estados (120 escenarios)", () => {
   it("horas con Sol/Tierra/ambos/desconocido y rachas se reproducen desde state_codes", () => {

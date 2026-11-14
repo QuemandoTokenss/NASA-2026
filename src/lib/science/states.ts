@@ -68,3 +68,15 @@ export function intervalAt(list: IndexedInterval[], i: number): IndexedInterval 
 }
 
 export const stateName = (code: number): StateName => STATE_NAMES[code] ?? "UNKNOWN";
+
+/**
+ * Tramo más largo en el que la propiedad NO se cumple (p. ej. la racha más
+ * larga sin Sol). Con varios tramos de igual longitud devuelve el primero.
+ * Un test comprueba que su duración = `longest_dark_hours` / `longest_no_earth_hours`
+ * en los 120 escenarios.
+ */
+export function longestHiddenRun(codes: ArrayLike<number>, visible: (c: number) => boolean): Run | null {
+  let best: Run | null = null;
+  for (const r of booleanRuns(codes, visible)) if (!r.value && (!best || r.end - r.start > best.end - best.start)) best = r;
+  return best;
+}

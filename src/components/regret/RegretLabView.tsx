@@ -543,7 +543,7 @@ function RegretBody({ core }: { core: Core }) {
       dispatch({ type: "setVariant", value: "nominal" });
       setDemoStep(0);
     }}>
-      Caso demostrativo {DEMO_CASE.windowId} · {DEMO_CASE.heightM} m
+      <span className="whitespace-nowrap">Caso demostrativo {DEMO_CASE.windowId} · {DEMO_CASE.heightM} m</span>
     </Button>
   );
 

@@ -39,7 +39,7 @@ function LoadedChunks() {
   }, []);
   if (!rows.length) return <p className="text-xs text-ink-faint">…</p>;
   return (
-    <ul className="flex max-h-40 flex-col gap-1 overflow-auto font-mono text-xs">
+    <ul tabIndex={0} aria-label="Archivos cargados y su verificación" className="flex max-h-40 flex-col gap-1 overflow-auto rounded-md font-mono text-xs focus-visible:outline-2 focus-visible:outline-accent">
       {rows.map((r) => (
         <li key={r.path} className="flex items-center justify-between gap-3">
           <span className="truncate text-ink-muted">{r.path}</span>

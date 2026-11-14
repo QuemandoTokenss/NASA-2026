@@ -132,6 +132,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavLinks />
           </nav>
           <div className="ml-auto flex items-center gap-2 xl:ml-0">
+            <Link
+              href="/historia/"
+              className="hidden items-center gap-1.5 rounded-full border border-uncertainty/40 bg-uncertainty-soft px-3 py-1 text-xs font-semibold text-ink transition-colors hover:border-uncertainty sm:inline-flex"
+            >
+              <Icon name="play" className="size-3.5 text-uncertainty" /> Presentar
+            </Link>
             <DataStatusPill />
             <button
               type="button"
@@ -148,6 +154,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         {open ? (
           <nav id="menu-movil" aria-label="Secciones" className="border-t border-line bg-bg px-4 py-3 xl:hidden">
             <NavLinks vertical onNavigate={() => setOpen(false)} />
+            <Link href="/historia/" onClick={() => setOpen(false)} className="mt-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-surface-2 hover:text-ink">
+              <Icon name="play" className="size-[18px] text-uncertainty" /> Historia · modo presentación
+            </Link>
           </nav>
         ) : null}
       </header>

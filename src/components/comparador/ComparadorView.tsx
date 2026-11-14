@@ -63,7 +63,7 @@ function SiteCard({
       </header>
       <div className="relative grid gap-x-6 gap-y-4 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
         <div className="flex flex-col items-center gap-2">
-          <SiteThumb site={site} size={124} />
+          <SiteThumb site={site} size={124} scale={0.85} />
           <span className="inline-flex items-center gap-1 rounded-lg border border-line bg-bg-2 px-2 py-1 text-[11px] text-ink-muted tabular">
             <Icon name="pin" className="size-3.5" />
             {formatLatitude(site.latitude_deg, 3)}, {formatLongitudeEast(site.longitude_east_deg, 2)}

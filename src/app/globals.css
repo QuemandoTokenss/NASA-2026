@@ -22,7 +22,7 @@
   /* Texto */
   --color-ink: #e8eef8;
   --color-ink-muted: #9aaac4;
-  --color-ink-faint: #64748f;
+  --color-ink-faint: #8291aa;
 
   /* Interfaz (no son colores de datos) */
   --color-accent: #8fb4ff;
@@ -126,4 +126,24 @@ body {
 
 .animate-rise {
   animation: rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Modo historia: campo de estrellas estático (decorativo, sin datos). */
+.story-stars {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #ffffff55 50%, transparent 51%),
+    radial-gradient(1px 1px at 72% 12%, #ffffff40 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 38% 68%, #ffffff30 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 58%, #ffffff50 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 88%, #ffffff35 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 56% 32%, #ffffff25 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 90%, #ffffff40 50%, transparent 51%);
+}
+.story-root:fullscreen {
+  background-color: var(--color-bg);
+}
+/* El título recibe el foco al cambiar de escena (lectores de pantalla); no es interactivo. */
+.story-heading:focus,
+.story-heading:focus-visible {
+  outline: none;
 }

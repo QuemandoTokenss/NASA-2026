@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, type Page } from "@playwright/test";
 
-export const ROUTES = ["/", "/explore/", "/timeline/", "/comparador/", "/engineer/", "/regret-lab/", "/evidencia/"] as const;
+export const ROUTES = ["/", "/explore/", "/timeline/", "/comparador/", "/engineer/", "/regret-lab/", "/evidencia/", "/historia/"] as const;
 
 /** Núcleo generado por `npm run data` (fuente de verdad para comparar con la UI). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
