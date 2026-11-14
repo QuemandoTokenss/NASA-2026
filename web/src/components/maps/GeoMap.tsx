@@ -53,6 +53,8 @@ export interface GeoMapOverlay {
   line: XY[];
   point?: XY;
   label?: string;
+  /** Rectángulos [xmin, ymin, xmax, ymax] que se dibujan como contorno (p. ej. cobertura del visor 3D). No cambian el encuadre. */
+  areas?: Array<[number, number, number, number]>;
 }
 
 export function rgbaToUrl(rgba: Uint8ClampedArray<ArrayBuffer>, w: number, h: number): string {
@@ -478,6 +480,12 @@ export function GeoMap({
     if (compact) {
       const ext = src.getExtent();
       if (ext) mapRef.current?.getView().fit(ext, { padding: [40, 40, 40, 40], duration: 200 });
+    }
+    // Contornos de área: después del encuadre, para que no lo alteren.
+    for (const [x0, y0, x1, y1] of overlay.areas ?? []) {
+      const ring = new Feature({ geometry: new LineString([[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]]) });
+      ring.setStyle(new Style({ stroke: new Stroke({ color: "#e8eef8b0", width: 1.2, lineDash: [5, 4] }) }));
+      src.addFeature(ring);
     }
     // `overlayKey` resume el contenido del objeto `overlay`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
