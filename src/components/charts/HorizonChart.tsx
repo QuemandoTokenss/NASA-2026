@@ -32,7 +32,16 @@ const CARDINALS = [
  * muestra de 0° (interpolación periódica documentada en el contrato).
  * Las muestras `unknown` se dejan como huecos, nunca como 0°.
  */
-export function HorizonChart({ series, title }: { series: HorizonSeries[]; title: string }) {
+export interface SkyTrack {
+  key: string;
+  label: string;
+  color: string;
+  azimuthDeg: number[];
+  elevationDeg: number[];
+  cursor?: number;
+}
+
+export function HorizonChart({ series, title, tracks = [] }: { series: HorizonSeries[]; title: string; tracks?: SkyTrack[] }) {
   const descId = useId();
   const [cursor, setCursor] = useState<number | null>(null); // índice de azimut
 
@@ -49,12 +58,33 @@ export function HorizonChart({ series, title }: { series: HorizonSeries[]; title
           hi = Math.max(hi, v);
         }
       });
+    for (const t of tracks)
+      for (const v of t.elevationDeg) {
+        lo = Math.min(lo, v);
+        hi = Math.max(hi, v);
+      }
     if (!Number.isFinite(lo)) return [-1, 1];
     return [Math.floor(lo - 0.25), Math.ceil(hi + 0.25)];
-  }, [series]);
+  }, [series, tracks]);
+
 
   const x = (az: number) => M.left + (az / 360) * PW;
   const y = (el: number) => M.top + ((yMax - el) / (yMax - yMin)) * PH;
+
+  // Trayectorias en el cielo (nominal): se corta el trazo al cruzar 360° → 0°.
+  const trackPaths = useMemo(
+    () =>
+      tracks.map((t) => {
+        let d = "";
+        for (let i = 0; i < t.azimuthDeg.length; i++) {
+          const jump = i > 0 && Math.abs(t.azimuthDeg[i] - t.azimuthDeg[i - 1]) > 180;
+          d += `${i === 0 || jump ? "M" : "L"}${x(t.azimuthDeg[i]).toFixed(1)},${y(t.elevationDeg[i]).toFixed(2)}`;
+        }
+        return d;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tracks, yMin, yMax],
+  );
 
   const paths = useMemo(
     () =>
@@ -152,6 +182,14 @@ export function HorizonChart({ series, title }: { series: HorizonSeries[]; title
             strokeOpacity={s.emphasis ? 1 : 0.75}
             strokeLinejoin="round"
           />
+        ))}
+        {tracks.map((t, k) => (
+          <g key={t.key} pointerEvents="none">
+            <path d={trackPaths[k]} fill="none" stroke={t.color} strokeWidth={1.4} strokeOpacity={0.7} />
+            {t.cursor !== undefined ? (
+              <circle cx={x(t.azimuthDeg[t.cursor])} cy={y(t.elevationDeg[t.cursor])} r={6} fill={t.color} stroke="var(--color-bg)" strokeWidth={2} style={{ filter: `drop-shadow(0 0 6px ${t.color})` }} />
+            ) : null}
+          </g>
         ))}
         {cursor !== null ? (
           <g pointerEvents="none">

@@ -50,10 +50,15 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   // compartida (en StrictMode los efectos se ejecutan dos veces).
   useEffect(() => {
     if (!restored) return;
-    const next = `?${query}`;
-    if (window.location.search !== next) {
-      window.history.replaceState(window.history.state, "", `${window.location.pathname}${next}${window.location.hash}`);
-    }
+    // Retardo breve: el reproductor de Timeline cambia `t` muchas veces por
+    // segundo y el navegador limita las llamadas a replaceState.
+    const id = setTimeout(() => {
+      const next = `?${query}`;
+      if (window.location.search !== next) {
+        window.history.replaceState(window.history.state, "", `${window.location.pathname}${next}${window.location.hash}`);
+      }
+    }, 180);
+    return () => clearTimeout(id);
   }, [query, pathname, restored]);
 
   const stableDispatch = useCallback((a: SelectionAction) => dispatch(a), []);

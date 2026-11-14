@@ -179,6 +179,60 @@ export function loadEphemerisSite(windowId: WindowId, siteId: SiteId, heightM: H
   );
 }
 
+/**
+ * Original publicado sin modificar (p. ej. eventos acotados o validaciones),
+ * verificado contra el SHA-256 de SHA256_TRANSFERENCIA.txt recogido en el manifiesto.
+ */
+export function loadOriginalJson<T>(transferPath: string, validate: (v: T) => ValidationReport, label: string): Promise<Loaded<T>> {
+  const key = `original/${transferPath}`;
+  const cached = chunkCache.get(key);
+  if (cached) return cached as Promise<Loaded<T>>;
+  const p = (async () => {
+    const manifest = await loadManifest();
+    const entry = manifest.originals.find((o) => o.transfer_path === transferPath);
+    if (!entry) throw new DataError(`El manifiesto no declara el original ${transferPath}`, "integrity");
+    const buf = await fetchBuffer(dataUrl(BASE_PATH, entry.path));
+    const digest = await sha256Hex(buf);
+    if (digest !== null && digest !== entry.sha256)
+      throw new DataError(`Integridad fallida en ${transferPath}`, "integrity", [`esperado ${entry.sha256}`, `obtenido ${digest}`]);
+    const value = parseJson<T>(buf, transferPath);
+    assertValid(validate(value), label);
+    return { value, path: key, integrity: digest === null ? "unverifiable" : "verified", sha256: entry.sha256, bytes: entry.bytes } satisfies Loaded<T>;
+  })();
+  chunkCache.set(key, p);
+  p.catch(() => chunkCache.delete(key));
+  return p;
+}
+
+export interface BoundedEvent {
+  site: string;
+  window: string;
+  height_m: number;
+  target: "SUN" | "EARTH";
+  event: "RISE" | "SET";
+  earliest_utc: string;
+  latest_utc: string;
+  precision: string;
+}
+
+export function loadBoundedEvents() {
+  return loadOriginalJson<BoundedEvent[]>(
+    "DERIVADOS_SITE_REGRET/datos/eventos_acotados.json",
+    (v) => {
+      const errors: string[] = [];
+      if (!Array.isArray(v)) errors.push("eventos_acotados.json no es un array");
+      else
+        for (const e of v)
+          if (!["SUN", "EARTH"].includes(e.target) || !["RISE", "SET"].includes(e.event) || Date.parse(e.latest_utc) - Date.parse(e.earliest_utc) !== 600_000) {
+            errors.push(`evento con formato inesperado: ${JSON.stringify(e).slice(0, 120)}`);
+            break;
+          }
+      return { ok: errors.length === 0, errors, warnings: [] };
+    },
+    "Eventos acotados",
+  );
+}
+
 /** Rutas ya cargadas en esta sesión (para el panel de integridad). */
 export async function loadedChunkStatuses(): Promise<Array<{ path: string; integrity: IntegrityStatus }>> {
   const out: Array<{ path: string; integrity: IntegrityStatus }> = [];
