@@ -1,7 +1,91 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-24 (ver §0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-bis. PC-24 · rediseño de la experiencia lunar — IMPLEMENTADO Y VERIFICADO EN LOCAL, pendiente de revisión del equipo (leer antes que §0)
+
+**Relevo Hugo → Asier, 2026-11-14 (+01:00).** §0 (PC-23) sigue siendo cierto para `main`, producción, propietarios y entrega; esta sección solo añade el rediseño.
+
+| | |
+|---|---|
+| Rama | `feat/rediseno-experiencia-lunar` (local, **sin subir, sin PR, sin fusionar**), desde `be84975` = punta de `feat/operacion-final-integracion` (PR #20). Fusionar y publicar lo decide el equipo: `main` despliega en producción |
+| Commits | `6491f1e` Dashboard (globo) · `3fab07e` Engineer (sombra solar + relieve regional) · `1d627d7` Timeline · encima, el commit de capturas y documentos de este punto de control |
+| Compilación servida | `web/out`, compilada por `npm run verify` sobre el código de esos commits. Servidor: `node scripts/serve-static.ts out 4190` (PID 30428, arrancado por Hugo a las 19:05; lee `out/` del disco en cada petición, así que sirve la compilación final). URL: http://127.0.0.1:4190/ · http://127.0.0.1:4190/timeline/?s=A&w=W2&h=0&v=nominal&t=3200 · http://127.0.0.1:4190/engineer/?s=A&w=W1&h=10&v=nominal&t=629. Si no responde: `cd web && npm run build && node scripts/serve-static.ts out 4190` |
+| Referencia «antes» | `web/docs/capturas/pc24/antes/` (de Hugo, sobre el código de `0871dcf`), reutilizada sin repetir. «Después»: `web/docs/capturas/pc24/despues/` (mismo equipo, mismo Edge, mismo script) |
+
+### Qué se hizo
+
+**1 · Dashboard — globo lunar** (`web/src/components/home/Hero.tsx`, `MoonGlobe.tsx`, `HomeView.tsx`, `web/src/lib/geospatial/globe.ts`, `web/src/assets/globe/`, `web/scripts/imagery/make_globe_assets.py`)
+- Portada: «¿Dónde alunizarías?», una frase («el relieve decide cuándo se ven el Sol y la Tierra desde cada sitio»), «Probar la misión» → `/historia/` (recorrido guiado de PC-23, intacto) y los botones Sitio A / Sitio B. El héroe ya no espera al paquete: texto, botón e imagen NASA local (SVS 5187) se pintan primero; el globo llega en su propio trozo y funde sobre la imagen. Cifras, fuentes, «Explorar el polo sur» y «Presentación en 7 escenas» pasan al segundo nivel (sección «por qué» y siguientes).
+- Globo Three.js propio (sin OrbitControls: cámara por cuaternión, sin singularidad en los polos): rotación libre 360°, zoom (rueda solo tras tocar el globo, pellizco, botones +/−), «Polo sur», «Volver al globo», teclado (flechas, +/−, P, 0), render bajo demanda (0 fotogramas en reposo), `prefers-reduced-motion` (salto sin animación), caída sin WebGL (queda la imagen y la demo es accesible).
+- Textura: NASA SVS 4720 LROC color 2k (`lroc_color_2k.jpg`, SHA-256 `f7130a18…` = el de `celestial/SOURCES.json`), recodificada a WebP 2k/1k sin reproyectar. Orientación comprobada (0° en el centro, −180° en la columna 0, norte arriba) con Tycho, Crisium, Imbrium, Orientale y Tsiolkovskiy.
+- A y B: en sus X/Y del paquete (`unitFromXY`). De lejos, un marcador «A · B · polo sur»; al acercar (≈ 5,9 km de altura) dos marcadores con etiqueta; ocultos tras el limbo. Detalle polar georreferenciado en la misma proyección del mapa: relieve sombreado (luz sintética) de LOLA PGDA90 240 m (±480 km), PGDA90 80 m (80 × 80 km) y el recorte PGDA78 de 5 m. Procedencia y hashes en `web/src/assets/globe/SOURCES.json`.
+- Sol (NASA/SDO), Tierra (Apollo 17) y Vía Láctea/estrellas (SVS 4851): la Tierra en su dirección media real (0°, 0°); Sol, tamaños, distancias y luz ilustrativos y rotulados («Composición ilustrativa: Sol, Tierra y luz fuera de escala» + créditos plegados). Los rótulos «Sol» y «Tierra» giran la cámara hasta verlos.
+
+**2 · Engineer — sombra solar** (`web/src/components/terrain/TerrainPanel.tsx`, `TerrainScene.tsx`)
+- Se eliminó `directionENU((azimuth ?? 0) + 115, 17)`. La luz es `directionENU(az, el)` del Sol del paquete para el mismo sitio, instante, altura y superficie (la misma transformación que su marcador), con su elevación real (1–2°), **solo si el motor da el Sol por visible**. Sol oculto, estado desconocido (4), carga, vista previa o superficie sin efemérides → luz neutra (hemisférica + cenital sin sombra), sin luz directa ni sombra solar. Rótulo en la escena (`scene-light`).
+- La cámara de sombras mira a lo largo de la luz y solo encuadra la torre: la resolución no depende de la longitud de la sombra (hasta 2,6 km de alcance; con 1° una torre de 10 m proyecta ~530 m). El mapa de sombras solo se actualiza cuando cambian Sol, altura o exageración, no al orbitar.
+
+**3 · Engineer — relieve regional** (`web/scripts/geospatial/build-regional.ts`, `publish-regional.ts`, `web/data/derived/terrain-regional/v1/`, `web/src/lib/geospatial/regional.ts`, `web/src/components/terrain/useRegionalTerrain.ts`, `GeoMap.tsx` solo `overlay.areas`)
+- Originales PGDA90 verificados (firma TIFF, tamaño y SHA-256 = `datos/pasaporte.json`): 80 m `82030dcb…`, 240 m `3f966325…`. 251 bloques int16 (0,25 m; error máx. 0,125 m), 8,28 MB versionados: L0 80 m nativo (129 bloques: todos los puntos que fijan el horizonte según el motor + anillo de 25 km), L1 320 m (hasta 210 km), L2 1,28 km (todo el producto de 80 m), F 3,84 km (hasta 400 km). Vértices = centros de píxel reales; bordes compartidos idénticos (sin costuras); curvatura con `toLocal`. `npm run data` los publica.
+- El visor carga siempre L2, el anillo L1 de 50 km y el L0 de 12 km, y bajo demanda los bloques L0/L1 de la visual. Cada malla excluye lo que dibuja un bloque más fino cargado; profundidad logarítmica; Sol y Tierra a 900 km para que una cresta los tape. PGDA78 de 5 m se conserva cerca de la torre.
+- Si el bloque nativo del punto del motor está cargado, la visual acaba en la cresta (mismo X/Y que el mapa; se muestra la altura del relieve dibujado y su Δ con la del motor). Si carga o no hay cobertura, visual discontinua hasta el límite del visor y punto real en el mapa. El mapa dibuja en discontinuo la cobertura del 3D.
+- **Hallazgo:** la URL «fuera» de `capture.mjs` (A · W1 · 10 m · t=3200, Sol) tiene el obstáculo a 450 m, dentro del recorte. El caso regional real es A · W1 · 10 m · t=629.
+
+**4 · Timeline** (`web/src/components/timeline/TimelineView.tsx`, `charts/TimeCharts.tsx` solo `height`/`fontSize` opcionales)
+- Barra (sitio, ventana, altura, superficie) → reproductor → zona principal (gráfico «Elevación sobre el horizonte» con franjas y leyendas dentro del panel; geometría orbital y cielo local) → columna de lectura (Sitio → Instante seleccionado → Métricas del periodo → Salidas y puestas). Una sola instancia de cada panel; en móvil el instante va tras el reproductor (orden CSS). Sin cambios de cálculo.
+
+### Los cuatro casos de Engineer (reproducibles; comprobados en `web/e2e/engineer-pc24.spec.ts`)
+
+| Caso | Sitio · ventana · instante UTC · altura · superficie | URL | Resultado numérico |
+|---|---|---|---|
+| 1 · Sol visible, sombra opuesta | A · W1 · 2026-12-06 05:20 (t=3200) · 10 m · nominal | `/engineer/?s=A&w=W1&h=10&v=nominal&t=3200` | Sol del motor az 353,636°, el 1,994° · luz de three.js az 353,6362°, el 1,9942° · sombra az 173,6362° (= +180°), 287,2 m |
+| 2 · Sol oculto, sin sombra | A · W2 · 2027-01-05 05:20 (t=3200) · 0 m · nominal | `/engineer/?s=A&w=W2&h=0&v=nominal&t=3200` | el 1,487° < horizonte 1,497° (estado 0) · `data-sun-light=off`, sin azimut de luz ni de sombra. También neutra con `v=published_0001` |
+| 3 · La mirada no mueve la sombra | mismo que el caso 1; mirar a la Tierra, azimut manual 90°/250°, orbitar | igual | luz 353,6362° y sombra 173,6362° idénticas en los cuatro estados; +1 día sí las cambia |
+| 4 · Cresta regional | A · W1 · 2026-11-18 08:50 (t=629) · 10 m · nominal | `/engineer/?s=A&w=W1&h=10&v=nominal&t=629` | punto del motor X −2913,78 m, Y −9663,38 m, 8 740 m, az 210,5° · bloque `L0/29_30` · relieve dibujado − altura del motor = −0,058 m · fin de la visual local (E −4440,10, N −7537,80, U −318,93) = punto del mapa · elevación de la visual = horizonte del motor (−2,151°) con < 0,02° · sombra az 30,58° |
+
+Capturas: `web/docs/capturas/pc24/despues/engineer-obstaculo-{fuera,sol-oculto,cresta-regional}-1440x900.png`, `despues/caso3/*.png`; lecturas en `despues/lecturas.json` y `despues/caso3/log.json`.
+
+### Verificaciones reales (2026-11-14)
+
+| Qué | Resultado |
+|---|---|
+| `npm run verify` completo (2 procesos, 8,7 min de E2E) sobre el código final | typecheck y lint limpios · Vitest **153/153** (16 archivos; +9 `globe.test.ts`, +18 `regional.test.ts`) · build PASS · Playwright **105 PASS, 0 FAIL, 1 omitida** (la opcional `E2E_LIVE_TREK=1`). Salida 0 |
+| Specs nuevas | `dashboard-globe.spec.ts` (4: 1280×720 con Luna, pregunta y botón juntos; giro completo; polo; A/B; vuelta; render parado; móvil; movimiento reducido; sin WebGL → imagen local y entrada a la demo) · `engineer-pc24.spec.ts` (4 casos) · `timeline-pc24.spec.ts` (4) |
+| Specs adaptadas | `jurado-pc21.spec.ts` (titular y frase nuevos de portada) · `timeline-engineer-visual.spec.ts` (texto «fuera del recorte») |
+| Portada → recorrido guiado de PC-23 | Comprobado en E2E (`landing-demo.spec.ts` sin cambios, en verde; `hero-cta` → `/historia/`) |
+| Revisión visual por la IA | Capturas a 1440×900, 1280×720 y 390×844 de las tres vistas. **No sustituye la revisión humana** |
+
+### Rendimiento (mismo equipo, Edge, GPU Intel D3D11, `capture.mjs --perf --no-shots --gpu`, 1280×720, servidor local)
+
+| Vista | Antes | Después | Nota |
+|---|---|---|---|
+| Dashboard · contenido útil (botón de misión) | 387 ms | 417 ms | |
+| Dashboard · transferido / peticiones | 4 902 KB / 81 | 6 180 KB / 88 | + three.js, textura 2k y cielo; la capa `elevation.f32` (2,5 MB) ya se cargaba |
+| Dashboard · arrastre del globo | sin globo | mediana 6,1 ms, p95 6,2 ms | |
+| Timeline · útil / transferido | 111 ms / 6 303 KB | 135 ms / 6 374 KB | |
+| Engineer · útil / transferido / peticiones | 116 ms / 8 561 KB / 100 | 148 ms / 9 776 KB / 131 | + bloques regionales (≈ 1,2 MB) |
+| Engineer · órbita | mediana 6,1 ms, p95 6,2 ms | mediana 6,1 ms, p95 6,2 ms | |
+| Engineer · deslizador hasta 30 m con dato | 263 ms | **1 041 ms** | Más lento: al cambiar la altura cambia el punto del horizonte y se piden y mallan bloques regionales nuevos |
+
+Cómo mide el script y qué NO es comparable: `usefulMs` y `settledMs` son relojes de Node alrededor de Playwright (incluyen su latencia; `settledMs` lleva 1,8 s fijos de espera). El intervalo entre fotogramas es `requestAnimationFrame` de la página: **6,1 ms es el tope de la pantalla (~165 Hz)**, así que solo demuestra que no se pierden fotogramas, no cuánto margen queda. `transferKB` es contra un servidor local sin compresión. «Arrastre del globo» no tiene valor «antes».
+
+### Pendiente / limitaciones (declarado)
+
+- **Revisión humana** de las tres vistas (proyector incluido) antes de cualquier fusión. No se ha subido la rama.
+- Relieve regional: fuera de los bloques L0 (puntos de horizonte del motor + 25 km) solo hay L1/L2/F; ahí las crestas entre vértices no están y la visual termina en «Límite del visor 3D» con el punto real en el mapa. No existe en el paquete un caso de **Sol oculto por cresta regional** a 2 ni a 10 m (no comprobado a 0 m ni en alturas intermedias). Entre el recorte de 4 km y el borde de la tesela Site01 (16 km) el motor usó PGDA78 de 5 m, que la web no publica: ahí el 80 m es contexto, con un escalón de hasta ~6 m (RMS 0,7 m) en la junta. Ampliar: `node scripts/geospatial/build-regional.ts --ring-km=40 --sector=A:120-140:150` y `publish-regional.ts`.
+- El deslizador de altura tarda más en mostrar el dato (ver tabla). Mejora posible: construir las mallas regionales fuera del hilo principal o no pedir bloques de la visual durante el arrastre.
+- Con el Sol a 1–2° la torre iluminada queda muy clara y el suelo oscuro (es la geometría real); la luz neutra del caso «Sol oculto» es plana a propósito.
+- Globo: la textura global es de 2k (≈ 5 km/px); el detalle fino solo existe en el casquete sur. La rotación es de tipo «trackball» (puede acumular giro); «Volver al globo» lo restablece.
+- Sin comprobar: lector de pantalla real, zoom al 200 %, Safari/Firefox, móvil físico, inglés de forma visual en las vistas nuevas.
+- El proceso 30428 (servidor de Hugo en 4190) no se pudo detener desde esta sesión; no hizo falta: sirve `out/` actual.
+
+### Siguiente paso exacto
+
+1. Revisar en http://127.0.0.1:4190/ : portada (girar, «Polo sur», A/B, «Volver al globo», «Probar la misión»), Timeline y los cuatro casos de Engineer de la tabla.
+2. Si se aprueba: `git push -u origin feat/rediseno-experiencia-lunar` y abrir PR contra la rama que decida el equipo (la PR #20 sigue abierta sobre la base de esta rama). No fusionar en `main` sin esa decisión.
+3. Si se pide más cobertura regional o afinar el deslizador, ver «Pendiente».
 
 ## 0. Estado vigente (PC-23) — leer primero
 

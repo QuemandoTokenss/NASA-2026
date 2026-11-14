@@ -32,6 +32,10 @@ const SIZES = [
 const ENGINEER = {
   dentro: "/engineer/?s=A&w=W2&h=0&v=nominal&t=3200",
   fuera: "/engineer/?s=A&w=W1&h=10&v=nominal&t=3200",
+  // PC-24: «fuera» resultó ser un obstáculo local a 450 m (se conserva para comparar con `antes/`).
+  // Casos de la sombra solar y de la cresta regional (8,74 km, fuera del recorte de 4 km):
+  "sol-oculto": "/engineer/?s=A&w=W2&h=0&v=nominal&t=3200",
+  "cresta-regional": "/engineer/?s=A&w=W1&h=10&v=nominal&t=629",
 };
 const PAGES = [
   { key: "dashboard", url: "/" },
@@ -47,6 +51,7 @@ const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? "msed
 async function settle(page, key) {
   await page.getByText("Cargando y verificando el paquete científico…").waitFor({ state: "detached", timeout: 60_000 }).catch(() => undefined);
   if (key === "engineer") await page.locator("[data-testid=terrain-scene][data-frames]").waitFor({ timeout: 60_000 }).catch(() => undefined);
+  if (key === "engineer" && page.url().includes("t=629")) await page.locator("[data-testid=obstacle-readout][data-regional=ready]").waitFor({ timeout: 60_000 }).catch(() => undefined);
   if (key === "dashboard" && (await page.locator("[data-testid=moon-globe]").count())) await page.locator("[data-testid=moon-globe][data-ready=true]").waitFor({ timeout: 30_000 }).catch(() => undefined);
   await page.waitForLoadState("networkidle", { timeout: 20_000 }).catch(() => undefined);
   await page.waitForTimeout(1800);
@@ -80,7 +85,9 @@ if (!noShots && (!only || only.includes("engineer"))) {
     await settle(page, "engineer");
     await shot(page, `engineer-obstaculo-${tag}-1440x900`);
     const reading = await page.getByTestId("obstacle-readout").innerText().catch(() => "");
-    results.pages[`engineer-obstaculo-${tag}`] = { url, lectura: reading.replace(/\s+/g, " ").slice(0, 400) };
+    const datos = await page.getByTestId("obstacle-readout").evaluate((e) => ({ ...e.dataset })).catch(() => ({}));
+    const escena = await page.getByTestId("terrain-scene").evaluate((e) => ({ ...e.dataset })).catch(() => ({}));
+    results.pages[`engineer-obstaculo-${tag}`] = { url, lectura: reading.replace(/\s+/g, " ").slice(0, 400), datos, escena };
     await ctx.close();
   }
 }

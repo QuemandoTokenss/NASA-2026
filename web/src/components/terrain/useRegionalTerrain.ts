@@ -67,9 +67,10 @@ export function useRegionalTerrain(
   }, [site.x, site.y, site.lonEastDeg, site.latDeg, ray?.azimuthDeg, ray?.distanceM]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const todo = wanted.filter((b) => !requested.current.has(b.id));
+    const asked = requested.current;
+    const todo = wanted.filter((b) => !asked.has(b.id));
     if (!todo.length) return;
-    for (const b of todo) requested.current.add(b.id);
+    for (const b of todo) asked.add(b.id);
     let alive = true;
     const t = setTimeout(() => alive && setPending((n) => n + todo.length), 0);
     loadRegionalBlocks(todo).then(({ grids: got, errors }) => {
@@ -87,7 +88,7 @@ export function useRegionalTerrain(
       alive = false;
       clearTimeout(t);
       // Efecto cancelado (StrictMode, cambio de lista): se volverá a pedir; la caché del cargador evita otra descarga.
-      for (const b of todo) requested.current.delete(b.id);
+      for (const b of todo) asked.delete(b.id);
     };
   }, [wanted]);
 
