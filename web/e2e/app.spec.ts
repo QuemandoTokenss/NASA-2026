@@ -124,7 +124,7 @@ test.describe("Regret Lab", () => {
     await expect(page.getByText("Se mantiene 2/4")).toBeVisible();
     await expect(page.getByText("Se mantiene 4/5")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Hipótesis propias" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Clones publicados" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Clones publicados", exact: true })).toBeVisible();
     await expect(page.getByText(/probabilidad de ser mejor/i)).toHaveCount(0);
   });
 

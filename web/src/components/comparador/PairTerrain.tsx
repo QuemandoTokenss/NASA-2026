@@ -227,3 +227,23 @@ export function PairTerrain({ sites }: { sites: Site[] }) {
     </Panel>
   );
 }
+
+/** Miniatura del DEM real alrededor de un sitio (relieve + ROI), sin depender del Comparador. */
+export function SiteTerrainThumb({ site }: { site: Site }) {
+  const [elev, setElev] = useState<RasterGrid | null>(null);
+  const [rois, setRois] = useState<RoiPolygon[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    loadTerrainLayer("elevation").then((g) => alive && setElev(g), () => undefined);
+    loadRois().then((r) => alive && setRois(r), () => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return (
+    <div className="w-28 shrink-0">
+      {elev ? <SiteCrop site={site} grids={{ elevation: elev }} rois={rois} overlay="none" /> : <span className="block aspect-square w-full animate-pulse rounded-xl bg-surface-3/50" />}
+      <span className="mt-1 block text-center text-[10px] leading-tight text-ink-faint">{L("DEM PGDA78 · 800 m", "PGDA78 DEM · 800 m")}</span>
+    </div>
+  );
+}

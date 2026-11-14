@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-15 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A, B, C y D terminados; siguiente: bloque E · Dashboard/Evidence/Historia)**
+**Punto de control:** PC-16 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E implementados; pendiente revisión humana de la demo y bloque F)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/mission-control-v2`, creada desde `main` = `6e41690` («Merge #18: integrate real lunar terrain and geospatial layers») |
-| HEAD | ver `git log -3`: `ca684bf` (A, PC-13), `0785e45` (B, PC-14) y el commit de PC-15 (C + D). **Sin push, sin PR, sin despliegue** |
+| HEAD | ver `git log -4`: `ca684bf` (A), `0785e45` (B), `8c2d682` (C + D) y el commit de PC-16 (E). **Sin push, sin PR, sin despliegue** |
 | Otra copia | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` (rama `feat/geo-real-terrain`, `47844ba`, ya fusionada en `main` por el PR #18). No se ha tocado; sus originales NASA de `web/data/raw/` se COPIARON a esta carpeta |
 
 **Reconciliación de documentos antiguos:** el HANDOFF anterior (PC-11/12) decía que `feat/geo-real-terrain` no estaba fusionada. Ya lo está: `main` contiene el PR #18 (`6e41690`). En `main` SÍ está la capa geoespacial (G0–G10). `01_REANUDAR_IMPLEMENTACION.md` es histórico (relevo Hugo → Asier) y sus referencias de rama/HEAD están superadas.
@@ -36,8 +36,8 @@ Encargo vigente: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md) §A.5 («Mission C
 | B | Timeline orbital con efemérides reales | **HECHO (PC-14)**, Vitest + E2E + revisión visual | ver §4 bis |
 | C | Comparador A/B con cartografía real | **HECHO (PC-15)** | ver §4 ter |
 | D | Engineer con 3D protagonista y alturas 0/2/10 | **HECHO (PC-15)** | ver §4 ter |
-| E | Dashboard → Mission Control, Evidence, Historia | PENDIENTE (siguiente) | ver §5 |
-| F | G9 mosaico, G11 NAC, G10 mejoras ODE, G12 IAU, G13 PGDA90 | PENDIENTE (sin cambios desde PC-11) | — |
+| E | Dashboard → Mission Control, Evidence, Historia | **HECHO (PC-16)** | ver §4 quater |
+| F | G9 mosaico, G11 NAC, G10 mejoras ODE, G12 IAU, G13 PGDA90 | PENDIENTE (siguiente; sin cambios desde PC-11) | ver §5 |
 
 Tabla G0–G18 heredada: G0–G8 VERIFICADO, G9 PARCIAL, G10 VERIFICADO en lo implementado, **G15 HECHO**, G11–G14 PENDIENTE, G16 no autorizado, G17 actualizado en PC-13 para G15, G18: rama nueva sin subir.
 
@@ -79,7 +79,20 @@ Hecho:
 - Con un clon publicado la malla 3D es el recorte de ESE clon (verificado con SHA-256) y el origen vertical es la altura de suelo del clon del paquete; con hipótesis propias se dibuja el nominal con aviso explícito. `data-mesh-surface` en el panel.
 - `MastScene` sigue plegado y rotulado como ilustración.
 
-## 5. Siguiente tarea exacta: bloque E · Dashboard, Evidence, Historia
+## 4 quater. Bloque E terminado (PC-16)
+
+- **Dashboard** (`home/HomeView.tsx`): la luna ilustrada del héroe se sustituyó por el `GeoMap` compacto con imágenes reales LRO NAC (Moon Trek) de Connecting Ridge, A, B y la línea entre ambos. Nuevo panel **Mission Control** con el escenario sincronizado (sitio, ventana, altura, superficie, criterio) y una tarjeta por vista con un dato real de ese escenario (resultado del Comparador si hay criterio, «se mantiene x/y» de Regret Lab, clones verificados, intervalo del Timeline, altura y malla de Engineer, comprobaciones de Evidencia). Sustituye a los 3 pasos y a la navegación duplicada del pie. Las miniaturas `SiteThumb` de los sitios se sustituyeron por recortes reales del DEM (`SiteTerrainThumb`).
+- **Evidencia** (`evidence/GeoEvidence.tsx`): las fichas de los 5 clones muestran su recorte descargable, SHA-256, estadísticas clon − nominal y la comprobación de altura en A/B; anclas `#geo-pgda78-site01-clone_000N` (Regret Lab enlaza a ellas).
+- **Historia** (`story/StoryView.tsx`): la escena 1 usa el mapa NAC real (antes la figura `PairMap`); la escena «Desafiar el terreno» cita la RMS real de los clones (manifiesto) y enlaza al mapa de diferencias de Regret Lab.
+- `PairMap.tsx` y `SiteThumb.tsx` siguen en el código (los usan otras vistas: `ContextMap` en Explore plegado y la figura del paquete), rotulados como derivados del motor.
+
+## 5. Siguiente tarea exacta: revisión humana de la demo y bloque F
+
+1. **Revisión humana** (bloqueo NO técnico): el equipo debe recorrer Dashboard → Explore → Timeline → Comparador → Engineer → Regret Lab → Evidencia → Historia con `npm run build && npm run serve` y anotar problemas visuales. Ninguna IA puede dar por buena la experiencia visual sola.
+2. **Bloque F** (por orden de valor): G11/G9 producto NAC proyectado concreto de Connecting Ridge (ODE `pt=SDNDTM`/`BDRROI` en la caja de los sitios) y corregistro del mosaico; G12 nomenclatura IAU/USGS (Gazetteer of Planetary Nomenclature, solo con fuente verificada); G13 PGDA90 regional solo si aporta (≈408 MB: comprobar espacio y avisar); mejoras ODE (región visible / polígono).
+3. **G18**: push de `feat/mission-control-v2` y PR a `main` cuando Hugo lo autorice.
+
+### Antiguo §5 (bloque E) — HECHO en PC-16
 
 En `web/`:
 1. Dashboard (`src/components/home/HomeView.tsx`): sustituir la luna ilustrada del héroe por un mapa real (GeoMap compacto con NAC o el relieve del DEM) de Connecting Ridge con A/B; convertir el resto en «Mission Control»: estado del escenario seleccionado (ventana, altura, superficie, criterio), accesos directos a cada vista con su estado real (p. ej. ganador si hay criterio, número de clones verificados, instante de Timeline) y al caso demostrativo. Las tarjetas `SiteThumb` del Dashboard son derivados del motor: sustituir por recortes del DEM (`subGrid`) o rotular.
@@ -110,7 +123,7 @@ Después: bloque C (Comparador con `GeoMap` compacto o recortes A/B), D (Enginee
 ## 6. Cambios locales y archivos de PC-13
 
 Archivos nuevos o modificados (todo en `web/` salvo docs):
-`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), PC-15: `src/components/comparador/PairTerrain.tsx` (nuevo), `ComparadorView.tsx`, `charts/HorizonDeltaChart.tsx`, `src/lib/geospatial/raster.ts` (`subGrid`), `engineer/EngineerView.tsx`, `terrain/TerrainPanel.tsx`, `e2e/comparador-terrain.spec.ts` (nuevo), `e2e/geo.spec.ts`, `tests/ensemble.test.ts`; PC-14: `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx`, `src/components/timeline/TimelineView.tsx`, `tests/sky.test.ts`, `e2e/timeline-orbital.spec.ts`, `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
+`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), PC-16: `home/HomeView.tsx`, `evidence/GeoEvidence.tsx`, `story/StoryView.tsx`, `comparador/PairTerrain.tsx` (`SiteTerrainThumb`), `e2e/mission-control.spec.ts` (nuevo); PC-15: `src/components/comparador/PairTerrain.tsx` (nuevo), `ComparadorView.tsx`, `charts/HorizonDeltaChart.tsx`, `src/lib/geospatial/raster.ts` (`subGrid`), `engineer/EngineerView.tsx`, `terrain/TerrainPanel.tsx`, `e2e/comparador-terrain.spec.ts` (nuevo), `e2e/geo.spec.ts`, `tests/ensemble.test.ts`; PC-14: `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx`, `src/components/timeline/TimelineView.tsx`, `tests/sky.test.ts`, `e2e/timeline-orbital.spec.ts`, `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
 
 No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales + 5 clones, ~410 MB), `web/node_modules`, `web/out`, `web/public/data`.
 
@@ -141,6 +154,9 @@ npm run verify                      # typecheck → lint → test → build → 
 | PC-14 · `npm run lint`, `tsc`, `npm run build` | PASS |
 | PC-14 · E2E Timeline (`timeline-orbital.spec.ts` 2 + 3 de `app.spec.ts`) | 5/5 PASS |
 | PC-14 · E2E `a11y.spec.ts` (axe WCAG A/AA, 8 rutas) + `responsive.spec.ts` (375 px) + `i18n.spec.ts` | 20/20 PASS |
+| PC-16 · lint, `tsc`, `npm test`, `npm run build` | PASS · Vitest **113/113** |
+| PC-16 · `npx playwright test` completo (2 procesos, 4,0 min) | **73 PASS, 0 FAIL, 1 omitida** (incluye `mission-control.spec.ts` 3/3). Un primer intento quedó colgado ~17 min con 3 fallos: 2 por carga (pasan solos) y 1 real de localizador ambiguo (`heading 'Clones publicados'` también encontraba «Los 5 clones publicados…»), corregido con `exact: true` en `e2e/app.spec.ts`. Tras abortar una ejecución, matar el `serve-static` del puerto 4174 antes de relanzar |
+| PC-16 · revisión visual Dashboard (dev, 1600×1000) | HECHO: mapa NAC real con A/B en el héroe, Mission Control con escenario sincronizado. Historia y Evidencia comprobadas solo por E2E. **Pendiente revisión humana** |
 | PC-15 · `npm test` | **113/113 PASS** (+1 `subGrid`) |
 | PC-15 · batería E2E completa tras C (2 procesos, 3,6 min) | **69 PASS, 0 FAIL, 1 omitida** |
 | PC-15 · E2E Engineer/superficies tras D (`geo.spec.ts` + `app.spec.ts`) | 11/11 PASS (incluye la nueva «hipótesis propia») |

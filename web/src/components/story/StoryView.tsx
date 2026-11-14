@@ -18,7 +18,8 @@ import { Badge, Legend } from "../ui/Display";
 import { Icon, type IconName } from "../ui/Icon";
 import { Button, LinkButton } from "../ui/Interactive";
 import { DarkStreakStrips } from "./DarkStreakStrips";
-import { PairMap } from "./PairMap";
+import { GeoMap } from "../maps/GeoMap";
+import { TERRAIN_MANIFEST } from "@/lib/geospatial/terrain";
 import { L, R } from "@/lib/i18n";
 import { METRIC_META } from "@/lib/science/metrics";
 
@@ -127,8 +128,8 @@ function Story({ data }: { data: ReadyData }) {
         </>
       ),
       visual: (
-        <VisualFrame caption={L("Figura DEM original del paquete (PGDA78, 40 m/píxel; color = altura del terreno) ampliada sin suavizar. Separación medida en el plano estereográfico polar.", "Original DEM figure from the package (PGDA78, 40 m/pixel; colour = terrain height) enlarged without smoothing. Separation measured on the polar stereographic plane.")}>
-          <PairMap a={siteA} b={siteB} />
+        <VisualFrame caption={L("Imágenes orbitales reales LRO NAC (NASA Moon Trek) en la proyección polar lunar, con A, B y la línea entre ambos. Es el mismo mapa de Explore, el Comparador y el Dashboard; sin red no se sustituye por otra imagen.", "Real LRO NAC orbital images (NASA Moon Trek) in the lunar polar projection, with A, B and the line between them. It is the same map as in Explore, Compare and the Dashboard; offline it is not replaced by another image.")}>
+          <GeoMap sites={[siteA, siteB]} focusSite="A" compact overlay={{ line: [{ x: siteA.x_m, y: siteA.y_m }, { x: siteB.x_m, y: siteB.y_m }] }} />
         </VisualFrame>
       ),
     },
@@ -243,6 +244,16 @@ function Story({ data }: { data: ReadyData }) {
                 pub: <Big>{pub.evaluated}</Big>,
                 p: <strong className="text-uncertainty">{VARIANT_LABEL[pert]}</strong>,
                 fam: variantFamily(pert) === "own" ? L(`, una de las ${FAMILY_META.own.label.toLowerCase()}`, `, one of the ${FAMILY_META.own.label.toLowerCase()}`) : "",
+              },
+            )}
+          </p>
+          <p>
+            {R(
+              "Los clones son DEM completos publicados por la NASA: frente al nominal difieren {rms} de media cuadrática en la ventana de 4 × 4 km. En {lab} se ve dónde, en un mapa de diferencias, y qué punto del terreno fija el horizonte con cada superficie.",
+              "The clones are complete DEMs published by NASA: against the nominal they differ by {rms} RMS over the 4 × 4 km window. {lab} shows where, on a difference map, and which terrain point sets the horizon with each surface.",
+              {
+                rms: <Big>{`${formatNumber(Math.min(...(TERRAIN_MANIFEST.ensemble?.members ?? []).map((m) => m.difference_vs_nominal.rms)), 2)}–${formatNumber(Math.max(...(TERRAIN_MANIFEST.ensemble?.members ?? []).map((m) => m.difference_vs_nominal.rms)), 2)} m`}</Big>,
+                lab: <Link href="/regret-lab/#terreno-variante" className="text-accent underline-offset-2 hover:underline">Regret Lab</Link>,
               },
             )}
           </p>

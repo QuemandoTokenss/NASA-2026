@@ -30,6 +30,7 @@ function Row({ k, v, mono = false }: { k: string; v: React.ReactNode; mono?: boo
 
 function AssetCard({ a }: { a: RegistryAsset }) {
   const derived = TERRAIN_MANIFEST.layers.find((l) => l.registry_id === a.id);
+  const member = TERRAIN_MANIFEST.ensemble?.members.find((m) => m.registry_id === a.id);
   const rois = TERRAIN_MANIFEST.rois.registry_id === a.id ? TERRAIN_MANIFEST.rois : null;
   const none = L("no publicado por el proveedor", "not published by the provider");
   return (
@@ -83,6 +84,25 @@ function AssetCard({ a }: { a: RegistryAsset }) {
                 <span className="font-mono text-[11px]">{derived.sha256}</span>
                 <span>
                   {derived.processing} {L(`Ventana de ${TERRAIN_MANIFEST.georeferencing.width} × ${TERRAIN_MANIFEST.georeferencing.height} píxeles de ${TERRAIN_MANIFEST.georeferencing.pixel_size_m} m; valores ${formatNumber(derived.stats.min, 3)} … ${formatNumber(derived.stats.max, 3)}; ${derived.stats.nodata_count} sin dato.`, `Window of ${TERRAIN_MANIFEST.georeferencing.width} × ${TERRAIN_MANIFEST.georeferencing.height} pixels of ${TERRAIN_MANIFEST.georeferencing.pixel_size_m} m; values ${formatNumber(derived.stats.min, 3)} … ${formatNumber(derived.stats.max, 3)}; ${derived.stats.nodata_count} without data.`)}
+                </span>
+              </span>
+            }
+          />
+        ) : null}
+        {member ? (
+          <Row
+            k={L("Clon en la web", "Clone in the app")}
+            v={
+              <span className="flex flex-col gap-0.5" data-testid={`evidence-clone-${member.variant}`}>
+                <a href={terrainUrl(member.file)} download className="text-accent hover:underline">
+                  {member.file}
+                </a>
+                <span className="font-mono text-[11px]">{member.sha256}</span>
+                <span>
+                  {L(
+                    `Superficie ${member.variant} del motor. Recorte exacto de ${TERRAIN_MANIFEST.georeferencing.width} × ${TERRAIN_MANIFEST.georeferencing.height} píxeles. Clon − nominal: mín. ${formatNumber(member.difference_vs_nominal.min, 3)} m, máx. ${formatNumber(member.difference_vs_nominal.max, 3)} m, RMS ${formatNumber(member.difference_vs_nominal.rms, 3)} m. Altura en A y B = la del paquete (${member.at_sites.map((s) => `${s.site_id} ${formatNumber(s.clone_height_m, 3)} m`).join(", ")}). Se usa en Regret Lab y en el 3D de Engineer.`,
+                    `Engine surface ${member.variant}. Exact crop of ${TERRAIN_MANIFEST.georeferencing.width} × ${TERRAIN_MANIFEST.georeferencing.height} pixels. Clone − nominal: min ${formatNumber(member.difference_vs_nominal.min, 3)} m, max ${formatNumber(member.difference_vs_nominal.max, 3)} m, RMS ${formatNumber(member.difference_vs_nominal.rms, 3)} m. Height at A and B = the package value (${member.at_sites.map((s) => `${s.site_id} ${formatNumber(s.clone_height_m, 3)} m`).join(", ")}). Used in Regret Lab and the Engineer 3D view.`,
+                  )}
                 </span>
               </span>
             }

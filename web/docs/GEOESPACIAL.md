@@ -38,7 +38,8 @@ Batería completa (PC-10, tras corregistro y ODE): `tsc` y ESLint limpios, Vites
 | Figura `figuras/mapa_sitios.svg` (`ContextMap`, `SiteThumb`, `PairMap`) | Explore (plegada), Dashboard, Comparador, Timeline, Historia | 3 · derivado del DEM por el motor (no es foto ni IA) | Conservada y rotulada |
 | Gráficos de horizonte, franjas y curvas | Timeline, Comparador, Engineer, Regret Lab | 3 · derivado del paquete | Conservados |
 | `MastScene` (crestas, Sol y Tierra dibujados a mano) | Engineer (plegado) | 5 · ilustración | Retirada de la vista principal; rotulada |
-| Luna del Dashboard, estrellas de Historia, logotipo, iconos Lucide | Dashboard, Historia, cabecera | 5 · ilustración | Conservadas; la luna lleva el rótulo «Ilustración» |
+| Luna del Dashboard | Dashboard | 5 · ilustración | **Retirada en PC-16**: sustituida por el mapa NAC real de Connecting Ridge |
+| Estrellas de Historia, logotipo, iconos Lucide | Historia, cabecera | 5 · ilustración | Conservadas (decorativas, no representan lugares) |
 | Origen desconocido | — | 6 | Ninguno encontrado |
 
 No hay imágenes rasterizadas en `public/` ni URLs externas de imagen aparte de Moon Trek.

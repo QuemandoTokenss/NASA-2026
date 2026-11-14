@@ -1,70 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { HEIGHTS_M, VARIANTS, WINDOW_IDS, type SiteId } from "@/lib/contract/constants";
+import { HEIGHTS_M, STATE_SAMPLES, VARIANTS, WINDOW_IDS, variantFamily, type SiteId } from "@/lib/contract/constants";
 import type { Core } from "@/lib/contract/schema";
 import { getCriterionResult, getScenarioSummary } from "@/lib/data/selectors";
 import { formatHoursMinutes, formatLatitude, formatLongitudeEast, formatNumber, formatUtcDate } from "@/lib/format";
-import { CRITERION_META, SITE_META, WINNER_LABEL } from "@/lib/labels";
-import { NAV } from "@/lib/nav";
+import { CRITERION_META, SITE_META, VARIANT_LABEL, WINNER_LABEL } from "@/lib/labels";
+import { GEO_REGISTRY, TERRAIN_MANIFEST } from "@/lib/geospatial/terrain";
 import { familyCounts } from "@/lib/science/decision";
 import { DEMO_CASE, DEMO_HASH } from "@/lib/science/demo";
 import { CRITERION_METRIC, METRIC_META } from "@/lib/science/metrics";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { DataGate } from "../data/DataGate";
-import { SiteThumb } from "../explore/SiteThumb";
+import { SiteTerrainThumb } from "../comparador/PairTerrain";
+import { GeoMap } from "../maps/GeoMap";
 import { Badge, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon, type IconName } from "../ui/Icon";
 import { LinkButton } from "../ui/Interactive";
 import { Panel } from "../ui/Panel";
 import { L, R } from "@/lib/i18n";
-
-/** Luna ilustrativa (no es un mapa): marca aproximada del polo sur. */
-function MoonIllustration() {
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[420px]" aria-hidden>
-      <div className="absolute inset-[6%] rounded-full shadow-[0_0_120px_-20px_#3a6ff0]" />
-      <svg viewBox="0 0 400 400" className="relative h-full w-full">
-        <defs>
-          <radialGradient id="moon" cx="38%" cy="32%" r="75%">
-            <stop offset="0" stopColor="#e8e6e0" />
-            <stop offset="0.45" stopColor="#9a9a98" />
-            <stop offset="0.85" stopColor="#3b3f48" />
-            <stop offset="1" stopColor="#14171f" />
-          </radialGradient>
-          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0" stopColor="#a78bfa" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#a78bfa" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx="200" cy="200" r="170" fill="url(#moon)" />
-        {[
-          [140, 120, 22],
-          [250, 95, 14],
-          [270, 210, 30],
-          [150, 250, 18],
-          [215, 165, 10],
-          [110, 190, 12],
-          [300, 150, 9],
-          [230, 300, 16],
-        ].map(([x, y, r], i) => (
-          <g key={i} opacity={0.35}>
-            <circle cx={x} cy={y} r={r} fill="#2a2d33" />
-            <circle cx={x - r * 0.15} cy={y - r * 0.15} r={r * 0.82} fill="#7a7a78" opacity={0.35} />
-          </g>
-        ))}
-        <ellipse cx="200" cy="200" rx="170" ry="40" fill="none" stroke="#8fb4ff" strokeOpacity={0.15} />
-        <circle cx="200" cy="366" r="26" fill="url(#glow)" className="animate-pulse" />
-        <circle cx="200" cy="366" r="5" fill="#a78bfa" />
-        <line x1="200" y1="366" x2="300" y2="388" stroke="#a78bfa" strokeOpacity={0.6} />
-        <text x="306" y="392" fontSize="12" fill="#c9b8ff">
-          {L("Polo sur", "South pole")}
-        </text>
-      </svg>
-      <span className="absolute top-2 right-2 rounded-full border border-line-strong bg-bg/80 px-2 py-0.5 text-[10px] text-ink-faint">{L("Ilustración", "Illustration")}</span>
-    </div>
-  );
-}
 
 const UNIQUE = (): Array<{ icon: IconName; title: string; text: string }> => [
   {
@@ -90,29 +44,68 @@ const UNIQUE = (): Array<{ icon: IconName; title: string; text: string }> => [
   },
 ];
 
-const STEPS = (): Array<{ n: string; t: string; d: string; href: string; icon: IconName }> => [
-  {
-    n: "01",
-    t: L("Elige qué significa «mejor»", "Choose what “better” means"),
-    d: L("Menor racha sin Sol, más horas con Sol, con Tierra o con ambos.", "Shortest dark streak, most hours with Sun, with Earth or with both."),
-    href: "/comparador/",
-    icon: "lock",
-  },
-  {
-    n: "02",
-    t: L("Compara A y B", "Compare A and B"),
-    d: L("Mismo periodo, misma altura y misma superficie; empates explícitos.", "Same period, same height and same surface; explicit ties."),
-    href: "/comparador/",
-    icon: "compare",
-  },
-  {
-    n: "03",
-    t: L("Desafía el terreno", "Challenge the terrain"),
-    d: L("4 hipótesis propias y 5 clones publicados: ¿se mantiene la elección?", "4 team hypotheses and 5 published clones: does the choice hold?"),
-    href: "/regret-lab/",
-    icon: "flask",
-  },
-];
+/**
+ * Mission Control: estado del escenario seleccionado (el mismo en todas las vistas)
+ * y acceso a cada vista con un dato real de ese escenario. Nada se calcula aquí:
+ * todo se lee del paquete, del registro o del manifiesto.
+ */
+function MissionControl({ core }: { core: Core }) {
+  const { selection, query } = useSelection();
+  const { focusSite, windowId, heightM, variant, criterion, timeIndex } = selection;
+  const result = criterion ? getCriterionResult(core, windowId, heightM, criterion) : undefined;
+  const winner = result?.cases[variant].winner;
+  const own = result ? familyCounts(result, "own") : null;
+  const pub = result ? familyCounts(result, "published") : null;
+  const nominalAB = result && (result.nominal_winner === "A" || result.nominal_winner === "B");
+  const clones = TERRAIN_MANIFEST.ensemble?.members.length ?? 0;
+  const cards: Array<{ href: string; icon: IconName; title: string; status: string; detail: string }> = [
+    { href: "/explore/", icon: "map", title: "Explore", status: L("Mapa real · Moon Trek NAC + DEM 5 m", "Real map · Moon Trek NAC + 5 m DEM"), detail: L(`${GEO_REGISTRY.assets.length} activos con procedencia · foco ${focusSite}`, `${GEO_REGISTRY.assets.length} assets with provenance · focus ${focusSite}`) },
+    { href: "/timeline/", icon: "orbit", title: "Timeline", status: L(`${windowId} · intervalo ${timeIndex + 1} de ${STATE_SAMPLES}`, `${windowId} · interval ${timeIndex + 1} of ${STATE_SAMPLES}`), detail: L("Geometría Sol–Tierra–Luna y cielo local", "Sun–Earth–Moon geometry and local sky") },
+    {
+      href: "/comparador/",
+      icon: "compare",
+      title: L("Comparador A vs B", "Compare A vs B"),
+      status: winner ? `${L("Resultado", "Result")}: ${WINNER_LABEL[winner]}` : L("Elige un criterio para ver el resultado", "Choose a criterion to see the result"),
+      detail: L("Terreno real del par y Δ de horizonte", "Real terrain of the pair and horizon Δ"),
+    },
+    { href: "/engineer/", icon: "engineer", title: "Engineer", status: L(`Observador a ${heightM} m · terreno 3D`, `Observer at ${heightM} m · 3D terrain`), detail: variantFamily(variant) === "published" ? L(`Malla del ${VARIANT_LABEL[variant].toLowerCase()}`, `Mesh of ${VARIANT_LABEL[variant]}`) : L("Malla del DEM nominal", "Nominal DEM mesh") },
+    {
+      href: "/regret-lab/",
+      icon: "flask",
+      title: "Regret Lab",
+      status: nominalAB && own && pub ? L(`Se mantiene ${own.same}/${own.evaluated} · ${pub.same}/${pub.evaluated}`, `Holds ${own.same}/${own.evaluated} · ${pub.same}/${pub.evaluated}`) : result ? L("Sin elección nominal (empate o desconocido)", "No nominal choice (tie or unknown)") : L("Elige un criterio", "Choose a criterion"),
+      detail: L(`${clones} clones PGDA78 verificados · diferencias de terreno`, `${clones} verified PGDA78 clones · terrain differences`),
+    },
+    { href: "/evidencia/", icon: "file", title: L("Evidencia", "Evidence"), status: L(`${core.provenance.validation.passed} comprobaciones superadas`, `${core.provenance.validation.passed} checks passed`), detail: L("Fuentes, hashes y límites", "Sources, hashes and limits") },
+  ];
+  return (
+    <section aria-label="Mission Control" className="rounded-2xl border border-line bg-surface/85 p-4 sm:p-5" data-testid="mission-control">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Mission Control</h2>
+        <span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted" data-testid="mission-scenario">
+          <Badge tone={focusSite === "A" ? "a" : "b"}>{SITE_META[focusSite].label}</Badge>
+          <Badge tone="neutral">{windowId}</Badge>
+          <Badge tone="neutral">{heightM} m</Badge>
+          <Badge tone={variant === "nominal" ? "neutral" : "uncertainty"}>{VARIANT_LABEL[variant]}</Badge>
+          <Badge tone="neutral">{criterion ? CRITERION_META[criterion].short : L("criterio sin elegir", "no criterion yet")}</Badge>
+        </span>
+        <span className="text-[11px] text-ink-faint">{L("El mismo escenario se mantiene al cambiar de vista.", "The same scenario is kept when switching views.")}</span>
+      </div>
+      <nav aria-label={L("Vistas del escenario", "Scenario views")} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+        {cards.map((c) => (
+          <Link key={c.href} href={`${c.href}?${query}`} className="group flex flex-col gap-1.5 rounded-xl border border-line bg-bg-2/70 p-3.5 transition-all hover:-translate-y-0.5 hover:border-accent/50">
+            <span className="flex items-center gap-2 font-semibold text-ink">
+              <Icon name={c.icon} className="size-5 text-ink-muted group-hover:text-accent" />
+              {c.title}
+            </span>
+            <span className="text-sm text-ink">{c.status}</span>
+            <span className="text-[11px] text-ink-faint">{c.detail}</span>
+          </Link>
+        ))}
+      </nav>
+    </section>
+  );
+}
 
 function Body({ core }: { core: Core }) {
   const { query } = useSelection();
@@ -172,26 +165,19 @@ function Body({ core }: { core: Core }) {
               ))}
             </ul>
           </div>
-          <MoonIllustration />
+          <figure className="flex min-w-0 flex-col gap-2" data-testid="hero-map">
+            <GeoMap sites={core.sites} focusSite="A" compact overlay={{ line: [{ x: core.sites[0].x_m, y: core.sites[0].y_m }, { x: core.sites[1].x_m, y: core.sites[1].y_m }] }} />
+            <figcaption className="text-[11px] text-ink-faint">
+              {L(
+                "Connecting Ridge (polo sur lunar): imágenes orbitales reales LRO NAC servidas por NASA Moon Trek, con los sitios A (ROI 4) y B (ROI 6). Sin red no se muestra ninguna imagen de sustitución.",
+                "Connecting Ridge (lunar south pole): real LRO NAC orbital images served by NASA Moon Trek, with sites A (ROI 4) and B (ROI 6). Offline, no substitute image is shown.",
+              )}
+            </figcaption>
+          </figure>
         </div>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {STEPS().map((s) => (
-          <Link
-            key={s.n}
-            href={`${s.href}?${query}`}
-            className="group rounded-2xl border border-line bg-surface/85 p-5 transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_12px_32px_-16px_#3a6ff0]"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-ink-faint transition-colors group-hover:text-accent">{s.n}</span>
-              <Icon name={s.icon} className="size-5 text-ink-muted" />
-            </div>
-            <p className="mt-2 text-lg font-semibold text-ink">{s.t}</p>
-            <p className="mt-1 text-sm text-ink-muted">{s.d}</p>
-          </Link>
-        ))}
-      </div>
+      <MissionControl core={core} />
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.1fr)]">
         {core.sites.map((s) => {
@@ -199,7 +185,7 @@ function Body({ core }: { core: Core }) {
           return (
             <Panel key={id} title={`${SITE_META[id].label} · ROI ${s.roi}`} icon="pin" actions={<NatureBadge nature="OBSERVED" />}>
               <div className="flex gap-4">
-                <SiteThumb site={s} size={112} scale={0.85} />
+                <SiteTerrainThumb site={s} />
                 <div className="min-w-0 flex-1 text-sm">
                   <p className={`font-semibold ${SITE_META[id].textClass}`}>{s.name}</p>
                   <p className="tabular text-ink-muted">
@@ -346,17 +332,6 @@ function Body({ core }: { core: Core }) {
         </Panel>
       </div>
 
-      <nav aria-label={L("Secciones de la aplicación", "App sections")} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-        {NAV.filter((n) => n.href !== "/").map((n) => (
-          <Link key={n.href} href={`${n.href}?${query}`} className="group flex flex-col gap-2 rounded-2xl border border-line bg-surface/85 p-4 transition-all hover:-translate-y-0.5 hover:border-accent/50">
-            <span className="flex items-center gap-2 font-semibold text-ink">
-              <Icon name={n.icon} className="size-5 text-ink-muted group-hover:text-accent" />
-              {n.label}
-            </span>
-            <span className="text-xs text-ink-muted">{n.summary}</span>
-          </Link>
-        ))}
-      </nav>
 
       <p className="text-center text-[11px] text-ink-faint">
         {L(
