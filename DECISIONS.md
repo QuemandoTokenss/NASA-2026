@@ -15,3 +15,7 @@
 | D11 | 2026-11-14 | Engineer: selector discreto 0/2/10 m; escena 2D ilustrativa rotulada como tal. Sin 3D (P2). | Solo existen esas alturas; prioridad P0/P1. |
 | D12 | 2026-11-14 | `scripts/fix-export-segments.ts` tras el build. | Next 16.4.6 en Windows escribe mal los archivos de prefetch por segmento. |
 | D13 | 2026-11-14 | Pruebas E2E con Playwright usando el navegador Edge instalado (`channel: "msedge"`), sin descargar navegadores. | Pruebas funcionales reales sin dependencias de red. |
+| D14 | 2026-11-14 | Despliegue en Vercel como sitio estático (`vercel.json`, `framework: null`, `out/`), producción en https://site-regret.vercel.app. `qa_entradas.json` se excluye de la subida. | La CLI estaba autenticada y la misión autorizaba desplegar; el archivo excluido contiene rutas locales de un equipo. |
+| D15 | 2026-11-14 | Sin bilingüismo ES/EN en esta entrega. | P2; se priorizó P0/P1 y QA. |
+| D16 | 2026-11-14 | Sin `git push`: no hay remoto configurado ni destino autorizado. | Instrucción de la misión §18. |
+

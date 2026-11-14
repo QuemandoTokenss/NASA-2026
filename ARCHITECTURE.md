@@ -1,4 +1,4 @@
-# Arquitectura · fase 1
+# Arquitectura
 
 ## Principio
 
@@ -24,13 +24,13 @@ public/data/site-regret/{manifest.json, v0.1/**, original/**}   (generado, no ve
 
 ### División (carga diferida)
 
-| Trozo | Contenido | Tamaño aprox. | Lo pide |
+| Trozo | Contenido | Tamaño aprox. | Lo usa |
 |---|---|---|---|
 | `core.json` | `configuration`, `state_names`, `sites`, `comparisons`, `provenance`, resúmenes de los 120 escenarios (métricas, sin series), índices de horizontes/efemérides | 150 kB | Siempre |
-| `scenarios/W{1,2}_h{0,2,10}.json` | `state_codes` + `intervals` de 20 escenarios (A/B × 10 superficies) | 185 kB | Timeline, Regret (F2) |
-| `horizons/{A,B}_h{0,2,10}.json` | 10 superficies × 1440 azimuts | 470–500 kB | Explore, Engineer |
-| `ephemerides/W{1,2}_clock.json` | `times_utc`, `et_tdb_seconds_j2000` | 177 kB | Timeline (F2) |
-| `ephemerides/W{1,2}_{A,B}_h{…}.json` | Sol/Tierra nominales y umbrales de horizonte | 654 kB | Timeline (F2) |
+| `scenarios/W{1,2}_h{0,2,10}.json` | `state_codes` + `intervals` de 20 escenarios (A/B × 10 superficies) | 185 kB | Timeline, Engineer |
+| `horizons/{A,B}_h{0,2,10}.json` | 10 superficies × 1440 azimuts | 470–500 kB | Explore, Comparador, Timeline, Engineer |
+| `ephemerides/W{1,2}_clock.json` | `times_utc`, `et_tdb_seconds_j2000` | 177 kB | Timeline, Engineer |
+| `ephemerides/W{1,2}_{A,B}_h{…}.json` | Sol/Tierra nominales y umbrales de horizonte | 654 kB | Timeline, Engineer |
 
 Ningún valor se calcula, redondea o renombra al dividir. `canonicalStringify` conserva `-0` (presente en utilidades del motor) y la representación exacta de los doubles. El test `data-integrity` reensambla y compara con el original.
 
@@ -62,3 +62,27 @@ Enlace «saltar al contenido», foco visible, controles con roles nativos o ARIA
 ## Problema conocido de la herramienta
 
 Next 16.4.6 en Windows genera los archivos de prefetch por segmento como carpetas (`__next.explore/__PAGE__.txt`) por usar `\` en las rutas; `scripts/fix-export-segments.ts` (postbuild) los aplana al nombre esperado. En Linux/macOS no hace nada.
+
+## Capas de la aplicación
+
+```
+src/app/                 rutas (export estático)
+src/components/
+  ui/                    sistema de diseño: Panel, Controls, Display, Interactive (Tooltip, Button), Icon (Lucide)
+  data/                  DataGate/ChunkGate, controles ligados al estado, ControlBar, CriterionPicker, ExportButtons
+  charts/                HorizonChart (perfil + trayectorias), TimeCharts (curvas y franjas por tramos), Bars
+  home/ explore/ timeline/ comparador/ engineer/ regret/ evidence/ design/   vistas
+src/lib/
+  contract/              constantes del dominio, esquemas zod + tipos, validación semántica
+  data/                  split/assemble, manifiesto, cargador con SHA-256, selectores por tupla, proveedor
+  science/               decision (outcome, recuentos, regret), states (tramos, recuentos), metrics, demo, evidence
+  state/                 selección global y sincronización con la URL
+  export.ts format.ts labels.ts figure.ts nav.ts
+tests/                   Vitest sobre datos auténticos
+e2e/                     Playwright sobre el export estático (o un despliegue)
+```
+
+## Pruebas
+
+- Unitarias/datos (Vitest): integridad, contrato, coherencia métricas↔estados y robustness↔casos, caso W2·0 m, exportes, evidencias, figura, estado/URL.
+- E2E (Playwright, Edge del sistema): rutas, estado compartido, 24 combinaciones del comparador, caso demo, reproductor, mapa, alturas, descargas, integridad, móvil.

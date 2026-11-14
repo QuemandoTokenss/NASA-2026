@@ -61,3 +61,9 @@
 
 - Pulido: sin desbordamiento horizontal en todas las rutas a 1440 y 375 px; cabeceras de panel adaptables; área de pulsación de marcadores.
 - QA: Playwright (`e2e/`, Edge del sistema, export estático servido sin red) — 32/32; Vitest 63/63; tsc y ESLint limpios. Ver `QA_REPORT.md` (incluye defectos corregidos y lo no verificado).
+
+## F12 — Entrega (2026-11-14)
+
+- `vercel.json` + `.vercelignore`; `vercel deploy --prod` → https://site-regret.vercel.app (alias de producción). Comprobado: 7 rutas 200, 404 propio, manifest/core 200, prefetch de segmentos 200, SHA-256 del paquete servido = `e7c8984b…`; Playwright 32/32 con `E2E_BASE_URL` contra producción.
+- Documentación actualizada: README (ejecución, verificación, despliegue, demo offline), ARCHITECTURE, DECISIONS (D14–D16), QA_REPORT.
+- Siguiente (si se retoma): prueba en segundo portátil sin red, auditoría de accesibilidad con lector de pantalla, ES/EN (P2), mover el proyecto a la carpeta definitiva del equipo y configurar un remoto Git.

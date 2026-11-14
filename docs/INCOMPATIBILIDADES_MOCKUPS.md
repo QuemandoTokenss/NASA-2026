@@ -28,7 +28,7 @@ Los mockups son **referencia visual**, no fuente de datos. Esta tabla registra c
 
 ## Timeline
 
-| Mockup | Realidad | Resolución (fase 2) |
+| Mockup | Realidad | Resolución |
 |---|---|---|
 | Sol hasta 62,3° de elevación | Imposible a ~89,5° S | Series nominales reales `ephemerides[W].sites[S][H]` |
 | Amanecer/atardecer al minuto | `eventos_acotados.json`: intervalos de 10 min | Mostrar `earliest_utc–latest_utc` |
@@ -37,7 +37,7 @@ Los mockups son **referencia visual**, no fuente de datos. Esta tabla registra c
 
 ## Comparador A vs B
 
-| Mockup | Realidad | Resolución (fase 2) |
+| Mockup | Realidad | Resolución |
 |---|---|---|
 | Puntuación 88/100 vs 81/100, barras 0–100 | No hay puntuación agregada | Un criterio a la vez, en horas, con `D_hours` |
 | Métricas «elevación solar máx.», pendiente y horizonte como criterio | 4 criterios del motor | Selector de criterio previo |
@@ -45,7 +45,7 @@ Los mockups son **referencia visual**, no fuente de datos. Esta tabla registra c
 
 ## Engineer
 
-| Mockup | Realidad | Resolución (fase 2) |
+| Mockup | Realidad | Resolución |
 |---|---|---|
 | Slider 0–50 m, altura óptima 18–30 m | 0, 2 y 10 m | Control discreto de 3 alturas |
 | Tipo, diámetro, albedo, material | No modelados | Omitidos |
@@ -53,7 +53,7 @@ Los mockups son **referencia visual**, no fuente de datos. Esta tabla registra c
 
 ## Regret Lab
 
-| Mockup | Realidad | Resolución (fase 2) |
+| Mockup | Realidad | Resolución |
 |---|---|---|
 | Monte Carlo 1 000, curvas gaussianas μ/σ | 4 perturbaciones propias + 5 clones | Lista de casos por familia |
 | «Prob. de ser mejor 92 %», «Robustez alta» | Prohibido convertir frecuencias en probabilidad | Conteos `same_winner_count/evaluated_count`, empates aparte, `null` = no aplicable |

@@ -7,6 +7,8 @@ import { defineConfig, devices } from "@playwright/test";
  */
 const PORT = 4174;
 const channel = process.env.PW_CHANNEL ?? "msedge";
+/** E2E_BASE_URL=https://… prueba un despliegue en lugar del export local. */
+const remote = process.env.E2E_BASE_URL;
 
 export default defineConfig({
   testDir: "e2e",
@@ -16,16 +18,18 @@ export default defineConfig({
   workers: 4,
   reporter: [["list"]],
   use: {
-    baseURL: `http://127.0.0.1:${PORT}`,
+    baseURL: remote ?? `http://127.0.0.1:${PORT}`,
     channel,
     trace: "off",
   },
-  webServer: {
-    command: `node scripts/serve-static.ts out ${PORT}`,
-    url: `http://127.0.0.1:${PORT}/`,
-    reuseExistingServer: false,
-    timeout: 30_000,
-  },
+  webServer: remote
+    ? undefined
+    : {
+        command: `node scripts/serve-static.ts out ${PORT}`,
+        url: `http://127.0.0.1:${PORT}/`,
+        reuseExistingServer: false,
+        timeout: 30_000,
+      },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], channel, viewport: { width: 1920, height: 1080 } }, testIgnore: /responsive\.spec\.ts/ },
     { name: "mobile", use: { channel, viewport: { width: 375, height: 812 }, isMobile: false, hasTouch: true }, testMatch: /responsive\.spec\.ts/ },

@@ -16,6 +16,7 @@ Prioridad: P0 debe funcionar · P1 muy importante · P2 mejora. Estado: ✅ hech
 | 10 | F9 Integración | Flujo completo, URL validada, exportación JSON/CSV | P1 | ✅ |
 | 11 | F10 Pulido | Fidelidad a mockups, 1920/1440/móvil, microinteracciones | P1 | ✅ |
 | 12 | F11 QA | Tests de datos/ciencia ampliados + E2E Playwright; QA_REPORT | P0 | ✅ |
-| 13 | F12 Entrega | typecheck/lint/test/build, comprobación de rutas y estáticos, Vercel preparado/desplegado | P0 | ⬜ |
+| 13 | F12 Entrega | typecheck/lint/test/build, comprobación de rutas y estáticos, Vercel preparado/desplegado | P0 | ✅ |
 | 14 | P2 | Inglés (i18n) — no abordado: se prioriza P0/P1 | P2 | ⬜ |
-| 15 | P2 | Escena 3D ilustrativa | P2 | ⬜ |
+| 15 | P2 | Escena 3D ilustrativa — no abordada | P2 | ⬜ |
+| 16 | Pendiente | Prueba en segundo portátil sin red; auditoría con lector de pantalla y contraste WCAG | P1 | ⬜ |
