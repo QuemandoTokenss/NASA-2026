@@ -21,16 +21,33 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your mission can handle 24 hours without sunlight. Where would you land?");
     await expect(page.getByText("illustrative limit for this demo")).toBeVisible();
     await expect(page.getByText(/14 Dec 2026 – 13 Jan 2027 UTC/)).toBeVisible();
-    // Paso 1: valores de referencia a 0 m, del paquete.
+    // Paso 1 · Elegir: antes de elegir no se enseña ninguna cifra, ningún veredicto ni ningún gráfico.
+    expect(await hours(page, "A")).toBe("?");
+    expect(await hours(page, "B")).toBe("?");
+    await expect(page.locator("[data-compliance]")).toHaveCount(0);
+    await expect(page.getByTestId("demo-strips-panel")).toHaveCount(0);
+    await expect(page.getByTestId("demo-regret")).toHaveCount(0);
+    await expect(page.getByRole("listitem").filter({ hasText: "1 · Choose" })).toHaveAttribute("aria-current", "step");
+    // Salidas de cada pantalla: explicación en lenguaje llano y evidencia.
+    await expect(page.getByTestId("demo-evidence")).toHaveAttribute("href", /\/evidencia\/$/);
+    await page.getByTestId("demo-why").click();
+    await expect(page.getByTestId("demo-plain-explanation")).toContainText("any mountain in the way can hide it");
+    await page.getByTestId("demo-why").click();
+    await expect(page.getByTestId("demo-why-panel")).toHaveCount(0);
+    // Paso 2 · Descubrir: valores de referencia a 0 m, del paquete.
+    await page.getByTestId("demo-card-B").click();
+    await expect(page.getByTestId("demo-choice-B")).toHaveText("Your choice");
+    await expect(page.getByRole("listitem").filter({ hasText: "2 · Discover" })).toHaveAttribute("aria-current", "step");
     expect(await hours(page, "A")).toBe(hm(summary("A", 0, "nominal")));
     expect(await hours(page, "B")).toBe(hm(summary("B", 0, "nominal")));
     expect(await hours(page, "A")).toBe("38 h 40 min");
     expect(await compliance(page)).toEqual(["exceeds", "meets"]);
-    await page.getByTestId("demo-card-B").click();
-    await expect(page.getByTestId("demo-choice-B")).toHaveText("Your choice");
     await expect(page.getByTestId("demo-message")).toContainText("Site B stays within the limit");
-    // Paso 2: relieve alternativo, misma fecha, altura y elección.
+    await expect(page.getByTestId("demo-best-reference")).toHaveText("With this terrain map it is the better of the two options.");
+    await expect(page.getByTestId("demo-strips")).toBeVisible();
+    // Paso 3 · Cambiar el terreno: relieve alternativo, misma fecha, altura y elección. El giro es el regret.
     await page.getByRole("button", { name: "Test another terrain model" }).click();
+    await expect(page.getByRole("listitem").filter({ hasText: "3 · Change the terrain" })).toHaveAttribute("aria-current", "step");
     await expect(page.getByTestId("demo-scenario")).toContainText("Alternative terrain · team hypothesis");
     await expect(page.getByTestId("demo-scenario")).toContainText("Observer height: 0 m");
     expect(await hours(page, "A")).toBe("32 h 30 min");
@@ -39,11 +56,16 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await expect(page.getByTestId("demo-choice-B")).toBeVisible();
     await expect(page.getByTestId("demo-message")).toContainText(`Keeping B means ${hm(regretB)} more without sunlight than choosing A in this scenario.`);
     await expect(page.getByTestId("demo-message")).toContainText("16 h 30 min");
+    await expect(page.getByTestId("demo-regret-value")).toHaveText(hm(regretB));
+    await expect(page.getByTestId("demo-regret")).toContainText("the price of having chosen with a terrain map that turned out to be different");
+    await expect(page.getByTestId("demo-best-choice")).toHaveText("Best choice with the reference map: Site B · with the alternative map: Site A");
     // «¿Por qué cambió?»: perfil de horizonte del mismo sitio y altura, enlace a Evidencia.
     await page.getByTestId("demo-why").click();
     await expect(page.getByTestId("demo-why-panel").getByRole("link", { name: /Evidence/ })).toBeVisible();
-    // Paso 3: solo cambia la altura.
+    // Extra: solo cambia la altura.
     await page.getByRole("button", { name: "Raise the observer to 2 m" }).click();
+    await expect(page.getByTestId("demo-extra-step")).toHaveAttribute("aria-current", "step");
+    await expect(page.getByTestId("demo-regret")).toHaveCount(0);
     await expect(page.getByTestId("demo-scenario")).toContainText("Alternative terrain · team hypothesis");
     await expect(page.getByTestId("demo-scenario")).toContainText("Observer height: 2 m");
     expect(await hours(page, "A")).toBe("0 h");
@@ -57,7 +79,7 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await page.getByRole("button", { name: "Restart demo" }).click();
     await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "0");
     await expect(page.getByTestId("demo-choice-B")).toHaveCount(0);
-    expect(await hours(page, "A")).toBe("38 h 40 min");
+    expect(await hours(page, "A")).toBe("?");
     await noHorizontalOverflow(page);
     expect(errors).toEqual([]);
   });
@@ -67,9 +89,14 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await waitForData(page);
     await page.getByTestId("demo-card-A").click();
     await expect(page.getByTestId("demo-message")).toContainText("Sitio A supera el límite");
+    await expect(page.getByTestId("demo-best-reference")).toHaveText("Con este mapa del terreno, Sitio B era mejor opción.");
     await page.getByRole("button", { name: "Prueba otro modelo del terreno" }).click();
     await expect(page.getByTestId("demo-choice-A")).toBeVisible();
     await expect(page.getByTestId("demo-message")).toContainText("Tu elección, A, ahora queda por delante de B (32 h 30 min frente a 49 h), pero aun así supera las 24 h.");
+    // Quien elige A no paga regret, pero ve el del sitio que era mejor con el primer mapa (valores del motor).
+    await expect(page.getByTestId("demo-regret-value")).toHaveText("0 h");
+    await expect(page.getByTestId("demo-regret")).toContainText(`Quien se hubiera quedado con Sitio B pagaría ${hm(regretB)} de más sin Sol.`);
+    await expect(page.getByTestId("demo-best-choice")).toHaveText("Mejor elección con el mapa de referencia: Sitio B · con el mapa alternativo: Sitio A");
     await page.getByRole("button", { name: "Eleva el observador a 2 m" }).click();
     await expect(page.getByTestId("demo-message")).toContainText("Los dos sitios cumplen el límite de Sol a 2 m en esta prueba.");
     await page.getByRole("button", { name: "Reiniciar demo" }).click();

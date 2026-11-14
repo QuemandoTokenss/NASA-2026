@@ -223,10 +223,12 @@ test.describe("Engineer · terreno 3D y obstáculo", () => {
     await waitForData(page);
     const scene = page.getByTestId("terrain-scene");
     await expect(scene.locator("canvas")).toBeVisible({ timeout: 30_000 });
-    // La escena tiene terreno dibujado (no un lienzo vacío).
+    // La escena tiene terreno dibujado (no un lienzo vacío). El visor renderiza bajo demanda y sin
+    // preserveDrawingBuffer: se le pide un dibujo síncrono y se lee el lienzo en la misma tarea.
     await expect
       .poll(() =>
         scene.locator("canvas").evaluate((c: HTMLCanvasElement) => {
+          c.parentElement!.dispatchEvent(new Event("site-regret:render-now"));
           const k = document.createElement("canvas");
           k.width = 64;
           k.height = 64;

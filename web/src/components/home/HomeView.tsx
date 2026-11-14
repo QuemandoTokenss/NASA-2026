@@ -157,12 +157,26 @@ function Body({ core }: { core: Core }) {
           <h1 className="max-w-[17ch] text-4xl leading-[1.05] font-bold tracking-tight text-ink sm:text-6xl">
             {L("¿Dónde alunizarías si solo pudieras aguantar 24 horas sin Sol?", "Where would you land if you could only last 24 hours without sunlight?")}
           </h1>
-          <p className="max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg">
+          <p className="max-w-xl text-base leading-relaxed text-ink sm:text-xl" data-testid="hero-pitch">
             {L(
-              "Dos sitios reales del polo sur. Unos metros de relieve deciden si un punto ve el Sol. Las 24 h son el límite ilustrativo del reto interactivo.",
-              "Two real south-pole sites. A few metres of relief decide whether a point sees the Sun. The 24 h is the illustrative limit of the interactive challenge.",
+              "Elegimos entre dos lugares de la Luna. Las montañas pueden tapar el Sol. Y si nuestro mapa del relieve cambia un poco, la mejor elección también puede cambiar.",
+              "We choose between two places on the Moon. Mountains can block the Sun. And if our map of the terrain changes a little, the best choice can change too.",
             )}
           </p>
+          <ul className="flex flex-wrap gap-3" aria-label={L("Los dos sitios que se comparan", "The two sites being compared")} data-testid="hero-sites">
+            {core.sites.map((s) => {
+              const id = s.id as SiteId;
+              return (
+                <li key={id} className={`flex items-center gap-3 rounded-2xl border bg-black/55 py-2 pr-4 pl-2 backdrop-blur-sm ${SITE_META[id].borderClass}`}>
+                  <SiteTerrainThumb site={s} compact />
+                  <span className="flex flex-col leading-tight">
+                    <span className={`text-lg font-bold ${SITE_META[id].textClass}`}>{SITE_META[id].label}</span>
+                    <span className="text-xs text-ink-muted">Connecting Ridge · ROI {s.roi}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
           <div className="flex flex-wrap items-center gap-3">
             <Link href="/historia/" className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-3.5 text-base font-bold text-bg shadow-[0_10px_40px_-10px_#8fb4ff] transition-transform hover:-translate-y-0.5" data-testid="hero-cta">
               <Icon name="play" className="size-5" /> {L("Probar la misión", "Try the mission")}
@@ -170,10 +184,16 @@ function Body({ core }: { core: Core }) {
             <Link href={`/explore/?${query}`} className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-black/30 px-5 py-3.5 text-base font-semibold text-ink backdrop-blur-sm hover:bg-white/10">
               <Icon name="map" className="size-5" /> {L("Explorar el polo sur", "Explore the south pole")}
             </Link>
-            <Link href="/historia/#pregunta" className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline">
+            <Link href="/historia/#pregunta" className="text-sm text-ink-muted underline underline-offset-4 hover:text-ink">
               {L("Presentación en 7 escenas", "7-scene presentation")}
             </Link>
           </div>
+          <p className="max-w-xl text-xs text-ink-muted">
+            {L(
+              "Dos sitios reales del polo sur lunar, a 648 m uno del otro; miniaturas: relieve medido por LRO (DEM PGDA78). Las 24 h son un límite ilustrativo del reto, no un requisito de misión.",
+              "Two real sites at the lunar south pole, 648 m apart; thumbnails: relief measured by LRO (PGDA78 DEM). The 24 h is an illustrative limit for the challenge, not a mission requirement.",
+            )}
+          </p>
         </div>
         <p className="px-6 pb-3 text-[10px] text-white/75 sm:absolute sm:right-3 sm:bottom-2 sm:max-w-[60%] sm:p-0 sm:text-right">
           {L("Luna: NASA SVS, render con LRO LOLA + LROC WAC (18 ene 2024). Vista de la Luna entera, no de Connecting Ridge.", "Moon: NASA SVS, rendered from LRO LOLA + LROC WAC (18 Jan 2024). Whole-Moon view, not Connecting Ridge.")}

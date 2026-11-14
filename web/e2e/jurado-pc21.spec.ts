@@ -15,6 +15,9 @@ test.describe("PC-21 · Portada", () => {
     await expect(img).toHaveAttribute("src", /hero-moon-svs5187/);
     await expect.poll(() => img.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
     await expect(page.getByTestId("hero-cta")).toHaveAttribute("href", /\/historia\/$/);
+    // Los 10 primeros segundos: dos lugares, las montañas tapan el Sol, la elección puede cambiar; A y B señalados.
+    await expect(page.getByTestId("hero-pitch")).toHaveText("Elegimos entre dos lugares de la Luna. Las montañas pueden tapar el Sol. Y si nuestro mapa del relieve cambia un poco, la mejor elección también puede cambiar.");
+    await expect(page.getByTestId("hero-sites").getByRole("listitem")).toHaveText([/Sitio A.*ROI 4/, /Sitio B.*ROI 6/]);
     const why = page.getByTestId("home-why-b");
     await expect(why).toContainText(hm(summary("B", 0, "nominal").longest_dark_hours));
     await expect(why).toContainText(hm(summary("B", 0, "correlated_plus").longest_dark_hours));

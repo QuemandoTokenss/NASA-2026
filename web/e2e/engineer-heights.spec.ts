@@ -100,7 +100,15 @@ test.describe("Engineer · visibilidad a cualquier altura del deslizador (nomina
       const m = r.url().match(/scenarios\/W1_A_(k\d{3})\.bin/);
       if (m) asked.push(m[1]);
     });
-    for (const v of ["29", "27.5", "24", "21", "18.5", "22", "25.5", "26"]) await slider.fill(v);
+    // El arrastre se emite dentro de la página, en una sola tarea: así la prueba no depende de lo que tarde
+    // cada orden de Playwright en llegar (con la máquina cargada superaban la espera de asentamiento).
+    await slider.evaluate((el: HTMLInputElement, values: string[]) => {
+      const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+      for (const v of values) {
+        setValue.call(el, v);
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }, ["29", "27.5", "24", "21", "18.5", "22", "25.5", "26"]);
     await expectReading(page, "W1", "A", 26, "sun");
     expect(asked).toEqual(["k052"]);
   });
@@ -151,5 +159,21 @@ test.describe("Engineer · visibilidad a cualquier altura del deslizador (nomina
     fail = false;
     await page.getByTestId("height-error").getByRole("button", { name: "Reintentar" }).click();
     await expectReading(page, "W1", "A", 16.5, "sun");
+  });
+
+  test("Evidencia documenta el paquete de alturas: mismo motor, contrastes con el contrato y límites", async ({ page }) => {
+    const manifest = JSON.parse(readFileSync(join(PKG, "manifest.json"), "utf8"));
+    const errors = trackErrors(page);
+    await page.goto("/evidencia/#alturas-engineer");
+    await waitForData(page);
+    const panel = page.getByTestId("heights-evidence");
+    await expect(panel).toContainText("244 = 61 alturas × 2 sitios × 2 ventanas");
+    // La comprobación se hace en el navegador contra el SHA-256 del motor del paquete site-regret/0.1.
+    await expect(panel.getByTestId("heights-engine-match")).toHaveAttribute("data-match", "true");
+    await expect(panel.getByTestId("heights-validation")).toContainText(`${manifest.validation.contrast_passed} de ${manifest.validation.contrast_passed + manifest.validation.contrast_failed} contrastes`);
+    await expect(panel).toContainText("no hay modelo de estructura y no se recomienda ninguna altura");
+    await expect(panel).toContainText("cualquier otra altura es una vista previa sin cálculo");
+    await expect(panel.getByRole("link", { name: /Descargar el manifiesto/ })).toHaveAttribute("href", /engineer-heights\/v1\/manifest\.json$/);
+    expect(errors).toEqual([]);
   });
 });
