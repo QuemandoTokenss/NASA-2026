@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { SITE_IDS, variantFamily, type SiteId } from "@/lib/contract/constants";
 import type { Site } from "@/lib/contract/schema";
 import { useChunk } from "@/lib/data/DataProvider";
@@ -13,37 +12,25 @@ import { useSelection } from "@/lib/state/SelectionProvider";
 import { HorizonChart } from "../charts/HorizonChart";
 import { ChunkGate, DataGate } from "../data/DataGate";
 import { FocusSiteControl, HeightControl, VariantControl } from "../data/SelectionControls";
-import { Toggle } from "../ui/Controls";
 import { Badge, Callout, KeyValueList, Legend, MetricRow, NatureBadge, SiteTag, type LegendItem } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel, PanelSection } from "../ui/Panel";
+import dynamic from "next/dynamic";
 import { ContextMap } from "./ContextMap";
 import { L } from "@/lib/i18n";
 
+const GeoMap = dynamic(() => import("../maps/GeoMap").then((m) => m.GeoMap), {
+  ssr: false,
+  loading: () => <div className="h-[560px] animate-pulse rounded-xl border border-line bg-bg-2" aria-busy="true" />,
+});
+
 const UNAVAILABLE_LAYERS = () => [
-  { label: L("Imagen orbital LROC", "LROC orbital image"), reason: L("No incluida en el paquete", "Not included in the package") },
   { label: L("Iluminación media", "Mean illumination"), reason: L("No incluida en el paquete", "Not included in the package") },
   { label: L("Temperatura", "Temperature"), reason: L("Fuera del modelo científico", "Outside the scientific model") },
-  { label: L("Pendiente (ráster)", "Slope (raster)"), reason: L("Solo el valor en cada punto", "Only the value at each point") },
   { label: L("Zonas de riesgo", "Hazard zones"), reason: L("El modelo no evalúa seguridad", "The model does not assess safety") },
-  { label: L("Vista 3D", "3D view"), reason: L("Prioridad P2", "Priority P2") },
+  { label: L("Ortoimagen NAC individual", "Single NAC orthoimage"), reason: L("Sin producto identificado y comprobado", "No product identified and checked") },
 ];
-
-function LayerRow({ title, source, children, info }: { title: string; source: string; children?: React.ReactNode; info: string }) {
-  return (
-    <div className="flex items-start gap-3 rounded-xl border border-line bg-bg-2/80 p-3">
-      <div className="min-w-0 flex-1">
-        <p className="flex items-center gap-1.5 text-sm text-ink">
-          {title}
-          <InfoTip>{info}</InfoTip>
-        </p>
-        <p className="text-[11px] text-ink-faint">{source}</p>
-      </div>
-      {children}
-    </div>
-  );
-}
 
 function SiteSheet({ site, query }: { site: Site; query: string }) {
   const id = site.id as SiteId;
@@ -162,8 +149,6 @@ function HorizonSummary() {
 
 export function ExploreView() {
   const { selection, dispatch, query, restored } = useSelection();
-  const [showMarkers, setShowMarkers] = useState(true);
-  const [showCoords, setShowCoords] = useState(true);
   const { heightM, variant, focusSite } = selection;
 
   const horizonA = useChunk(restored ? () => loadHorizonChunk("A", heightM) : null, [heightM]);
@@ -179,36 +164,52 @@ export function ExploreView() {
           const focused = getSite(core, focusSite);
           return (
             <>
-              <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)] 2xl:grid-cols-[320px_minmax(0,1fr)_400px]">
-                <Panel title={L("Capas del mapa", "Map layers")} icon="layers" className="lg:row-span-2 2xl:row-span-1">
+              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_400px]">
+                <Panel
+                  title={L("Connecting Ridge · mapa georreferenciado", "Connecting Ridge · georeferenced map")}
+                  icon="map"
+                  actions={
+                    <>
+                      <NatureBadge nature="OBSERVED" />
+                      <Badge tone="neutral">{L("Imágenes orbitales + DEM numérico", "Orbital images + numeric DEM")}</Badge>
+                    </>
+                  }
+                >
+                  <GeoMap sites={core.sites} focusSite={focusSite} onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
+                </Panel>
+
+                <Panel title={L("Ficha del sitio", "Site sheet")} icon="pin" actions={<NatureBadge nature="DERIVED" />}>
                   <div className="flex flex-col gap-5">
-                    <PanelSection title={L("Capa base (obligatoria)", "Base layer (required)")}>
-                      <LayerRow
-                        title={L("Relieve DEM LOLA", "LOLA DEM relief")}
-                        source={L("NASA PGDA78 Site01 · figura del motor, 40 m/píxel", "NASA PGDA78 Site01 · engine figure, 40 m/pixel")}
-                        info={L(
-                          "Superficie de 5 m/píxel de PGDA78 promediada a 40 m/píxel para visualizar. Es contexto: el horizonte se calcula con el DEM completo, no con esta imagen.",
-                          "PGDA78 5 m/pixel surface averaged to 40 m/pixel for display. It is context: the horizon is computed with the full DEM, not with this image.",
-                        )}
-                      >
-                        <Icon name="lock" className="mt-1 size-4 text-ink-faint" title={L("Siempre visible", "Always visible")} />
-                      </LayerRow>
-                    </PanelSection>
-                    <PanelSection title="Superposiciones">
-                      <div className="flex flex-col gap-3">
-                        <Toggle label={L("Marcadores A / B", "A / B markers")} description={L("sites[].x_m, y_m (ROI 4 y 6)", "sites[].x_m, y_m (ROI 4 and 6)")} checked={showMarkers} onChange={setShowMarkers} />
-                        <Toggle label={L("Coordenadas X/Y al pasar", "X/Y coordinates on hover")} description={L("Proyección estereográfica polar (m)", "Polar stereographic projection (m)")} checked={showCoords} onChange={setShowCoords} />
-                      </div>
-                    </PanelSection>
+                    <FocusSiteControl />
+                    {focused ? <SiteSheet site={focused} query={query} /> : <Callout tone="danger">{L("Sitio no encontrado en el paquete.", "Site not found in the package.")}</Callout>}
+                  </div>
+                </Panel>
+              </div>
+
+              <details className="group rounded-2xl border border-line bg-surface/85">
+                <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-sm font-semibold text-ink">
+                  <Icon name="layers" className="size-5 text-ink-muted" />
+                  {L("Figura original del motor (referencia)", "Original engine figure (reference)")}
+                  <Badge tone="neutral">{L("Derivado del DEM · solo visual", "Derived from the DEM · visual only")}</Badge>
+                  <Icon name="chevronDown" className="ml-auto size-4 text-ink-muted transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="grid gap-5 border-t border-line p-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+                  <ContextMap sites={core.sites} focusSite={focusSite} showMarkers showCoords onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
+                  <div className="flex flex-col gap-4">
                     <PanelSection title={L("Leyenda (elevación)", "Legend (elevation)")}>
                       <div className="h-3 rounded-full" style={{ background: `linear-gradient(90deg, ${CONTEXT_LEGEND.stops.join(", ")})` }} />
                       <div className="mt-1.5 flex justify-between text-xs text-ink-muted tabular">
                         <span>{formatNumber(CONTEXT_LEGEND.darkM, 0)} m</span>
                         <span>{formatNumber(CONTEXT_LEGEND.lightM, 0)} m</span>
                       </div>
-                      <p className="mt-1 text-[11px] text-ink-faint">{L(`${CONTEXT_LEGEND.caption}. Extremos tomados del pie de la figura original.`, "Terrain height above the reference sphere (averaged at 40 m/pixel). End values taken from the caption of the original figure.")}</p>
+                      <p className="mt-1 text-[11px] text-ink-faint">
+                        {L(
+                          "Figura SVG generada por el motor a partir del DEM PGDA78 promediado a 40 m/píxel. No es una fotografía orbital ni una imagen generada: es una representación calculada del DEM, y no es la entrada del cálculo de horizontes.",
+                          "SVG figure produced by the engine from the PGDA78 DEM averaged to 40 m/pixel. It is neither an orbital photograph nor a generated image: it is a computed rendering of the DEM, and it is not the input of the horizon computation.",
+                        )}
+                      </p>
                     </PanelSection>
-                    <PanelSection title={L("No disponibles en este paquete", "Not available in this package")}>
+                    <PanelSection title={L("Aún no disponibles", "Not available yet")}>
                       <ul className="flex flex-col gap-1.5 text-sm">
                         {UNAVAILABLE_LAYERS().map((l) => (
                           <li key={l.label} className="flex items-baseline justify-between gap-3 text-ink-faint">
@@ -219,29 +220,8 @@ export function ExploreView() {
                       </ul>
                     </PanelSection>
                   </div>
-                </Panel>
-
-                <Panel
-                  title={L("Connecting Ridge · contexto del DEM", "Connecting Ridge · DEM context")}
-                  icon="map"
-                  className="order-first lg:order-none"
-                  actions={
-                    <>
-                      <NatureBadge nature="OBSERVED" />
-                      <Badge tone="neutral">{L("Solo visual", "Visual only")}</Badge>
-                    </>
-                  }
-                >
-                  <ContextMap sites={core.sites} focusSite={focusSite} showMarkers={showMarkers} showCoords={showCoords} onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
-                </Panel>
-
-                <Panel title={L("Ficha del sitio", "Site sheet")} icon="pin" className="lg:col-start-2 2xl:col-start-auto" actions={<NatureBadge nature="DERIVED" />}>
-                  <div className="flex flex-col gap-5">
-                    <FocusSiteControl />
-                    {focused ? <SiteSheet site={focused} query={query} /> : <Callout tone="danger">{L("Sitio no encontrado en el paquete.", "Site not found in the package.")}</Callout>}
-                  </div>
-                </Panel>
-              </div>
+                </div>
+              </details>
 
               <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_400px]">
                 <Panel
