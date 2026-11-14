@@ -1,9 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import {
   DEFAULT_SELECTION,
+  URL_KEYS,
   parseSelection,
   selectionReducer,
   serializeSelection,
@@ -28,6 +29,10 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   const [selection, dispatch] = useReducer(selectionReducer, DEFAULT_SELECTION);
   const [rejectedParams, setRejected] = useState<string[]>([]);
   const [restored, setRestored] = useState(false);
+  const selectionRef = useRef(selection);
+  useEffect(() => {
+    selectionRef.current = selection;
+  }, [selection]);
   const pathname = usePathname();
 
   // Restaurar desde la URL al cargar y al navegar con atrás/adelante.
@@ -44,6 +49,20 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const query = useMemo(() => serializeSelection(selection), [selection]);
+
+  // Navegación interna hacia una URL con parámetros explícitos (p. ej. el acceso
+  // al caso demostrativo): adoptar esa selección. Si la URL no trae parámetros
+  // (logo, enlaces sin query), se conserva la selección actual.
+  useEffect(() => {
+    if (!restored) return;
+    const params = new URLSearchParams(window.location.search);
+    if (![...params.keys()].some((k) => (Object.values(URL_KEYS) as string[]).includes(k))) return;
+    const { selection: parsed, rejected } = parseSelection(params);
+    if (serializeSelection(parsed) !== serializeSelection(selectionRef.current)) {
+      dispatch({ type: "replace", value: parsed });
+      setRejected(rejected);
+    }
+  }, [pathname, restored]);
 
   // Reflejar el estado en la URL (sin crear entradas de historial). Solo tras
   // restaurar: antes, la selección es la de por defecto y sobrescribiría la URL

@@ -49,3 +49,10 @@
 - Implementado: `EvidenceView` reescrita + `src/lib/science/evidence.ts`: KPIs reales, inventario de 18 fuentes agrupado con enlaces y hashes, metodología en 7 pasos con etiquetas de naturaleza, 414 comprobaciones clasificadas en 6 categorías (8/4/2/40/120/240), tabla de contraste con Horizons (Δ en segundos de arco), convergencia espacial y temporal y efecto del refinamiento, parámetros e hipótesis, explicación de qué representa y qué no el RMS, naturaleza de los datos, referencias con DOI, límites del pasaporte, integridad y descargas (21 originales + manifest). Se publican además 4 JSON de validación originales.
 - Pruebas: `tests/evidence.test.ts` (414 = categorías; máximo del contraste = pasaporte). 63 tests.
 - Comprobado en navegador: sin errores; convergencia espacial máx. 0,0549° (B · 0 m), temporal 5 min, refinamiento 50 min y 6/6 ganadores sin cambios.
+
+## F8 — Dashboard y F9 — Integración (2026-11-14)
+
+- Dashboard (`HomeView`): hero con la pregunta del proyecto y luna ILUSTRATIVA rotulada, cifras reales del paquete (2 sitios, 2 ventanas, 3 alturas, 10 superficies, 120 escenarios), recorrido 01/02/03, fichas de A y B con recorte DEM real y métricas nominales a 0 m por ventana, tarjeta del caso demostrativo con valores del paquete y CTA a `/regret-lab/…#demo`, ventanas y ganadores nominales del criterio principal, indicadores (414, 8, 18, 24) y qué hace única la aplicación, accesos a las 6 secciones.
+- Integración: al navegar internamente hacia una URL con parámetros explícitos, el estado adopta esa selección (antes se ignoraba); enlaces sin parámetros conservan la selección. Exportación JSON/CSV en Comparador, Regret Lab, Timeline y Engineer. Eliminadas las pantallas provisionales `phase2/`.
+- Comprobado en navegador: desde el Dashboard (estado W1·2 m·published_0002) «Iniciar caso demostrativo» abre Regret Lab con W2·0 m·criterio y la guía en el paso 1 con A 38 h 40 min / B 14 h 40 min.
+- No abordado: bilingüismo ES/EN (P2).
