@@ -14,3 +14,9 @@
 - Comprobado: `tsc`, ESLint, 47 tests Vitest, build estático, revisión en navegador (escritorio y 375 px), error de integridad provocado y recuperación.
 - Comprobación cruzada sobre el paquete: las 720 métricas (6 × 120 escenarios) se reproducen exactamente desde `state_codes`; los recuentos de `robustness` coinciden con los casos en las 48 familias.
 - Pendiente: fases 2–12.
+
+## F2 — Comparador A vs B (2026-11-14)
+
+- Implementado: `src/components/comparador/ComparadorView.tsx` (tarjetas A/B con recorte real de la figura DEM y anillo de fracción REAL de la ventana, diferencias clave, tabla por métrica con barras en horas, conclusión bloqueada hasta elegir criterio, frase `summary_es`, regret A/B, superficie alternativa, matriz de 6 combinaciones, D por superficie, horizontes A/B), exportación JSON/CSV (`src/lib/export.ts`), Tooltip/Button/LinkButton, CriterionPicker, ControlBar, iconos Lucide.
+- Corregido: la URL compartida se sobrescribía con valores por defecto en desarrollo (StrictMode); ahora se escribe solo tras restaurar. Tooltips ocultos causaban scroll horizontal; ahora son `fixed` y acotados.
+- Comprobado en navegador (1920×1080): W2·0 m·racha sin Sol → B gana (A 38 h 40 min, B 14 h 40 min, frase del motor); `correlated_plus` → gana A, regret de B 16 h 30 min; W1·2 m → empate con regret 0. Sin desbordamiento horizontal.

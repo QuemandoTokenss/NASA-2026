@@ -76,7 +76,17 @@ export const metricsSchema = z.looseObject({
   longest_dark_hours: finite,
   longest_no_earth_hours: finite,
 });
-export type MetricKey = keyof z.infer<typeof metricsSchema>;
+export const METRIC_KEYS = [
+  "duration_hours",
+  "known_hours",
+  "unknown_hours",
+  "sun_hours",
+  "dte_center_hours",
+  "joint_hours",
+  "longest_dark_hours",
+  "longest_no_earth_hours",
+] as const;
+export type MetricKey = (typeof METRIC_KEYS)[number];
 
 export const intervalSchema = z.looseObject({
   start: utc,

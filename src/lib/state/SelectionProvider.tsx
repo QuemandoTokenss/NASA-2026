@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
 import {
   DEFAULT_SELECTION,
   parseSelection,
@@ -28,7 +28,6 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   const [selection, dispatch] = useReducer(selectionReducer, DEFAULT_SELECTION);
   const [rejectedParams, setRejected] = useState<string[]>([]);
   const [restored, setRestored] = useState(false);
-  const hydrated = useRef(false);
   const pathname = usePathname();
 
   // Restaurar desde la URL al cargar y al navegar con atrás/adelante.
@@ -40,21 +39,22 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       setRestored(true);
     };
     restore();
-    hydrated.current = true;
     window.addEventListener("popstate", restore);
     return () => window.removeEventListener("popstate", restore);
   }, []);
 
   const query = useMemo(() => serializeSelection(selection), [selection]);
 
-  // Reflejar el estado en la URL (sin crear entradas de historial).
+  // Reflejar el estado en la URL (sin crear entradas de historial). Solo tras
+  // restaurar: antes, la selección es la de por defecto y sobrescribiría la URL
+  // compartida (en StrictMode los efectos se ejecutan dos veces).
   useEffect(() => {
-    if (!hydrated.current) return;
+    if (!restored) return;
     const next = `?${query}`;
     if (window.location.search !== next) {
       window.history.replaceState(window.history.state, "", `${window.location.pathname}${next}${window.location.hash}`);
     }
-  }, [query, pathname]);
+  }, [query, pathname, restored]);
 
   const stableDispatch = useCallback((a: SelectionAction) => dispatch(a), []);
   const value = useMemo(

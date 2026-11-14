@@ -41,6 +41,7 @@ describe("formato de etiquetas", () => {
     expect(formatHoursMinutes(38.666666666666664)).toBe("38 h 40 min");
     expect(formatHoursMinutes(528.6666666666666)).toBe("528 h 40 min");
     expect(formatHoursMinutes(0)).toBe("0 h");
+    expect(formatHoursMinutes(1 / 6)).toBe("10 min");
     expect(formatHoursMinutes(null)).toBe("—");
   });
   it("-0 se muestra como 0 y los ausentes como guion, nunca como 0", () => {

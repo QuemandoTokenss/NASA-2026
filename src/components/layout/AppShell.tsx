@@ -118,7 +118,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Saltar al contenido
       </a>
       <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 max-w-[1880px] items-center gap-4 px-4 sm:px-6">
           <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="SITE REGRET — inicio">
             <Logo />
             <span className="flex flex-col leading-none">
@@ -152,7 +152,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : null}
       </header>
 
-      <main id="contenido" className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <main id="contenido" className="mx-auto w-full max-w-[1880px] flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {rejectedParams.length ? (
           <div className="mb-4">
             <Callout tone="warn" icon="alert" title="Parámetros de URL ignorados">
@@ -164,7 +164,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </main>
 
       <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-[1600px] flex-col gap-2 px-4 py-5 text-xs text-ink-faint sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-[1880px] flex-col gap-2 px-4 py-5 text-xs text-ink-faint sm:px-6 md:flex-row md:items-center md:justify-between">
           <p>
             SITE REGRET · equipo QuemandoTokens · NASA International Space Apps Challenge 2026. Datos: NASA PGDA, LRO-LOLA, JPL/NAIF
             DE421 y JPL Horizons. No implica respaldo de la NASA ni aptitud operacional.

@@ -53,12 +53,17 @@ export function NatureBadge({ nature }: { nature: Nature }) {
 }
 
 /** Resultado de una comparación. TIE y UNKNOWN tienen apariencia propia. */
-export function WinnerTag({ winner }: { winner: Winner }) {
-  if (winner === "A" || winner === "B") return <Badge tone={winner === "A" ? "a" : "b"}>{WINNER_LABEL[winner]}</Badge>;
-  if (winner === "TIE") return <Badge tone="neutral">{WINNER_LABEL.TIE}</Badge>;
+export function WinnerTag({ winner, short = false }: { winner: Winner; short?: boolean }) {
+  if (winner === "A" || winner === "B") return <Badge tone={winner === "A" ? "a" : "b"}>{short ? winner : WINNER_LABEL[winner]}</Badge>;
+  if (winner === "TIE")
+    return (
+      <Badge tone="neutral" title={WINNER_LABEL.TIE}>
+        {short ? "Empate" : WINNER_LABEL.TIE}
+      </Badge>
+    );
   return (
-    <Badge tone="warn" icon="alert">
-      {WINNER_LABEL.UNKNOWN}
+    <Badge tone="warn" icon="alert" title={WINNER_LABEL.UNKNOWN}>
+      {short ? "?" : WINNER_LABEL.UNKNOWN}
     </Badge>
   );
 }

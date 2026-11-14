@@ -18,7 +18,8 @@ export function formatHoursMinutes(h: number | null | undefined): string {
   const hh = Math.floor(total / 60);
   const mm = total % 60;
   const sign = h < 0 && total > 0 ? "−" : "";
-  return mm === 0 ? `${sign}${hh} h` : `${sign}${hh} h ${mm} min`;
+  if (mm === 0) return `${sign}${hh} h`;
+  return hh === 0 ? `${sign}${mm} min` : `${sign}${hh} h ${mm} min`;
 }
 
 export function formatDeg(v: number | null | undefined, digits = 2): string {
