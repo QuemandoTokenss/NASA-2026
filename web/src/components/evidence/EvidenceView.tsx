@@ -179,7 +179,6 @@ function ChecksPanel({ checks }: { checks: CheckRow[] }) {
     const rows = checks.filter((r) => categorizeCheck(r.name) === c.id);
     return { ...c, total: rows.length, passed: rows.filter((r) => r.passed).length };
   }).filter((c) => c.total > 0);
-  const max = Math.max(...counts.map((c) => c.total));
   const passed = checks.filter((c) => c.passed).length;
   return (
     <Panel title={`${L("Comprobaciones guardadas", "Stored checks")} · ${passed}/${checks.length}`} icon="check" actions={<InfoTip>{L("validacion/pruebas.json de la ejecución documentada. Demuestran coherencia interna de aquella ejecución; no certifican la exactitud del DEM ni el producto web.", "validacion/pruebas.json from the documented run. They show the internal consistency of that run; they do not certify the DEM accuracy or the web product.")}</InfoTip>}>
@@ -193,7 +192,7 @@ function ChecksPanel({ checks }: { checks: CheckRow[] }) {
               </span>
             </div>
             <div className="mt-1 h-2 overflow-hidden rounded-full bg-surface-3/70">
-              <div className="h-full rounded-full bg-ok/80" style={{ width: `${(c.total / max) * 100}%` }} />
+              <div className="h-full rounded-full bg-ok/80" style={{ width: `${(c.passed / c.total) * 100}%` }} />
             </div>
             <p className="mt-1 text-[11px] text-ink-faint">{c.description}</p>
           </li>
