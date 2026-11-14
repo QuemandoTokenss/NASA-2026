@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/*
+ * SITE REGRET · sistema de diseño
+ * Base: mockup Explore v2 (azul noche, paneles con borde sutil, cabecera con
+ * pestañas). La interfaz usa un acento neutro azul acero; los colores
+ * saturados quedan reservados a los DATOS para que nunca compitan con ellos.
+ */
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  /* Superficies */
+  --color-bg: #050912;
+  --color-bg-2: #08101e;
+  --color-surface: #0b1424;
+  --color-surface-2: #0f1b30;
+  --color-surface-3: #14233d;
+  --color-line: #1c2b46;
+  --color-line-strong: #2a3f63;
+
+  /* Texto */
+  --color-ink: #e8eef8;
+  --color-ink-muted: #9aaac4;
+  --color-ink-faint: #64748f;
+
+  /* Interfaz (no son colores de datos) */
+  --color-accent: #8fb4ff;
+  --color-accent-strong: #3a6ff0;
+  --color-accent-surface: #12254a;
+
+  /* Datos: sitios e incertidumbre */
+  --color-site-a: #ff8a1f;
+  --color-site-a-soft: #ff8a1f26;
+  --color-site-b: #22d3ee;
+  --color-site-b-soft: #22d3ee26;
+  --color-uncertainty: #a78bfa;
+  --color-uncertainty-soft: #a78bfa26;
+
+  /* Datos: estados de visibilidad (state_names 0..4) */
+  --color-state-neither: #2b3650;
+  --color-state-sun: #f5c518;
+  --color-state-earth: #4f7cff;
+  --color-state-both: #3ccf7a;
+  --color-state-unknown: #7b8496;
+
+  /* Mensajes */
+  --color-ok: #3ccf7a;
+  --color-warn: #f5b84a;
+  --color-danger: #ff5d6c;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, #0f2244 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, #0c1a33 0%, transparent 55%),
+    var(--color-bg);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #3a6ff055;
+}
+
+/* Foco visible y consistente para teclado */
+:where(a, button, select, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Trama para estados desconocidos: nunca depender solo del color */
+.pattern-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-state-unknown) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

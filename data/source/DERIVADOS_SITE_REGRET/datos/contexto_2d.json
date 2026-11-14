@@ -1,0 +1,14 @@
+{
+  "image": "figuras/mapa_sitios.svg",
+  "bounds_xy_m": [
+    -13000.0,
+    -14000.0,
+    -9000.0,
+    -10000.0
+  ],
+  "frame": "MOON_ME_DE421",
+  "display_pixel_size_m": 40,
+  "resampling": "average",
+  "role": "visual_only_not_horizon_input",
+  "source": "NASA PGDA78 Site01"
+}

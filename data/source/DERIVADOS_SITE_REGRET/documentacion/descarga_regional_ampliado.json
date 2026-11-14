@@ -1,0 +1,18 @@
+{
+  "id": "DEM_LEJANO_240M",
+  "url": "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_60S_240MPP_ADJ.TIF",
+  "path": "datos_originales/PGDA90_contexto/LDEM_60S_240MPP_ADJ.TIF",
+  "purpose": "Tercer nivel de relieve para horizonte lejano hasta 400 km",
+  "kind": "tiff",
+  "bytes": 218961039,
+  "sha256": "3f9663257b63022f2b0d5a623482ff3cadddceb91594a4e4ca14a94d8cec8b34",
+  "verification_status": "BYTES_VERIFIED",
+  "downloaded_at_utc": "2026-11-13T23:41:12.598117+00:00",
+  "last_modified": "Fri, 07 Jul 2023 22:04:03 GMT",
+  "etag": "W/\"d0d148f-18932623038\"",
+  "download_method": "Verified HTTP byte ranges; original bytes concatenated without data transformation",
+  "provider": "NASA GSFC / LRO-LOLA",
+  "source_page": "https://pgda.gsfc.nasa.gov/products/90",
+  "license_note": "Citar Barker et al. 2023 y DOI 10.60903/gsfcpgda-lola-spole",
+  "processing_steps": []
+}

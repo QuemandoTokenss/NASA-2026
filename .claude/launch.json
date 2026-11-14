@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site-regret-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve-static.ts", "out", "4173"],
+      "port": 4173
+    },
+    {
+      "name": "site-regret-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    }
+  ]
+}

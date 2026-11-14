@@ -1,0 +1,2 @@
+# Originales científicos: bytes exactos (sus SHA-256 deben coincidir siempre)
+data/source/** -text

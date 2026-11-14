@@ -1,0 +1,16 @@
+{
+  "scenarios": 120,
+  "nominal_scenarios": 12,
+  "unknown_hours_total_nominal": 0.0,
+  "validation": {
+    "passed": 414,
+    "failed": 0,
+    "horizons_reference_rows": 8,
+    "max_horizons_az_delta_deg": 4.221103836243856e-06,
+    "max_horizons_el_delta_deg": 9.660818442558394e-06
+  },
+  "spatial_max_deg": 0.05487851329812404,
+  "spatial_max_rms_deg": 0.007138050665183521,
+  "temporal_max_metric_difference_hours": 0.08333333333337123,
+  "frontend_json_bytes": 12464735
+}
