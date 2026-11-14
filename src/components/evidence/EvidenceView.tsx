@@ -245,7 +245,7 @@ function Downloads({ manifest }: { manifest: DataManifest }) {
   return (
     <Panel title="Información reproducible (originales sin modificar)" icon="download" footer={`Cada archivo coincide con su SHA-256 en ${manifest.source.hash_list}. manifest.json documenta la división del paquete y su verificación.`}>
       <ul className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
-        <li>
+        <li className="min-w-0">
           <a href={dataUrl(BASE_PATH, "manifest.json")} download className="flex items-start gap-3 rounded-xl border border-accent/40 bg-accent-surface/40 p-3 hover:border-accent">
             <Icon name="json" className="mt-0.5 size-4 shrink-0 text-accent" />
             <span className="min-w-0">
@@ -255,7 +255,7 @@ function Downloads({ manifest }: { manifest: DataManifest }) {
           </a>
         </li>
         {manifest.originals.map((o) => (
-          <li key={o.path}>
+          <li key={o.path} className="min-w-0">
             <a href={dataUrl(BASE_PATH, o.path)} download className="flex items-start gap-3 rounded-xl border border-line bg-bg-2 p-3 hover:border-line-strong hover:bg-surface-2">
               <Icon name="download" className="mt-0.5 size-4 shrink-0 text-ink-muted" />
               <span className="min-w-0">

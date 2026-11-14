@@ -31,12 +31,12 @@ export function Panel({
       className={`flex min-w-0 flex-col rounded-2xl border border-line bg-surface/85 shadow-[0_1px_0_0_#ffffff08_inset,0_20px_40px_-24px_#000] backdrop-blur-sm ${className}`}
     >
       {title ? (
-        <header className="flex items-center gap-3 border-b border-line px-4 py-3 sm:px-5">
+        <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-4 py-3 sm:px-5">
           {icon ? <Icon name={icon} className="size-5 shrink-0 text-ink-muted" /> : null}
           <h2 id={headingId} className="min-w-0 flex-1 text-[15px] font-semibold tracking-tight text-ink">
             {title}
           </h2>
-          {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+          {actions ? <div className="flex max-w-full flex-wrap items-center gap-2">{actions}</div> : null}
         </header>
       ) : null}
       <div className={`min-w-0 flex-1 p-4 sm:p-5 ${bodyClassName}`}>{children}</div>
