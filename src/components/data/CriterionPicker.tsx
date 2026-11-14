@@ -5,6 +5,7 @@ import { CRITERION_META } from "@/lib/labels";
 import { METRIC_META, CRITERION_METRIC } from "@/lib/science/metrics";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { Icon } from "../ui/Icon";
+import { L } from "@/lib/i18n";
 
 /** Estado «01 / CHOOSE»: elegir qué significa «mejor» antes de ver el ganador. */
 export function CriterionPicker({ compact = false }: { compact?: boolean }) {
@@ -14,7 +15,7 @@ export function CriterionPicker({ compact = false }: { compact?: boolean }) {
       <div className="flex items-center gap-2 text-sm text-ink-muted">
         <Icon name="lock" className="size-4 text-accent" />
         <span>
-          <strong className="text-ink">01 · Elige el criterio</strong> antes de ver el resultado.
+          <strong className="text-ink">{L("01 · Elige el criterio", "01 · Choose the criterion")}</strong> {L("antes de ver el resultado.", "before seeing the result.")}
         </span>
       </div>
       <div className={`grid gap-2 ${compact ? "grid-cols-1" : "sm:grid-cols-2"}`}>

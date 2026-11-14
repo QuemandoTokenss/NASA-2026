@@ -18,4 +18,7 @@
 | D14 | 2026-11-14 | Despliegue en Vercel como sitio estático (`vercel.json`, `framework: null`, `out/`), producción en https://site-regret.vercel.app. `qa_entradas.json` se excluye de la subida. | La CLI estaba autenticada y la misión autorizaba desplegar; el archivo excluido contiene rutas locales de un equipo. |
 | D15 | 2026-11-14 | Sin bilingüismo ES/EN en esta entrega. | P2; se priorizó P0/P1 y QA. |
 | D16 | 2026-11-14 | Sin `git push`: no hay remoto configurado ni destino autorizado. | Instrucción de la misión §18. |
+| D17 | 2026-11-14 | Bilingüismo sin biblioteca: idioma en un módulo, textos en pareja `L(es, en)`, tablas `bi()` y remontaje de la interfaz al cambiar de idioma (la selección se conserva). Se reemplaza la decisión D15. | Sin dependencias ni claves desincronizadas; el export estático sigue en español y el cliente adopta `?lang=en` o la preferencia guardada. |
+| D18 | 2026-11-14 | Modo historia `/historia/` como guion de presentación, fuera de la navegación principal (enlace «Presentar»). | El orden de las 7 secciones es el acordado; la historia reutiliza los mismos datos y lleva a Regret Lab, Comparador y Evidencia. |
+| D19 | 2026-11-14 | Auditoría axe-core WCAG 2.1 A/AA como prueba E2E en todas las rutas. | Evita regresiones de contraste y ARIA; no sustituye una prueba con lector de pantalla. |
 

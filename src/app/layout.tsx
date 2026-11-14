@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AppShell } from "@/components/layout/AppShell";
 import { DataProvider } from "@/lib/data/DataProvider";
+import { I18nProvider, LocaleKeyed } from "@/lib/I18nProvider";
 import { SelectionProvider } from "@/lib/state/SelectionProvider";
 import "./globals.css";
 
@@ -19,11 +20,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body>
-        <DataProvider>
-          <SelectionProvider>
-            <AppShell>{children}</AppShell>
-          </SelectionProvider>
-        </DataProvider>
+        <I18nProvider>
+          <DataProvider>
+            <SelectionProvider>
+              <LocaleKeyed>
+                <AppShell>{children}</AppShell>
+              </LocaleKeyed>
+            </SelectionProvider>
+          </DataProvider>
+        </I18nProvider>
       </body>
     </html>
   );

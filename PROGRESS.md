@@ -67,3 +67,12 @@
 - `vercel.json` + `.vercelignore`; `vercel deploy --prod` → https://site-regret.vercel.app (alias de producción). Comprobado: 7 rutas 200, 404 propio, manifest/core 200, prefetch de segmentos 200, SHA-256 del paquete servido = `e7c8984b…`; Playwright 32/32 con `E2E_BASE_URL` contra producción.
 - Documentación actualizada: README (ejecución, verificación, despliegue, demo offline), ARCHITECTURE, DECISIONS (D14–D16), QA_REPORT.
 - Siguiente (si se retoma): prueba en segundo portátil sin red, auditoría de accesibilidad con lector de pantalla, ES/EN (P2), mover el proyecto a la carpeta definitiva del equipo y configurar un remoto Git.
+
+## Mejoras posteriores (2026-11-14)
+
+- Proyecto movido a `Proyectos/NASA-SpaceApps-2026/site-regret` (historial Git copiado; dependencias reinstaladas con `npm ci`).
+- **Modo historia** (`/historia/`): 7 escenas a pantalla completa (pregunta, horizonte y Sol rasante, criterio, desafío del terreno, inversión con REGRET, robustez por familias, evidencia). Todo sale del paquete: separación A–B desde `sites[].x_m/y_m`, rango de elevación del Sol desde las efemérides nominales, racha más larga sin Sol localizada en `state_codes` (`longestHiddenRun`, contrastada con `longest_dark_hours` en los 120 escenarios), cambio máximo del horizonte entre superficies, recuentos por familia. Navegación con flechas, enlace por escena (`#inversion`), tecla F.
+- **Inglés**: selector ES/EN en la cabecera (en el menú en móvil), `?lang=en` y preferencia guardada; textos en pareja junto a su uso (`L()`/`R()`), tablas de etiquetas bilingües (`bi()`), fechas y números según idioma. La frase del motor (`summary_es`) y los textos del pasaporte se muestran sin traducir y marcados con `lang`.
+- **Accesibilidad**: auditoría axe-core WCAG 2.1 A/AA en las 8 rutas (E2E); contraste del texto tenue elevado a ≥ 4,5:1; lista con desplazamiento accesible por teclado.
+- Correcciones visuales: rótulos de las miniaturas DEM ya no salen cortados; botón del caso demostrativo sin salto de línea; cabecera más compacta.
+- Verificación: tsc y ESLint limpios; Vitest 63/63; Playwright 47/47 (escritorio, móvil, accesibilidad, historia, idioma).

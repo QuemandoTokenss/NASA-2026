@@ -8,13 +8,14 @@ import type { DataError } from "@/lib/data/loader";
 import type { DataManifest } from "@/lib/data/manifest";
 import { Callout, Skeleton } from "../ui/Display";
 import { Icon } from "../ui/Icon";
+import { L } from "@/lib/i18n";
 
-const KIND_LABEL: Record<DataError["kind"], string> = {
-  network: "No se pudo descargar",
-  integrity: "Integridad no verificada",
-  parse: "JSON inválido",
-  contract: "No cumple el contrato",
-};
+const KIND_LABEL = (): Record<DataError["kind"], string> => ({
+  network: L("No se pudo descargar", "Download failed"),
+  integrity: L("Integridad no verificada", "Integrity not verified"),
+  parse: L("JSON inválido", "Invalid JSON"),
+  contract: L("No cumple el contrato", "Does not meet the contract"),
+});
 
 export function DataErrorPanel({ error, onRetry }: { error: DataError; onRetry?: () => void }) {
   return (
@@ -22,10 +23,13 @@ export function DataErrorPanel({ error, onRetry }: { error: DataError; onRetry?:
       <div className="flex items-start gap-3">
         <Icon name="alert" className="mt-0.5 size-5 shrink-0 text-danger" />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">{KIND_LABEL[error.kind]}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-danger">{KIND_LABEL()[error.kind]}</p>
           <p className="mt-1 font-semibold text-ink">{error.message}</p>
           <p className="mt-1 text-sm text-ink-muted">
-            No se muestra ningún resultado: la interfaz nunca sustituye datos ausentes o inválidos por valores aproximados.
+            {L(
+              "No se muestra ningún resultado: la interfaz nunca sustituye datos ausentes o inválidos por valores aproximados.",
+              "No result is shown: the interface never replaces missing or invalid data with approximate values.",
+            )}
           </p>
           {error.details.length ? (
             <ul className="mt-3 max-h-48 space-y-1 overflow-auto rounded-lg bg-bg-2 p-3 font-mono text-xs text-ink-muted">
@@ -42,7 +46,7 @@ export function DataErrorPanel({ error, onRetry }: { error: DataError; onRetry?:
               onClick={onRetry}
               className="mt-4 rounded-lg border border-line-strong bg-surface-2 px-3 py-1.5 text-sm font-medium text-ink hover:bg-surface-3"
             >
-              Reintentar
+              {L("Reintentar", "Retry")}
             </button>
           ) : null}
         </div>
@@ -68,7 +72,7 @@ export function DataGate({ children, fallback }: { children: (d: ReadyData) => R
     return (
       fallback ?? (
         <div aria-busy="true" aria-live="polite" className="space-y-3 rounded-2xl border border-line bg-surface/70 p-5">
-          <p className="text-sm text-ink-muted">Cargando y verificando el paquete científico…</p>
+          <p className="text-sm text-ink-muted">{L("Cargando y verificando el paquete científico…", "Loading and verifying the scientific package…")}</p>
           <Skeleton className="h-4 w-2/3" />
           <Skeleton className="h-4 w-1/2" />
         </div>
@@ -79,7 +83,7 @@ export function DataGate({ children, fallback }: { children: (d: ReadyData) => R
     <>
       {state.report.warnings.length ? (
         <div className="mb-4">
-          <Callout tone="warn" icon="alert" title="Avisos del paquete">
+          <Callout tone="warn" icon="alert" title={L("Avisos del paquete", "Package warnings")}>
             <ul className="list-disc pl-4">
               {state.report.warnings.slice(0, 5).map((w) => (
                 <li key={w}>{w}</li>
@@ -109,7 +113,7 @@ export function ChunkGate<T>({
   if (state.status === "error") return <DataErrorPanel error={state.error} />;
   return (
     <div aria-busy="true" className={`flex flex-col justify-center gap-2 ${minHeight}`}>
-      <p className="text-xs text-ink-faint">Cargando {label}…</p>
+      <p className="text-xs text-ink-faint">{L("Cargando", "Loading")} {label}…</p>
       <Skeleton className="h-24 w-full" />
     </div>
   );

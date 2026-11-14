@@ -9,6 +9,7 @@ import { CONTEXT_FIGURE, FIGURE_PX_PER_M, figureToXY, figureXY } from "@/lib/fig
 import { formatNumber } from "@/lib/format";
 import { SITE_META } from "@/lib/labels";
 import { Icon } from "../ui/Icon";
+import { L } from "@/lib/i18n";
 
 const MIN_Z = 1;
 const MAX_Z = 6;
@@ -113,7 +114,7 @@ export function ContextMap({
           setHover(null);
         }}
       >
-        <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" role="group" aria-label="Figura DEM y marcadores de sitio">
+        <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" role="group" aria-label={L("Figura DEM y marcadores de sitio", "DEM figure and site markers")}>
             <g style={{ transform: tf, transition: dragging ? "none" : "transform 220ms ease-out" }}>
               <image href={dataUrl(BASE_PATH, CONTEXT_FIGURE.path)} x={0} y={0} width={width} height={height} />
               {showMarkers
@@ -157,10 +158,10 @@ export function ContextMap({
         <div className="absolute top-3 right-3 flex flex-col gap-1.5" onPointerDown={(e) => e.stopPropagation()}>
           {(
             [
-              ["zoomIn", "Acercar", () => zoomTo(z * 1.5)],
-              ["zoomOut", "Alejar", () => zoomTo(z / 1.5)],
-              ["target", `Centrar en ${SITE_META[focusSite].label}`, () => focusOn(focusSite)],
-              ["reset", "Vista completa", () => zoomTo(1, { x: width / 2, y: height / 2 })],
+              ["zoomIn", L("Acercar", "Zoom in"), () => zoomTo(z * 1.5)],
+              ["zoomOut", L("Alejar", "Zoom out"), () => zoomTo(z / 1.5)],
+              ["target", `${L("Centrar en", "Centre on")} ${SITE_META[focusSite].label}`, () => focusOn(focusSite)],
+              ["reset", L("Vista completa", "Full view"), () => zoomTo(1, { x: width / 2, y: height / 2 })],
             ] as const
           ).map(([icon, label, fn]) => (
             <button
@@ -192,9 +193,11 @@ export function ContextMap({
         ) : null}
       </div>
       <p className="text-xs leading-relaxed text-ink-faint">
-        Figura original <code className="font-mono">figuras/mapa_sitios.svg</code> del motor: DEM PGDA78 Site01 promediado a {CONTEXT_FIGURE.displayPixelSizeM} m/píxel; ejes X/Y
-        estereográficos polares en metros (MOON_ME_DE421). Solo contexto visual: no es la entrada del cálculo de horizontes. Rueda + Ctrl o botones para ampliar;
-        arrastra para desplazar. Los anillos naranja/cian se superponen a los puntos rojos dibujados por el motor.
+        {L("Figura original", "Original engine figure")} <code className="font-mono">figuras/mapa_sitios.svg</code>
+        {L(
+          ` del motor: DEM PGDA78 Site01 promediado a ${CONTEXT_FIGURE.displayPixelSizeM} m/píxel; ejes X/Y estereográficos polares en metros (MOON_ME_DE421). Solo contexto visual: no es la entrada del cálculo de horizontes. Rueda + Ctrl o botones para ampliar; arrastra para desplazar. Los anillos naranja/cian se superponen a los puntos rojos dibujados por el motor.`,
+          `: PGDA78 Site01 DEM averaged to ${CONTEXT_FIGURE.displayPixelSizeM} m/pixel; polar stereographic X/Y axes in metres (MOON_ME_DE421). Visual context only: it is not the input of the horizon computation. Wheel + Ctrl or buttons to zoom; drag to pan. The orange/cyan rings sit on top of the red dots drawn by the engine.`,
+        )}
       </p>
     </div>
   );

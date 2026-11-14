@@ -7,13 +7,14 @@ import { CRITERION_META, FAMILY_META, SITE_META, VARIANT_LABEL } from "@/lib/lab
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { Segmented, SelectField, type SelectGroup } from "../ui/Controls";
 import { SiteDot } from "../ui/Display";
+import { L } from "@/lib/i18n";
 
 /** Ventana: solo las dos ventanas calculadas, con sus fechas UTC reales. */
 export function WindowControl({ core }: { core: Core }) {
   const { selection, dispatch } = useSelection();
   return (
     <Segmented
-      label="Ventana (UTC)"
+      label={L("Ventana (UTC)", "Window (UTC)")}
       value={selection.windowId}
       onChange={(v) => dispatch({ type: "setWindow", value: v })}
       options={core.configuration.windows.map((w) => ({
@@ -38,10 +39,10 @@ export function HeightControl() {
   const { selection, dispatch } = useSelection();
   return (
     <Segmented
-      label="Altura del observador"
+      label={L("Altura del observador", "Observer height")}
       value={selection.heightM}
       onChange={(v) => dispatch({ type: "setHeight", value: v })}
-      options={HEIGHTS_M.map((h) => ({ value: h, label: `${h} m`, hint: h === 0 ? "Sobre el terreno" : `Mástil simulado de ${h} m` }))}
+      options={HEIGHTS_M.map((h) => ({ value: h, label: `${h} m`, hint: h === 0 ? L("Sobre el terreno", "On the ground") : L(`Mástil simulado de ${h} m`, `Simulated ${h} m mast`) }))}
     />
   );
 }
@@ -57,7 +58,7 @@ export function VariantControl() {
   }));
   return (
     <SelectField
-      label="Superficie del terreno"
+      label={L("Superficie del terreno", "Terrain surface")}
       value={selection.variant}
       onChange={(v) => v && dispatch({ type: "setVariant", value: v })}
       groups={groups}
@@ -71,11 +72,11 @@ export function CriterionControl() {
   const { selection, dispatch } = useSelection();
   return (
     <SelectField
-      label="Criterio de decisión"
+      label={L("Criterio de decisión", "Decision criterion")}
       value={selection.criterion}
       onChange={(v) => dispatch({ type: "setCriterion", value: v })}
-      placeholder="— Elegir antes de comparar —"
-      groups={[{ label: "Criterios del motor", options: CRITERIA.map((c) => ({ value: c, label: CRITERION_META[c].label })) }]}
+      placeholder={L("— Elegir antes de comparar —", "— Choose before comparing —")}
+      groups={[{ label: L("Criterios del motor", "Engine criteria"), options: CRITERIA.map((c) => ({ value: c, label: CRITERION_META[c].label })) }]}
       className="min-w-64"
     />
   );
@@ -85,7 +86,7 @@ export function FocusSiteControl() {
   const { selection, dispatch } = useSelection();
   return (
     <Segmented
-      label="Sitio inspeccionado"
+      label={L("Sitio inspeccionado", "Inspected site")}
       value={selection.focusSite}
       onChange={(v) => dispatch({ type: "setFocusSite", value: v })}
       options={SITE_IDS.map((s) => ({

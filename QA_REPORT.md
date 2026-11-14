@@ -11,7 +11,8 @@ Solo se declara lo que se ha ejecutado. Comando completo: `npm run verify` (type
 | Estilo y reglas React/a11y | ESLint (next core-web-vitals + TS) | 0 errores, 0 avisos |
 | Datos, contrato y ciencia | Vitest — 7 archivos | **63/63** |
 | Build de producción | `next build` (export estático) + `fix-export-segments` | Correcto, 9 rutas estáticas |
-| Funcionales / integración / visuales | Playwright sobre `out/` servido sin red | **32/32** (24 escritorio 1920×1080, 8 móvil 375×812) |
+| Funcionales / integración / visuales | Playwright sobre `out/` servido sin red | **47/47** (39 escritorio 1920×1080, 8 móvil 375×812) |
+| Accesibilidad automática | axe-core WCAG 2.1 A/AA (en Playwright) | 0 infracciones en las 8 rutas |
 
 ## Pruebas de datos (Vitest, datos auténticos)
 
@@ -36,6 +37,10 @@ Solo se declara lo que se ha ejecutado. Comando completo: `npm run verify` (type
 - Explore: zoom (×1,5) y selección de sitio pulsando el marcador. Engineer: alturas 0/10 m y «cambia con la altura». Evidencia: 414/414, 8 filas Horizons y descarga del paquete con SHA-256 correcto.
 - Integridad: un `core.json` alterado bloquea la interfaz con «Integridad fallida».
 - Menú móvil abre, navega y se cierra.
+- Historia: las 7 escenas con teclado, valores del paquete (648 m, 38 h 40 min / 14 h 40 min, 16 h 30 min, 2/4 y 4/5, 414/414), enlace directo por escena.
+- Idioma: el selector cambia a inglés, conserva la selección, persiste al recargar y vuelve a español; `?lang=en` en la historia y en Regret Lab («Holds 2/4», sin «probability»).
+- Accesibilidad: axe-core sin infracciones WCAG 2.1 A/AA en las 8 rutas (incluye contraste).
+- Barrido de idioma: recorrido automático de todas las rutas en inglés buscando texto en español; solo quedan, a propósito, la frase del motor y las descripciones de las fuentes del pasaporte (marcadas `lang="es"`).
 
 ## Defectos encontrados y corregidos durante QA
 
@@ -50,6 +55,6 @@ Solo se declara lo que se ha ejecutado. Comando completo: `npm run verify` (type
 ## No verificado / pendiente
 
 - Prueba en **otro portátil sin red** y en Firefox/Safari (solo Edge en este equipo; Chrome disponible con `PW_CHANNEL=chrome`).
-- Auditoría de accesibilidad con lector de pantalla real y medición automática de contraste (WCAG) — no ejecutadas.
+- Auditoría con lector de pantalla real — no ejecutada (la auditoría automática axe-core sí).
 - Rendimiento medido (Lighthouse) — no ejecutado; los trozos pesados se cargan bajo demanda y las franjas se dibujan por tramos.
 - Despliegue público: ver `README.md` (sección Despliegue).

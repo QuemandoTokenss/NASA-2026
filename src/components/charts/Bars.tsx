@@ -1,6 +1,7 @@
 "use client";
 
 import { formatHoursMinutes, formatNumber } from "@/lib/format";
+import { L } from "@/lib/i18n";
 
 /**
  * Anillo de fracción REAL de la ventana (p. ej. horas con Sol / 720 h).
@@ -43,7 +44,7 @@ export function WindowRing({
         <div className="mt-1 text-[10px] leading-tight text-ink-faint">
           {label}
           <br />
-          de {formatNumber(total, 0)} h ({formatNumber(frac * 100, 1)} %)
+          {L("de", "of")} {formatNumber(total, 0)} h ({formatNumber(frac * 100, 1)} %)
         </div>
       </div>
     </div>

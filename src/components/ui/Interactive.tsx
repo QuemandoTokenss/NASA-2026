@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useState, type ReactNode } from "react";
 import { Icon, type IconName } from "./Icon";
+import { L } from "@/lib/i18n";
 
 /* ------------------------------ Tooltip ---------------------------------- */
 
@@ -49,7 +50,8 @@ export function Tooltip({ content, children, side = "top" }: { content: ReactNod
 }
 
 /** Icono «i» con explicación. */
-export function InfoTip({ children, label = "Más información" }: { children: ReactNode; label?: string }) {
+export function InfoTip({ children, label }: { children: ReactNode; label?: string }) {
+  label ??= L("Más información", "More information");
   return (
     <Tooltip content={children}>
       <button type="button" aria-label={label} className="rounded-full text-ink-faint transition-colors hover:text-ink">

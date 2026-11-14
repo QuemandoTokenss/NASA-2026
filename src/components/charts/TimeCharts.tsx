@@ -2,9 +2,10 @@
 
 import { memo, useMemo, useState, type PointerEvent } from "react";
 import { STATE_NAMES } from "@/lib/contract/constants";
-import { formatHoursMinutes, formatNumber, formatUtc } from "@/lib/format";
+import { dateFormat, formatHoursMinutes, formatNumber, formatUtc } from "@/lib/format";
 import { STATE_META } from "@/lib/labels";
 import type { IndexedInterval, Run } from "@/lib/science/states";
+import { L } from "@/lib/i18n";
 
 /**
  * Geometría común: todos los gráficos temporales comparten ancho y márgenes
@@ -16,13 +17,12 @@ export const TM = { left: 92, right: 16 };
 export const TPW = TW - TM.left - TM.right;
 export const tx = (i: number, n: number) => TM.left + (i / n) * TPW;
 
-const dayTickFmt = new Intl.DateTimeFormat("es-ES", { timeZone: "UTC", day: "numeric", month: "short" });
 
 /** Marcas cada `everyDays` días a las 00:00 UTC. */
 export function dayTicks(times: string[], everyDays = 2) {
   const out: Array<{ i: number; label: string }> = [];
   const perDay = 144; // 10 min
-  for (let i = 0; i < times.length; i += perDay * everyDays) out.push({ i, label: dayTickFmt.format(new Date(times[i])) });
+  for (let i = 0; i < times.length; i += perDay * everyDays) out.push({ i, label: dateFormat("dayTick", { day: "numeric", month: "short" }).format(new Date(times[i])) });
   return out;
 }
 
@@ -272,18 +272,18 @@ export function StateStrips({ rows, times, cursor, onPick, showAxis = true }: { 
                 {formatUtc(hoveredInterval.start)} → {formatUtc(hoveredInterval.stop)}
               </p>
               <p>
-                Duración {formatHoursMinutes(hoveredInterval.duration_minutes / 60)}
-                {hoveredInterval.left_censored ? " · empieza antes de la ventana (censurado)" : ""}
-                {hoveredInterval.right_censored ? " · continúa tras la ventana (censurado)" : ""}
+                {L("Duración", "Duration")} {formatHoursMinutes(hoveredInterval.duration_minutes / 60)}
+                {hoveredInterval.left_censored ? L(" · empieza antes de la ventana (censurado)", " · starts before the window (censored)") : ""}
+                {hoveredInterval.right_censored ? L(" · continúa tras la ventana (censurado)", " · continues after the window (censored)") : ""}
               </p>
             </>
           ) : hoveredRun ? (
             <>
-              <p>{hoveredRun.value ? "Visible" : "No visible"}</p>
+              <p>{hoveredRun.value ? "Visible" : L("No visible", "Not visible")}</p>
               <p className="tabular">
                 {formatUtc(times[hoveredRun.start])} → {formatUtc(times[hoveredRun.end])}
               </p>
-              <p>Duración {formatHoursMinutes(((hoveredRun.end - hoveredRun.start) * 10) / 60)}</p>
+              <p>{L("Duración", "Duration")} {formatHoursMinutes(((hoveredRun.end - hoveredRun.start) * 10) / 60)}</p>
             </>
           ) : null}
         </div>

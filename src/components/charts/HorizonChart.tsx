@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { formatDeg, formatNumber } from "@/lib/format";
+import { L } from "@/lib/i18n";
 
 export interface HorizonSeries {
   key: string;
@@ -134,14 +135,14 @@ export function HorizonChart({ series, title, tracks = [] }: { series: HorizonSe
     .map((s) => {
       const vals = s.elevationDeg.filter((_, i) => !s.unknown[i]);
       const unknown = s.unknown.filter(Boolean).length;
-      return `${s.label}: mínimo ${formatDeg(Math.min(...vals))}, máximo ${formatDeg(Math.max(...vals))}${unknown ? `, ${unknown} azimuts desconocidos` : ""}`;
+      return `${s.label}: ${L("mínimo", "minimum")} ${formatDeg(Math.min(...vals))}, ${L("máximo", "maximum")} ${formatDeg(Math.max(...vals))}${unknown ? `, ${unknown} ${L("azimuts desconocidos", "unknown azimuths")}` : ""}`;
     })
     .join(". ");
 
   return (
     <div className="flex flex-col gap-2">
       <p id={descId} className="sr-only">
-        {title}. {summary}. Use las flechas izquierda y derecha para recorrer el azimut.
+        {title}. {summary}. {L("Use las flechas izquierda y derecha para recorrer el azimut.", "Use the left and right arrows to move along the azimuth.")}
       </p>
       <svg
         viewBox={`0 0 ${W} ${H}`}
@@ -216,7 +217,7 @@ export function HorizonChart({ series, title, tracks = [] }: { series: HorizonSe
             ))}
           </>
         ) : (
-          <span>Pasa el puntero o usa las flechas sobre el gráfico para leer valores exactos del paquete.</span>
+          <span>{L("Pasa el puntero o usa las flechas sobre el gráfico para leer valores exactos del paquete.", "Hover or use the arrow keys on the chart to read exact package values.")}</span>
         )}
       </div>
     </div>

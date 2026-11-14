@@ -7,6 +7,7 @@ import { dataUrl } from "@/lib/data/manifest";
 import { CONTEXT_FIGURE, FIGURE_PX_PER_M, figureXY } from "@/lib/figure";
 import { formatNumber } from "@/lib/format";
 import { SITE_META } from "@/lib/labels";
+import { L } from "@/lib/i18n";
 
 /**
  * Recorte de la figura DEM ORIGINAL centrado en el sitio (no es una foto).
@@ -44,7 +45,7 @@ export function SiteThumb({ site, size = 136, scale = 1.1 }: { site: Site; size?
         </svg>
       </div>
       <figcaption className="text-center text-[10px] leading-tight text-ink-faint">
-        Recorte DEM PGDA78 · ≈ {formatNumber(spanM, 0)} m de lado
+        {L("Recorte DEM PGDA78", "PGDA78 DEM crop")} · ≈ {formatNumber(spanM, 0)} {L("m de lado", "m wide")}
       </figcaption>
     </figure>
   );

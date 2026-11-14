@@ -19,6 +19,8 @@ import { Icon, type IconName } from "../ui/Icon";
 import { Button, LinkButton } from "../ui/Interactive";
 import { DarkStreakStrips } from "./DarkStreakStrips";
 import { PairMap } from "./PairMap";
+import { L, R } from "@/lib/i18n";
+import { METRIC_META } from "@/lib/science/metrics";
 
 interface Scene {
   id: string;
@@ -99,50 +101,62 @@ function Story({ data }: { data: ReadyData }) {
   const scenes: Scene[] = [
     {
       id: "pregunta",
-      eyebrow: "La pregunta",
+      eyebrow: L("La pregunta", "The question"),
       title: (
         <>
-          Dos puntos del polo sur lunar. <span className="bg-gradient-to-r from-site-a to-site-b bg-clip-text text-transparent">¿Cuál es mejor?</span>
+          {L("Dos puntos del polo sur lunar.", "Two points at the lunar south pole.")}{" "}
+          <span className="bg-gradient-to-r from-site-a to-site-b bg-clip-text text-transparent">{L("¿Cuál es mejor?", "Which one is better?")}</span>
         </>
       ),
       body: (
         <>
           <p>
-            <Big site="A">Sitio A</Big> y <Big site="B">Sitio B</Big> están en Connecting Ridge, a solo{" "}
-            <Big>{formatNumber(separation, 0)} m</Big> uno del otro en el plano del mapa. Allí el Sol roza el horizonte: unos metros de
-            relieve deciden si un punto lo ve o no.
+            {R(
+              "{a} y {b} están en Connecting Ridge, a solo {d} uno del otro en el plano del mapa. Allí el Sol roza el horizonte: unos metros de relieve deciden si un punto lo ve o no.",
+              "{a} and {b} sit on Connecting Ridge, only {d} apart on the map plane. There the Sun grazes the horizon: a few metres of relief decide whether a point sees it or not.",
+              { a: <Big site="A">{SITE_META.A.label}</Big>, b: <Big site="B">{SITE_META.B.label}</Big>, d: <Big>{formatNumber(separation, 0)} m</Big> },
+            )}
           </p>
           <p>
-            SITE REGRET no se queda en «cuál gana»: comprueba si la elección <strong className="text-ink">sobrevive cuando cambia el terreno</strong>{" "}
-            con el que se calculó.
+            {R(
+              "SITE REGRET no se queda en «cuál gana»: comprueba si la elección {s} con el que se calculó.",
+              "SITE REGRET does not stop at “which one wins”: it checks whether the choice {s} it was computed with.",
+              { s: <strong className="text-ink">{L("sobrevive cuando cambia el terreno", "survives when you change the terrain")}</strong> },
+            )}
           </p>
         </>
       ),
       visual: (
-        <VisualFrame caption="Figura DEM original del paquete (PGDA78, 40 m/píxel; color = altura del terreno) ampliada sin suavizar. Separación medida en el plano estereográfico polar.">
+        <VisualFrame caption={L("Figura DEM original del paquete (PGDA78, 40 m/píxel; color = altura del terreno) ampliada sin suavizar. Separación medida en el plano estereográfico polar.", "Original DEM figure from the package (PGDA78, 40 m/pixel; colour = terrain height) enlarged without smoothing. Separation measured on the polar stereographic plane.")}>
           <PairMap a={siteA} b={siteB} />
         </VisualFrame>
       ),
     },
     {
       id: "horizonte",
-      eyebrow: "Por qué importa el relieve",
-      title: "El Sol vive pegado al horizonte",
+      eyebrow: L("Por qué importa el relieve", "Why the relief matters"),
+      title: L("El Sol vive pegado al horizonte", "The Sun lives on the horizon"),
       body: (
-        <ChunkGate state={d.ephA} label="efemérides" minHeight="min-h-20">
+        <ChunkGate state={d.ephA} label={L("efemérides", "ephemerides")} minHeight="min-h-20">
           {(eph: EphemerisSiteChunk) => {
             const el = eph.series.bodies.SUN.elevation_deg;
             return (
-              <ChunkGate state={d.hzA} label="horizonte" minHeight="min-h-20">
+              <ChunkGate state={d.hzA} label={L("horizonte", "horizon")} minHeight="min-h-20">
                 {(hz: HorizonChunk) => (
                   <>
                     <p>
-                      En la ventana {windowId} el centro del Sol, visto desde el Sitio A, se mueve solo entre{" "}
-                      <Big>{formatDeg(minOf(el))}</Big> y <Big>{formatDeg(maxOf(el))}</Big> de elevación.
+                      {R(
+                        "En la ventana {w} el centro del Sol, visto desde el Sitio A, se mueve solo entre {min} y {max} de elevación.",
+                        "In window {w} the centre of the Sun, seen from Site A, only moves between {min} and {max} of elevation.",
+                        { w: windowId, min: <Big>{formatDeg(minOf(el))}</Big>, max: <Big>{formatDeg(maxOf(el))}</Big> },
+                      )}
                     </p>
                     <p>
-                      El relieve que lo rodea llega a <Big>{formatDeg(maxOf(hz.variants.nominal.elevation_deg, hz.variants.nominal.unknown))}</Big>. Cualquier
-                      error de pocos metros en el modelo del terreno puede tapar o destapar el Sol durante horas.
+                      {R(
+                        "El relieve que lo rodea llega a {h}. Cualquier error de pocos metros en el modelo del terreno puede tapar o destapar el Sol durante horas.",
+                        "The surrounding relief reaches {h}. An error of a few metres in the terrain model can hide or reveal the Sun for hours.",
+                        { h: <Big>{formatDeg(maxOf(hz.variants.nominal.elevation_deg, hz.variants.nominal.unknown))}</Big> },
+                      )}
                     </p>
                   </>
                 )}
@@ -152,20 +166,20 @@ function Story({ data }: { data: ReadyData }) {
         </ChunkGate>
       ),
       visual: (
-        <ChunkGate state={d.hzA} label="horizonte A" minHeight="min-h-64">
+        <ChunkGate state={d.hzA} label={L("horizonte A", "horizon A")} minHeight="min-h-64">
           {(hzA: HorizonChunk) => (
-            <ChunkGate state={d.ephA} label="efemérides" minHeight="min-h-64">
+            <ChunkGate state={d.ephA} label={L("efemérides", "ephemerides")} minHeight="min-h-64">
               {(eph: EphemerisSiteChunk) => (
-                <VisualFrame caption={`Horizonte nominal del Sitio A a ${heightM} m (1440 azimuts) y trayectoria del centro del Sol en ${windowId} (efemérides nominales SPICE DE421). Escala vertical exagerada.`}>
+                <VisualFrame caption={L(`Horizonte nominal del Sitio A a ${heightM} m (1440 azimuts) y trayectoria del centro del Sol en ${windowId} (efemérides nominales SPICE DE421). Escala vertical exagerada.`, `Nominal horizon of Site A at ${heightM} m (1440 azimuths) and path of the Sun centre in ${windowId} (nominal SPICE DE421 ephemerides). Vertical scale exaggerated.`)}>
                   <HorizonChart
-                    title={`Horizonte del Sitio A y trayectoria del Sol en ${windowId}`}
-                    series={[horizonSeries(hzA, "nominal", "A", "Horizonte · A", SITE_META.A.colorVar, true)]}
-                    tracks={[{ key: "sun", label: "Sol", color: "var(--color-state-sun)", azimuthDeg: eph.series.bodies.SUN.azimuth_deg, elevationDeg: eph.series.bodies.SUN.elevation_deg }]}
+                    title={L(`Horizonte del Sitio A y trayectoria del Sol en ${windowId}`, `Site A horizon and Sun path in ${windowId}`)}
+                    series={[horizonSeries(hzA, "nominal", "A", L("Horizonte · A", "Horizon · A"), SITE_META.A.colorVar, true)]}
+                    tracks={[{ key: "sun", label: L("Sol", "Sun"), color: "var(--color-state-sun)", azimuthDeg: eph.series.bodies.SUN.azimuth_deg, elevationDeg: eph.series.bodies.SUN.elevation_deg }]}
                   />
                   <Legend
                     items={[
-                      { label: "Horizonte del Sitio A", color: SITE_META.A.colorVar, shape: "line" },
-                      { label: `Centro del Sol en ${windowId}`, color: "var(--color-state-sun)", shape: "line" },
+                      { label: L("Horizonte del Sitio A", "Site A horizon"), color: SITE_META.A.colorVar, shape: "line" },
+                      { label: L(`Centro del Sol en ${windowId}`, `Sun centre in ${windowId}`), color: "var(--color-state-sun)", shape: "line" },
                     ]}
                   />
                 </VisualFrame>
@@ -177,50 +191,62 @@ function Story({ data }: { data: ReadyData }) {
     },
     {
       id: "criterio",
-      eyebrow: "01 · Elegir antes de mirar",
+      eyebrow: L("01 · Elegir antes de mirar", "01 · Choose before looking"),
       title: (
         <>
-          Criterio: <span className="text-accent">{CRITERION_META[criterion].label.charAt(0).toLowerCase() + CRITERION_META[criterion].label.slice(1)}</span>
+          {L("Criterio:", "Criterion:")} <span className="text-accent">{CRITERION_META[criterion].label.charAt(0).toLowerCase() + CRITERION_META[criterion].label.slice(1)}</span>
         </>
       ),
       body: (
         <>
           <p>
-            Un vehículo sin Sol no carga. Fijamos el criterio <em>antes</em> de ver el ganador: la racha continua más larga sin Sol en{" "}
-            {windowId} ({hm((Date.parse(win.stop) - Date.parse(win.start)) / 3_600_000)}), a {heightM} m de altura.
+            {R(
+              "Un vehículo sin Sol no carga. Fijamos el criterio {before} de ver el ganador: la racha continua más larga sin Sol en {w} ({d}), a {h} m de altura.",
+              "A rover without Sun cannot charge. We fix the criterion {before} seeing the winner: the longest continuous stretch without Sun in {w} ({d}), at {h} m height.",
+              { before: <em>{L("antes", "before")}</em>, w: windowId, d: hm((Date.parse(win.stop) - Date.parse(win.start)) / 3_600_000), h: heightM },
+            )}
           </p>
           <div className="grid grid-cols-2 gap-3">
-            <Fact value={hm(val("A", "nominal"))} label="Sitio A · racha más larga sin Sol" tone="A" />
-            <Fact value={hm(val("B", "nominal"))} label="Sitio B · racha más larga sin Sol" tone="B" />
+            <Fact value={hm(val("A", "nominal"))} label={`${SITE_META.A.label} · ${METRIC_META.longest_dark_hours.label}`} tone="A" />
+            <Fact value={hm(val("B", "nominal"))} label={`${SITE_META.B.label} · ${METRIC_META.longest_dark_hours.label}`} tone="B" />
           </div>
           <p>
-            Con el terreno nominal (DEM LOLA) gana <Big site={keep}>{SITE_META[keep].label}</Big>
-            {result.cases.nominal.D_hours !== null ? (
-              <>
-                {" "}
-                por <Big>{hm(Math.abs(result.cases.nominal.D_hours))}</Big>
-              </>
-            ) : null}
-            .
+            {R("Con el terreno nominal (DEM LOLA) gana {w}{by}.", "With the nominal terrain (LOLA DEM) {w} wins{by}.", {
+              w: <Big site={keep}>{SITE_META[keep].label}</Big>,
+              by:
+                result.cases.nominal.D_hours !== null ? (
+                  <>
+                    {" "}
+                    {L("por", "by")} <Big>{hm(Math.abs(result.cases.nominal.D_hours))}</Big>
+                  </>
+                ) : null,
+            })}
           </p>
         </>
       ),
       visual: (
-        <StreakVisual d={d} variant="nominal" caption="Amarillo: Sol visible · gris: sin Sol. Tramos originales del paquete, sin interpolar; el recuadro marca la racha más larga sin Sol." />
+        <StreakVisual d={d} variant="nominal" caption={L("Amarillo: Sol visible · gris: sin Sol. Tramos originales del paquete, sin interpolar; el recuadro marca la racha más larga sin Sol.", "Yellow: Sun visible · grey: no Sun. Original package runs, not interpolated; the box marks the longest stretch without Sun.")} />
       ),
     },
     {
       id: "terreno",
-      eyebrow: "02 · Desafiar el terreno",
-      title: "¿Y si el relieve fuera un poco distinto?",
+      eyebrow: L("02 · Desafiar el terreno", "02 · Challenge the terrain"),
+      title: L("¿Y si el relieve fuera un poco distinto?", "What if the relief were slightly different?"),
       body: (
         <>
           <p>
-            El paquete trae, además del nominal, <Big>{own.evaluated}</Big> hipótesis propias y <Big>{pub.evaluated}</Big> clones publicados del
-            DEM. Probamos <strong className="text-uncertainty">{VARIANT_LABEL[pert]}</strong>
-            {variantFamily(pert) === "own" ? `, una de las ${FAMILY_META.own.label.toLowerCase()}` : ""}.
+            {R(
+              "El paquete trae, además del nominal, {own} hipótesis propias y {pub} clones publicados del DEM. Probamos {p}{fam}.",
+              "Besides the nominal, the package carries {own} team hypotheses and {pub} published DEM clones. We try {p}{fam}.",
+              {
+                own: <Big>{own.evaluated}</Big>,
+                pub: <Big>{pub.evaluated}</Big>,
+                p: <strong className="text-uncertainty">{VARIANT_LABEL[pert]}</strong>,
+                fam: variantFamily(pert) === "own" ? L(`, una de las ${FAMILY_META.own.label.toLowerCase()}`, `, one of the ${FAMILY_META.own.label.toLowerCase()}`) : "",
+              },
+            )}
           </p>
-          <ChunkGate state={keep === "A" ? d.hzA : d.hzB} label="horizonte" minHeight="min-h-10">
+          <ChunkGate state={keep === "A" ? d.hzA : d.hzB} label={L("horizonte", "horizon")} minHeight="min-h-10">
             {(hz: HorizonChunk) => {
               const a = hz.variants.nominal;
               const b = hz.variants[pert];
@@ -230,8 +256,11 @@ function Story({ data }: { data: ReadyData }) {
               });
               return (
                 <p>
-                  En el {SITE_META[keep].label} el horizonte cambia como mucho <Big site="regret">{formatDeg(max, 3)}</Big>. Parece nada… pero el Sol
-                  vive en esa franja.
+                  {R(
+                    "En el {s} el horizonte cambia como mucho {d}. Parece nada… pero el Sol vive en esa franja.",
+                    "At {s} the horizon changes by at most {d}. It looks like nothing… but the Sun lives in that band.",
+                    { s: SITE_META[keep].label, d: <Big site="regret">{formatDeg(max, 3)}</Big> },
+                  )}
                 </p>
               );
             }}
@@ -240,11 +269,11 @@ function Story({ data }: { data: ReadyData }) {
         </>
       ),
       visual: (
-        <ChunkGate state={keep === "A" ? d.hzA : d.hzB} label="horizontes" minHeight="min-h-64">
+        <ChunkGate state={keep === "A" ? d.hzA : d.hzB} label={L("horizontes", "horizons")} minHeight="min-h-64">
           {(hz: HorizonChunk) => (
-            <VisualFrame caption={`Horizonte del ${SITE_META[keep].label} a ${heightM} m: superficie nominal frente a «${VARIANT_LABEL[pert]}». Mismos azimuts; sin suavizar.`}>
+            <VisualFrame caption={L(`Horizonte del ${SITE_META[keep].label} a ${heightM} m: superficie nominal frente a «${VARIANT_LABEL[pert]}». Mismos azimuts; sin suavizar.`, `${SITE_META[keep].label} horizon at ${heightM} m: nominal surface vs “${VARIANT_LABEL[pert]}”. Same azimuths; no smoothing.`)}>
               <HorizonChart
-                title={`Horizonte del ${SITE_META[keep].label}: nominal y ${VARIANT_LABEL[pert]}`}
+                title={L(`Horizonte del ${SITE_META[keep].label}: nominal y ${VARIANT_LABEL[pert]}`, `${SITE_META[keep].label} horizon: nominal and ${VARIANT_LABEL[pert]}`)}
                 series={[
                   horizonSeries(hz, "nominal", "nom", `${SITE_META[keep].short} · nominal`, SITE_META[keep].colorVar),
                   horizonSeries(hz, pert, "pert", `${SITE_META[keep].short} · ${VARIANT_LABEL[pert]}`, "var(--color-uncertainty)", true),
@@ -252,7 +281,7 @@ function Story({ data }: { data: ReadyData }) {
               />
               <Legend
                 items={[
-                  { label: `${SITE_META[keep].label} · nominal (DEM LOLA)`, color: SITE_META[keep].colorVar, shape: "line" },
+                  { label: `${SITE_META[keep].label} · ${VARIANT_LABEL.nominal}`, color: SITE_META[keep].colorVar, shape: "line" },
                   { label: `${SITE_META[keep].label} · ${VARIANT_LABEL[pert]}`, color: "var(--color-uncertainty)", shape: "line" },
                 ]}
               />
@@ -263,75 +292,101 @@ function Story({ data }: { data: ReadyData }) {
     },
     {
       id: "inversion",
-      eyebrow: "03 · El coste de equivocarse",
+      eyebrow: L("03 · El coste de equivocarse", "03 · The cost of being wrong"),
       title: (
         <>
-          {pertWinner === keep ? "La elección se mantiene" : pertWinner === "TIE" ? "La elección empata" : "La elección se invierte"}
+          {pertWinner === keep
+            ? L("La elección se mantiene", "The choice holds")
+            : pertWinner === "TIE"
+              ? L("La elección empata", "The choice ties")
+              : L("La elección se invierte", "The choice flips")}
         </>
       ),
       body: (
         <>
-          <p>Con «{VARIANT_LABEL[pert]}» las rachas cambian:</p>
+          <p>{L(`Con «${VARIANT_LABEL[pert]}» las rachas cambian:`, `With “${VARIANT_LABEL[pert]}” the streaks change:`)}</p>
           <div className="grid grid-cols-2 gap-3">
-            <Fact value={hm(val("A", pert))} label="Sitio A" tone="A" />
-            <Fact value={hm(val("B", pert))} label="Sitio B" tone="B" />
+            <Fact value={hm(val("A", pert))} label={SITE_META.A.label} tone="A" />
+            <Fact value={hm(val("B", pert))} label={SITE_META.B.label} tone="B" />
           </div>
           {pertWinner === rival ? (
             <p>
-              Ahora gana <Big site={rival}>{SITE_META[rival].label}</Big>. Si hubiéramos aterrizado en el {SITE_META[keep].label}, el{" "}
-              <strong className="text-uncertainty">REGRET</strong> —lo que se pierde frente a la mejor opción— sería{" "}
-              <Big site="regret">{hm(regret)}</Big> más de oscuridad continua.
+              {R(
+                "Ahora gana {r}. Si hubiéramos aterrizado en el {k}, el {regret} —lo que se pierde frente a la mejor opción— sería {v} más de oscuridad continua.",
+                "Now {r} wins. Had we landed at {k}, the {regret} — what is lost against the best option — would be {v} more of continuous darkness.",
+                {
+                  r: <Big site={rival}>{SITE_META[rival].label}</Big>,
+                  k: SITE_META[keep].label,
+                  regret: <strong className="text-uncertainty">REGRET</strong>,
+                  v: <Big site="regret">{hm(regret)}</Big>,
+                },
+              )}
             </p>
           ) : (
             <p>
-              REGRET de conservar el {SITE_META[keep].label}: <Big site="regret">{hm(regret)}</Big>.
+              {R("REGRET de conservar el {k}: {v}.", "REGRET of keeping {k}: {v}.", { k: SITE_META[keep].label, v: <Big site="regret">{hm(regret)}</Big> })}
             </p>
           )}
         </>
       ),
-      visual: <StreakVisual d={d} variant={pert} caption={`Superficie «${VARIANT_LABEL[pert]}». Mismas efemérides; cambia solo el relieve.`} />,
+      visual: <StreakVisual d={d} variant={pert} caption={L(`Superficie «${VARIANT_LABEL[pert]}». Mismas efemérides; cambia solo el relieve.`, `Surface “${VARIANT_LABEL[pert]}”. Same ephemerides; only the relief changes.`)} />,
     },
     {
       id: "robustez",
-      eyebrow: "04 · ¿Cuántas veces aguanta?",
-      title: "Robustez: recuentos, no probabilidades",
+      eyebrow: L("04 · ¿Cuántas veces aguanta?", "04 · How often does it hold?"),
+      title: L("Robustez: recuentos, no probabilidades", "Robustness: counts, not probabilities"),
       body: (
         <>
           <p>
-            La elección nominal ({SITE_META[keep].label}) se mantiene en <Big>{`${own.same}/${own.evaluated}`}</Big> hipótesis propias y en{" "}
-            <Big>{`${pub.same}/${pub.evaluated}`}</Big> clones publicados. Empates: {own.tie} y {pub.tie}; inversiones: {own.inverted} y {pub.inverted}.
+            {R(
+              "La elección nominal ({k}) se mantiene en {own} hipótesis propias y en {pub} clones publicados. Empates: {t1} y {t2}; inversiones: {i1} y {i2}.",
+              "The nominal choice ({k}) holds in {own} team hypotheses and in {pub} published clones. Ties: {t1} and {t2}; flips: {i1} and {i2}.",
+              {
+                k: SITE_META[keep].label,
+                own: <Big>{`${own.same}/${own.evaluated}`}</Big>,
+                pub: <Big>{`${pub.same}/${pub.evaluated}`}</Big>,
+                t1: own.tie,
+                t2: pub.tie,
+                i1: own.inverted,
+                i2: pub.inverted,
+              },
+            )}
           </p>
           <p className="text-sm text-ink-muted">
-            Son {own.evaluated + pub.evaluated} superficies concretas, no un muestreo: no se pueden leer como «probabilidad de acertar». Un solo
-            contraejemplo ya indica sensibilidad al relieve.
+            {L(
+              `Son ${own.evaluated + pub.evaluated} superficies concretas, no un muestreo: no se pueden leer como «probabilidad de acertar». Un solo contraejemplo ya indica sensibilidad al relieve.`,
+              `These are ${own.evaluated + pub.evaluated} specific surfaces, not a sample: they cannot be read as a “probability of being right”. A single counter-example already shows sensitivity to the relief.`,
+            )}
           </p>
         </>
       ),
       visual: (
-        <VisualFrame caption="Ganador con cada superficie del paquete para este criterio. El recuadro violeta marca las que invierten la elección nominal.">
+        <VisualFrame caption={L("Ganador con cada superficie del paquete para este criterio. El recuadro violeta marca las que invierten la elección nominal.", "Winner with each package surface for this criterion. The violet outline marks those that flip the nominal choice.")}>
           <SurfaceGrid result={result} keep={keep} />
         </VisualFrame>
       ),
     },
     {
       id: "evidencia",
-      eyebrow: "05 · Verificable",
-      title: "Cada número es trazable",
+      eyebrow: L("05 · Verificable", "05 · Verifiable"),
+      title: L("Cada número es trazable", "Every number is traceable"),
       body: (
         <>
           <p>
-            Nada se recalcula ni se inventa en el navegador: la web lee un paquete precalculado con datos NASA (PGDA, LRO-LOLA, JPL/NAIF DE421) y
-            comprueba su SHA-256 antes de mostrarlo.
+            {L(
+              "Nada se recalcula ni se inventa en el navegador: la web lee un paquete precalculado con datos NASA (PGDA, LRO-LOLA, JPL/NAIF DE421) y comprueba su SHA-256 antes de mostrarlo.",
+              "Nothing is recomputed or made up in the browser: the site reads a package precomputed from NASA data (PGDA, LRO-LOLA, JPL/NAIF DE421) and checks its SHA-256 before showing it.",
+            )}
           </p>
           <div className="flex flex-wrap gap-3">
             <LinkButton href={`/regret-lab/${labQuery}`} variant="regret" icon="flask">
-              Abrir este caso en Regret Lab
+              {L("Abrir este caso en Regret Lab", "Open this case in Regret Lab")}
             </LinkButton>
             <LinkButton href={`/comparador/${labQuery}`} icon="compare">
-              Comparador
+              {L("Comparador", "Compare")}
             </LinkButton>
             <LinkButton href="/evidencia/" icon="file">
-              Evidencia
+              {L("Evidencia", "Evidence")}
             </LinkButton>
           </div>
         </>
@@ -339,18 +394,21 @@ function Story({ data }: { data: ReadyData }) {
       visual: (
         <VisualFrame>
           <div className="grid grid-cols-2 gap-3">
-            <Fact value={`${v.passed}/${v.passed + v.failed}`} label="comprobaciones superadas" />
-            <Fact value={v.horizons_reference_rows} label="contrastes con JPL Horizons" />
-            <Fact value={core.provenance.source_assets.length} label="fuentes NASA registradas" />
-            <Fact value={core.provenance.comparison_count * 4} label="decisiones A/B precalculadas" />
+            <Fact value={`${v.passed}/${v.passed + v.failed}`} label={L("comprobaciones superadas", "checks passed")} />
+            <Fact value={v.horizons_reference_rows} label={L("contrastes con JPL Horizons", "JPL Horizons cross-checks")} />
+            <Fact value={core.provenance.source_assets.length} label={L("fuentes NASA registradas", "registered NASA sources")} />
+            <Fact value={core.provenance.comparison_count * 4} label={L("decisiones A/B precalculadas", "precomputed A/B decisions")} />
           </div>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
-            <Icon name="shield" className="size-4 text-ok" /> Paquete <span className="font-mono text-ink">{core.schema_version}</span> · SHA-256{" "}
+            <Icon name="shield" className="size-4 text-ok" /> {L("Paquete", "Package")} <span className="font-mono text-ink">{core.schema_version}</span> · SHA-256{" "}
             <span className="font-mono text-ink">{shortHash(manifest.source.sha256, 16)}…</span>
-            {data.integrity === "verified" ? <Badge tone="ok" icon="check">verificado</Badge> : <Badge tone="warn">sin verificar</Badge>}
+            {data.integrity === "verified" ? <Badge tone="ok" icon="check">{L("verificado", "verified")}</Badge> : <Badge tone="warn">{L("sin verificar", "unverified")}</Badge>}
           </p>
           <p className="text-[11px] text-ink-faint">
-            Visibilidad geométrica del centro del Sol y de la Tierra. No implica energía, enlace de radio, seguridad de alunizaje ni respaldo de la NASA.
+            {L(
+              "Visibilidad geométrica del centro del Sol y de la Tierra. No implica energía, enlace de radio, seguridad de alunizaje ni respaldo de la NASA.",
+              "Geometric visibility of the Sun and Earth centres. Does not imply power, radio link, landing safety or NASA endorsement.",
+            )}
           </p>
         </VisualFrame>
       ),
@@ -362,16 +420,16 @@ function Story({ data }: { data: ReadyData }) {
 
 function StreakVisual({ d, variant, caption }: { d: ReturnType<typeof useStoryData>; variant: Variant; caption: string }) {
   return (
-    <ChunkGate state={d.scen} label="estados" minHeight="min-h-48">
+    <ChunkGate state={d.scen} label={L("estados", "states")} minHeight="min-h-48">
       {(s: ScenarioChunk) => (
-        <ChunkGate state={d.clock} label="reloj" minHeight="min-h-48">
+        <ChunkGate state={d.clock} label={L("reloj", "clock")} minHeight="min-h-48">
           {(c: EphemerisClockChunk) => (
             <VisualFrame caption={caption}>
               <Legend
                 items={[
-                  { label: "Sol visible", color: "var(--color-state-sun)" },
-                  { label: "Sin Sol", color: "var(--color-state-neither)" },
-                  { label: "Racha más larga sin Sol", color: "var(--color-ink)", shape: "line" },
+                  { label: L("Sol visible", "Sun visible"), color: "var(--color-state-sun)" },
+                  { label: L("Sin Sol", "No Sun"), color: "var(--color-state-neither)" },
+                  { label: METRIC_META.longest_dark_hours.label, color: "var(--color-ink)", shape: "line" },
                 ]}
               />
               <DarkStreakStrips
@@ -392,7 +450,7 @@ function StreakVisual({ d, variant, caption }: { d: ReturnType<typeof useStoryDa
 
 function SurfaceGrid({ result, keep }: { result: NonNullable<ReturnType<typeof getCriterionResult>>; keep: SiteId }) {
   const groups: Array<{ label: string; vs: Variant[] }> = [
-    { label: "Nominal", vs: VARIANTS.filter((v) => variantFamily(v) === "nominal") },
+    { label: FAMILY_META.nominal.label, vs: VARIANTS.filter((v) => variantFamily(v) === "nominal") },
     { label: FAMILY_META.own.label, vs: VARIANTS.filter((v) => variantFamily(v) === "own") },
     { label: FAMILY_META.published.label, vs: VARIANTS.filter((v) => variantFamily(v) === "published") },
   ];
@@ -413,8 +471,8 @@ function SurfaceGrid({ result, keep }: { result: NonNullable<ReturnType<typeof g
                   className={`rounded-lg border px-2.5 py-2 text-xs ${tone} ${inv ? "outline-2 outline-offset-2 outline-uncertainty" : ""}`}
                 >
                   <span className="block leading-snug text-ink-muted">{VARIANT_LABEL[v]}</span>
-                  <span className="text-sm font-bold">{w === "TIE" ? "Empate" : w === "UNKNOWN" ? "—" : `Gana ${w}`}</span>
-                  {inv ? <span className="block text-[10px] font-semibold text-uncertainty">invierte · regret {hm(regretOfKeeping(result.cases[v], keep))}</span> : null}
+                  <span className="text-sm font-bold">{w === "TIE" ? L("Empate", "Tie") : w === "UNKNOWN" ? "—" : L(`Gana ${w}`, `${w} wins`)}</span>
+                  {inv ? <span className="block text-[10px] font-semibold text-uncertainty">{L("invierte", "flips")} · regret {hm(regretOfKeeping(result.cases[v], keep))}</span> : null}
                 </li>
               );
             })}
@@ -496,14 +554,14 @@ function StoryDeck({ scenes }: { scenes: Scene[] }) {
     >
       <div aria-hidden className="story-stars pointer-events-none absolute inset-0 opacity-60" />
       <div className="relative flex items-center gap-3">
-        <div className="flex flex-1 gap-1.5" role="tablist" aria-label="Escenas">
+        <div className="flex flex-1 gap-1.5" role="tablist" aria-label={L("Escenas", "Scenes")}>
           {scenes.map((sc, i) => (
             <button
               key={sc.id}
               type="button"
               role="tab"
               aria-selected={i === idx}
-              aria-label={`Escena ${i + 1}: ${sc.eyebrow}`}
+              aria-label={`${L("Escena", "Scene")} ${i + 1}: ${sc.eyebrow}`}
               onClick={() => go(i)}
               className="group h-6 flex-1 py-2.5"
             >
@@ -518,8 +576,8 @@ function StoryDeck({ scenes }: { scenes: Scene[] }) {
         <span className="tabular text-xs text-ink-faint" aria-hidden>
           {idx + 1} / {scenes.length}
         </span>
-        <Button size="sm" variant="ghost" icon="maximize" onClick={toggleFull} title="Pantalla completa (F)">
-          <span className="hidden sm:inline">{full ? "Salir" : "Pantalla completa"}</span>
+        <Button size="sm" variant="ghost" icon="maximize" onClick={toggleFull} title={L("Pantalla completa (F)", "Full screen (F)")}>
+          <span className="hidden sm:inline">{full ? L("Salir", "Exit") : L("Pantalla completa", "Full screen")}</span>
         </Button>
       </div>
 
@@ -527,8 +585,8 @@ function StoryDeck({ scenes }: { scenes: Scene[] }) {
         key={s.id}
         id={`escena-${s.id}`}
         role="tabpanel"
-        aria-roledescription="escena"
-        aria-label={`${idx + 1} de ${scenes.length}`}
+        aria-roledescription={L("escena", "scene")}
+        aria-label={`${idx + 1} ${L("de", "of")} ${scenes.length}`}
         className="animate-rise relative mt-6 grid flex-1 items-center gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
       >
         <div className="flex flex-col gap-4">
@@ -541,17 +599,17 @@ function StoryDeck({ scenes }: { scenes: Scene[] }) {
         <div className="min-w-0">{s.visual}</div>
       </section>
 
-      <nav aria-label="Navegación de la historia" className="relative mt-6 flex items-center justify-between gap-3">
+      <nav aria-label={L("Navegación de la historia", "Story navigation")} className="relative mt-6 flex items-center justify-between gap-3">
         <Button icon="stepBack" onClick={() => go(idx - 1)} disabled={idx === 0}>
-          Anterior
+          {L("Anterior", "Previous")}
         </Button>
         <p className="hidden text-xs text-ink-faint md:block">
-          <kbd className="rounded border border-line px-1.5">←</kbd> <kbd className="rounded border border-line px-1.5">→</kbd> para avanzar ·{" "}
-          <kbd className="rounded border border-line px-1.5">F</kbd> pantalla completa
+          <kbd className="rounded border border-line px-1.5">←</kbd> <kbd className="rounded border border-line px-1.5">→</kbd> {L("para avanzar", "to move")} ·{" "}
+          <kbd className="rounded border border-line px-1.5">F</kbd> {L("pantalla completa", "full screen")}
         </p>
         {idx < last ? (
           <Button variant="primary" iconRight="arrowRight" onClick={() => go(idx + 1)}>
-            Siguiente
+            {L("Siguiente", "Next")}
           </Button>
         ) : (
           <Link href="/" className="inline-flex items-center gap-2 rounded-xl border border-line-strong bg-surface-2 px-4 py-2 text-sm font-medium text-ink hover:bg-surface-3">

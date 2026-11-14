@@ -7,6 +7,7 @@ import { dataUrl } from "@/lib/data/manifest";
 import { CONTEXT_FIGURE, FIGURE_PX_PER_M, figureXY } from "@/lib/figure";
 import { formatNumber } from "@/lib/format";
 import { SITE_META } from "@/lib/labels";
+import { L } from "@/lib/i18n";
 
 /**
  * Recorte de la figura DEM ORIGINAL (40 m/píxel) que contiene ambos sitios,
@@ -51,7 +52,7 @@ export function PairMap({ a, b, width = 640, height = 360, scale = 1.8 }: { a: S
           aspectRatio: `${fw} / ${fh}`,
         }}
       />
-      <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" role="img" aria-label={`Sitio A y Sitio B separados ${formatNumber(dist, 0)} m en el plano del mapa`}>
+      <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" role="img" aria-label={L(`Sitio A y Sitio B separados ${formatNumber(dist, 0)} m en el plano del mapa`, `Site A and Site B ${formatNumber(dist, 0)} m apart on the map plane`)}>
         <line x1={sa.x} y1={sa.y} x2={sb.x} y2={sb.y} stroke="#050912" strokeWidth={4} strokeOpacity={0.5} />
         <line x1={sa.x} y1={sa.y} x2={sb.x} y2={sb.y} stroke="#e8eef8" strokeWidth={2} strokeDasharray="6 5" />
         <g>

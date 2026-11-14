@@ -5,6 +5,7 @@
  */
 import { VARIANTS, variantFamily, type SiteId, type Variant, type VariantFamily, type Winner } from "../contract/constants";
 import type { CaseResult, CriterionResult } from "../contract/schema";
+import { bi } from "../i18n";
 
 export type Outcome = "same" | "tie" | "inverted" | "unknown" | "not_applicable";
 
@@ -16,13 +17,19 @@ export function outcomeOf(nominalWinner: Winner, caseWinner: Winner): Outcome {
   return caseWinner === nominalWinner ? "same" : "inverted";
 }
 
-export const OUTCOME_LABEL: Record<Outcome, string> = {
+export const OUTCOME_LABEL: Record<Outcome, string> = bi({
   same: "Se mantiene",
   tie: "Empate",
   inverted: "Se invierte",
   unknown: "No determinable",
   not_applicable: "Sin elección nominal",
-};
+}, {
+  same: "Holds",
+  tie: "Tie",
+  inverted: "Flips",
+  unknown: "Not determinable",
+  not_applicable: "No nominal choice",
+});
 
 export interface FamilyCounts {
   family: Exclude<VariantFamily, "nominal">;

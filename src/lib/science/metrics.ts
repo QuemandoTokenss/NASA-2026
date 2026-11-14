@@ -5,6 +5,7 @@
 import type { IconName } from "@/components/ui/Icon";
 import type { Criterion } from "../contract/constants";
 import type { MetricKey } from "../contract/schema";
+import { bi } from "../i18n";
 
 export interface MetricMeta {
   label: string;
@@ -15,7 +16,7 @@ export interface MetricMeta {
   better?: "higher" | "lower";
 }
 
-export const METRIC_META: Record<MetricKey, MetricMeta> = {
+export const METRIC_META: Record<MetricKey, MetricMeta> = bi({
   sun_hours: {
     label: "Horas con Sol",
     short: "Con Sol",
@@ -58,7 +59,33 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
     description: "Horas sin estado determinable. Nunca se interpretan como sombra.",
   },
   duration_hours: { label: "Duración de la ventana", short: "Duración", icon: "clock", description: "Horas de la ventana analizada." },
-};
+}, {
+  sun_hours: { label: "Hours with Sun", short: "Sunlit", icon: "sun", description: "Time with the geometric centre of the Sun above the terrain.", better: "higher" },
+  dte_center_hours: {
+    label: "Hours with Earth visible",
+    short: "Earth",
+    icon: "earth",
+    description: "Time with the centre of the Earth above the terrain. Geometry, not a radio link.",
+    better: "higher",
+  },
+  joint_hours: { label: "Hours with Sun and Earth", short: "Sun + Earth", icon: "sparkles", description: "Intersection of both visibilities.", better: "higher" },
+  longest_dark_hours: {
+    label: "Longest stretch without Sun",
+    short: "Dark streak",
+    icon: "moon",
+    description: "Longest continuous interval without the Sun centre, clipped to the window.",
+    better: "lower",
+  },
+  longest_no_earth_hours: {
+    label: "Longest stretch without Earth",
+    short: "No-Earth streak",
+    icon: "radio",
+    description: "Longest continuous interval without the Earth centre, clipped to the window. Not a decision criterion of the engine.",
+  },
+  known_hours: { label: "Known hours", short: "Known", icon: "check", description: "Hours with a determined state." },
+  unknown_hours: { label: "Unknown hours", short: "Unknown", icon: "alert", description: "Hours without a determinable state. Never interpreted as shadow." },
+  duration_hours: { label: "Window duration", short: "Duration", icon: "clock", description: "Hours in the analysed window." },
+});
 
 /** Métricas de visibilidad mostradas en comparaciones, en orden. */
 export const DISPLAY_METRICS: MetricKey[] = ["sun_hours", "dte_center_hours", "joint_hours", "longest_dark_hours", "longest_no_earth_hours"];

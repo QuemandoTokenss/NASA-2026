@@ -4,7 +4,7 @@ Comparador de dos emplazamientos del polo sur lunar —**A = Connecting Ridge RO
 
 > ¿Hasta qué punto podemos confiar en que un emplazamiento es mejor que otro si el relieve usado en el cálculo contiene incertidumbre?
 
-**Producción:** https://site-regret.vercel.app (desplegado con Vercel; E2E 32/32 contra esta URL).
+**Producción:** https://site-regret.vercel.app (desplegado con Vercel).
 
 ## Secciones
 
@@ -17,6 +17,9 @@ Comparador de dos emplazamientos del polo sur lunar —**A = Connecting Ridge RO
 | `/engineer/` | Comparación 0/2/10 m: horizontes, métricas, franjas y ganadores por altura (escena 2D ilustrativa) |
 | `/regret-lab/` | Mantener/empatar/invertir por familia de superficies, regret, mapa de decisiones, caso guiado (`#demo`) |
 | `/evidencia/` | Fuentes, método, 414 comprobaciones, Horizons, convergencia, RMS, referencias, límites, descargas |
+| `/historia/` | Modo presentación: el caso demostrativo en 7 escenas (flechas para avanzar, F pantalla completa) |
+
+**Idiomas:** español e inglés (selector ES/EN en la cabecera, o `?lang=en` en cualquier URL).
 
 ## Requisitos
 
@@ -49,7 +52,7 @@ npm run serve
 npm run verify
 ```
 
-Encadena `typecheck → lint → test (Vitest, 63) → build → test:e2e (Playwright, 32)`. Detalle en [QA_REPORT.md](QA_REPORT.md). Para probar un despliegue: `E2E_BASE_URL=https://site-regret.vercel.app npx playwright test`. Con Chrome: `PW_CHANNEL=chrome`.
+Encadena `typecheck → lint → test (Vitest, 63) → build → test:e2e (Playwright, 47, incluida la auditoría axe-core WCAG A/AA)`. Detalle en [QA_REPORT.md](QA_REPORT.md). Para probar un despliegue: `E2E_BASE_URL=https://site-regret.vercel.app npx playwright test`. Con Chrome: `PW_CHANNEL=chrome`.
 
 ## Despliegue (Vercel)
 

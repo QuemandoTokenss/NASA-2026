@@ -3,8 +3,10 @@
  * tomarse con valores formateados: siempre con los valores completos del JSON.
  */
 
+import { getLocale, intlLocale } from "./i18n";
+
 const nf = (digits: number) =>
-  new Intl.NumberFormat("es-ES", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  new Intl.NumberFormat(intlLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
 export function formatNumber(v: number | null | undefined, digits = 2): string {
   if (v === null || v === undefined || !Number.isFinite(v)) return "—";
@@ -35,7 +37,7 @@ export function formatLongitudeEast(lonEast: number, digits = 4): string {
   return `${formatNumber(lonEast, digits)}° E`;
 }
 
-const utcFmt = new Intl.DateTimeFormat("es-ES", {
+const utcOpts: Intl.DateTimeFormatOptions = {
   timeZone: "UTC",
   day: "2-digit",
   month: "short",
@@ -43,14 +45,24 @@ const utcFmt = new Intl.DateTimeFormat("es-ES", {
   hour: "2-digit",
   minute: "2-digit",
   hourCycle: "h23",
-});
-const utcDateFmt = new Intl.DateTimeFormat("es-ES", { timeZone: "UTC", day: "numeric", month: "short", year: "numeric" });
+};
+const fmtCache = new Map<string, Intl.DateTimeFormat>();
+/** Formateador de fechas UTC del idioma activo (cacheado por idioma). */
+export function dateFormat(id: string, opts: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${getLocale()}|${id}`;
+  let f = fmtCache.get(key);
+  if (!f) {
+    f = new Intl.DateTimeFormat(intlLocale(), { timeZone: "UTC", ...opts });
+    fmtCache.set(key, f);
+  }
+  return f;
+}
 
 export function formatUtc(iso: string): string {
-  return `${utcFmt.format(new Date(iso))} UTC`;
+  return `${dateFormat("utc", utcOpts).format(new Date(iso))} UTC`;
 }
 export function formatUtcDate(iso: string): string {
-  return utcDateFmt.format(new Date(iso));
+  return dateFormat("utcDate", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
 }
 
 export function formatBytes(n: number): string {

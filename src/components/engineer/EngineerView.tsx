@@ -23,14 +23,15 @@ import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
 import { MastScene } from "./MastScene";
+import { L } from "@/lib/i18n";
 
 const heightColor = (h: HeightM, selected: HeightM, site: SiteId) => (h === selected ? SITE_META[site].colorVar : h === 0 ? "#64748f" : h === 2 ? "#9aaac4" : "#d6deeb");
 
 function HeightSelector() {
   const { selection, dispatch } = useSelection();
   return (
-    <Panel title="Altura del observador" icon="height" actions={<InfoTip>Solo existen tres alturas precalculadas por el motor (configuration.heights_m). No se interpolan valores intermedios.</InfoTip>}>
-      <div role="radiogroup" aria-label="Altura del observador" className="flex flex-col gap-2">
+    <Panel title={L("Altura del observador", "Observer height")} icon="height" actions={<InfoTip>{L("Solo existen tres alturas precalculadas por el motor (configuration.heights_m). No se interpolan valores intermedios.", "Only three heights are precomputed by the engine (configuration.heights_m). Intermediate values are not interpolated.")}</InfoTip>}>
+      <div role="radiogroup" aria-label={L("Altura del observador", "Observer height")} className="flex flex-col gap-2">
         {[...HEIGHTS_M].reverse().map((h) => {
           const active = selection.heightM === h;
           return (
@@ -47,7 +48,7 @@ function HeightSelector() {
               <span className={`grid size-9 place-items-center rounded-full border text-xs font-bold ${active ? "border-uncertainty bg-uncertainty text-[#14092e]" : "border-line-strong text-ink-muted"}`}>{h}</span>
               <span className="min-w-0 flex-1">
                 <span className="block text-lg font-bold text-ink">{h} m</span>
-                <span className="block text-xs text-ink-faint">{h === 0 ? "Sobre el terreno" : `Mástil simulado de ${h} m`}</span>
+                <span className="block text-xs text-ink-faint">{h === 0 ? L("Sobre el terreno", "On the ground") : L(`Mástil simulado de ${h} m`, `Simulated ${h} m mast`)}</span>
               </span>
               {h > 0 ? <NatureBadge nature="SIMULATED" /> : null}
             </button>
@@ -65,7 +66,7 @@ function MetricsAtHeight({ core }: { core: Core }) {
   const s = getScenarioSummary(core, { siteId: focusSite, windowId, heightM, variant })!;
   const base = getScenarioSummary(core, { siteId: focusSite, windowId, heightM: 0, variant })!;
   return (
-    <Panel title={`Rendimiento geométrico (altura ${heightM} m)`} icon="activity" actions={<SiteDot site={focusSite} className="size-3" />}>
+    <Panel title={L(`Rendimiento geométrico (altura ${heightM} m)`, `Geometric performance (height ${heightM} m)`)} icon="activity" actions={<SiteDot site={focusSite} className="size-3" />}>
       <ul className="flex flex-col">
         {DISPLAY_METRICS.map((k) => {
           const d = s.metrics[k] - base.metrics[k];
@@ -76,14 +77,14 @@ function MetricsAtHeight({ core }: { core: Core }) {
               <span className="tabular text-right text-sm font-semibold text-ink">
                 {formatHoursMinutes(s.metrics[k])}
                 <span className="block text-[10px] font-normal text-ink-faint">
-                  {heightM === 0 ? "referencia 0 m" : `${d > 0 ? "+" : d < 0 ? "−" : "±"}${formatHoursMinutes(Math.abs(d))} vs 0 m`}
+                  {heightM === 0 ? L("referencia 0 m", "0 m reference") : `${d > 0 ? "+" : d < 0 ? "−" : "±"}${formatHoursMinutes(Math.abs(d))} vs 0 m`}
                 </span>
               </span>
             </li>
           );
         })}
       </ul>
-      <p className="mt-3 text-[11px] text-ink-faint">Visibilidad geométrica del centro de Sol y Tierra; no equivale a energía generada ni a enlace de radio.</p>
+      <p className="mt-3 text-[11px] text-ink-faint">{L("Visibilidad geométrica del centro de Sol y Tierra; no equivale a energía generada ni a enlace de radio.", "Geometric visibility of the Sun and Earth centres; not the same as power generated or a radio link.")}</p>
     </Panel>
   );
 }
@@ -100,32 +101,32 @@ function HeightImpact({ core }: { core: Core }) {
   const y1 = hi + pad;
   const W = 420;
   const H = 230;
-  const L = 52;
+  const LM = 52;
   const B = 34;
-  const xs = (k: number) => L + 40 + k * ((W - L - 80) / 2);
+  const xs = (k: number) => LM + 40 + k * ((W - LM - 80) / 2);
   const ys = (v: number) => 12 + ((y1 - v) / (y1 - y0)) * (H - B - 12);
   return (
     <Panel
-      title="Impacto de la altura"
+      title={L("Impacto de la altura", "Height impact")}
       icon="timeline"
       actions={
         <SelectField
-          label="Métrica"
+          label={L("Métrica", "Metric")}
           hideLabel
           value={metric}
           onChange={(v) => v && setMetric(v)}
-          groups={[{ label: "Métricas", options: DISPLAY_METRICS.map((k) => ({ value: k, label: METRIC_META[k].label })) }]}
+          groups={[{ label: L("Métricas", "Metrics"), options: DISPLAY_METRICS.map((k) => ({ value: k, label: METRIC_META[k].label })) }]}
         />
       }
     >
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`${METRIC_META[metric].label} de A y B a 0, 2 y 10 m`}>
-        <rect x={L} y={12} width={W - L - 12} height={H - B - 12} rx={6} fill="var(--color-bg-2)" />
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={L(`${METRIC_META[metric].label} de A y B a 0, 2 y 10 m`, `${METRIC_META[metric].label} of A and B at 0, 2 and 10 m`)}>
+        <rect x={LM} y={12} width={W - LM - 12} height={H - B - 12} rx={6} fill="var(--color-bg-2)" />
         {[0, 0.5, 1].map((f) => {
           const v = y0 + f * (y1 - y0);
           return (
             <g key={f}>
-              <line x1={L} x2={W - 12} y1={ys(v)} y2={ys(v)} stroke="var(--color-line)" />
-              <text x={L - 6} y={ys(v) + 4} textAnchor="end" fontSize={10} fill="var(--color-ink-faint)">
+              <line x1={LM} x2={W - 12} y1={ys(v)} y2={ys(v)} stroke="var(--color-line)" />
+              <text x={LM - 6} y={ys(v) + 4} textAnchor="end" fontSize={10} fill="var(--color-ink-faint)">
                 {formatNumber(v, 0)} h
               </text>
             </g>
@@ -158,13 +159,13 @@ function HeightImpact({ core }: { core: Core }) {
 function SensitivityTable({ core }: { core: Core }) {
   const { selection } = useSelection();
   return (
-    <Panel title={`Análisis de sensibilidad · ${SITE_META[selection.focusSite].label}`} icon="sliders" bodyClassName="p-0 sm:p-0">
+    <Panel title={`${L("Análisis de sensibilidad", "Sensitivity analysis")} · ${SITE_META[selection.focusSite].label}`} icon="sliders" bodyClassName="p-0 sm:p-0">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
-          <caption className="sr-only">Métricas por altura del observador</caption>
+          <caption className="sr-only">{L("Métricas por altura del observador", "Metrics by observer height")}</caption>
           <thead>
             <tr className="border-b border-line text-xs text-ink-faint">
-              <th scope="col" className="px-5 py-2.5 text-left font-medium">Altura</th>
+              <th scope="col" className="px-5 py-2.5 text-left font-medium">{L("Altura", "Height")}</th>
               {DISPLAY_METRICS.map((k) => (
                 <th key={k} scope="col" className="px-3 py-2.5 text-right font-medium">
                   {METRIC_META[k].short}
@@ -199,12 +200,12 @@ function SensitivityTable({ core }: { core: Core }) {
 function WinnersByHeight({ core }: { core: Core }) {
   const { selection, query } = useSelection();
   return (
-    <Panel title="Conclusión de ingeniería" icon="check" actions={<InfoTip>Ganador de cada criterio a 0, 2 y 10 m con la superficie seleccionada (comparisons[w,h].criteria[C].cases[V].winner).</InfoTip>}>
+    <Panel title={L("Conclusión de ingeniería", "Engineering conclusion")} icon="check" actions={<InfoTip>{L("Ganador de cada criterio a 0, 2 y 10 m con la superficie seleccionada (comparisons[w,h].criteria[C].cases[V].winner).", "Winner of each criterion at 0, 2 and 10 m with the selected surface (comparisons[w,h].criteria[C].cases[V].winner).")}</InfoTip>}>
       <table className="w-full text-sm">
-        <caption className="sr-only">Ganador por criterio y altura</caption>
+        <caption className="sr-only">{L("Ganador por criterio y altura", "Winner by criterion and height")}</caption>
         <thead>
           <tr className="text-xs text-ink-faint">
-            <th scope="col" className="pb-2 text-left font-medium">Criterio</th>
+            <th scope="col" className="pb-2 text-left font-medium">{L("Criterio", "Criterion")}</th>
             {HEIGHTS_M.map((h) => (
               <th key={h} scope="col" className="pb-2 text-center font-medium">
                 {h} m
@@ -222,7 +223,7 @@ function WinnersByHeight({ core }: { core: Core }) {
                   {CRITERION_META[c].short}
                   {changes ? (
                     <span className="ml-2">
-                      <Badge tone="uncertainty">cambia con la altura</Badge>
+                      <Badge tone="uncertainty">{L("cambia con la altura", "changes with height")}</Badge>
                     </span>
                   ) : null}
                 </th>
@@ -237,11 +238,14 @@ function WinnersByHeight({ core }: { core: Core }) {
         </tbody>
       </table>
       <p className="mt-3 text-xs text-ink-muted">
-        Superficie {VARIANT_LABEL[selection.variant]}, ventana {selection.windowId}. Elevar el observador puede cambiar o igualar la decisión; no existe una «altura óptima» calculada.
+        {L(
+          `Superficie ${VARIANT_LABEL[selection.variant]}, ventana ${selection.windowId}. Elevar el observador puede cambiar o igualar la decisión; no existe una «altura óptima» calculada.`,
+          `Surface ${VARIANT_LABEL[selection.variant]}, window ${selection.windowId}. Raising the observer can change or even out the decision; no “optimal height” is computed.`,
+        )}
       </p>
       <div className="mt-3">
         <LinkButton href={`/comparador/?${query}`} size="sm" icon="compare">
-          Abrir en Comparador
+          {L("Abrir en Comparador", "Open in Compare")}
         </LinkButton>
       </div>
     </Panel>
@@ -257,19 +261,19 @@ function HeightStrips({ chunks, clock }: { chunks: ChunkState<ScenarioChunk>[]; 
       const c = chunks[k] as { status: "ready"; data: { value: ScenarioChunk } };
       const row = getScenarioSeries(c.data.value.rows, selection.focusSite, selection.variant)!;
       return [
-        { key: `s${h}`, label: `Sol · ${h} m`, runs: booleanRuns(row.state_codes, sunVisible), onColor: "var(--color-state-sun)" },
-        { key: `e${h}`, label: `Tierra · ${h} m`, runs: booleanRuns(row.state_codes, earthVisible), onColor: "var(--color-state-earth)" },
+        { key: `s${h}`, label: `${L("Sol", "Sun")} · ${h} m`, runs: booleanRuns(row.state_codes, sunVisible), onColor: "var(--color-state-sun)" },
+        { key: `e${h}`, label: `${L("Tierra", "Earth")} · ${h} m`, runs: booleanRuns(row.state_codes, earthVisible), onColor: "var(--color-state-earth)" },
       ];
     });
   }, [ready, chunks, selection.focusSite, selection.variant]);
   return (
-    <Panel title={`Timeline de visibilidad por altura · ${SITE_META[selection.focusSite].label} · ${selection.windowId}`} icon="calendar" actions={<NatureBadge nature={variantFamily(selection.variant) === "nominal" ? "DERIVED" : "MODELED"} />}>
+    <Panel title={`${L("Timeline de visibilidad por altura", "Visibility timeline by height")} · ${SITE_META[selection.focusSite].label} · ${selection.windowId}`} icon="calendar" actions={<NatureBadge nature={variantFamily(selection.variant) === "nominal" ? "DERIVED" : "MODELED"} />}>
       {ready ? (
         <StateStrips rows={rows} times={clock.times_utc} cursor={selection.timeIndex} onPick={(i) => dispatch({ type: "setTimeIndex", value: i })} />
       ) : (
-        <p className="text-sm text-ink-faint">Cargando estados de las tres alturas…</p>
+        <p className="text-sm text-ink-faint">{L("Cargando estados de las tres alturas…", "Loading states for the three heights…")}</p>
       )}
-      <p className="mt-2 text-[11px] text-ink-faint">Tramos originales de state_codes para 0, 2 y 10 m (sin interpolar). Pulsa para fijar el instante compartido con Timeline.</p>
+      <p className="mt-2 text-[11px] text-ink-faint">{L("Tramos originales de state_codes para 0, 2 y 10 m (sin interpolar). Pulsa para fijar el instante compartido con Timeline.", "Original state_codes runs for 0, 2 and 10 m (not interpolated). Click to set the instant shared with Timeline.")}</p>
     </Panel>
   );
 }
@@ -298,12 +302,12 @@ function EngineerBody({ core }: { core: Core }) {
       <div className="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_380px]">
         <HeightSelector />
         <Panel
-          title="Vista ilustrativa"
+          title={L("Vista ilustrativa", "Illustrative view")}
           icon="engineer"
           actions={
             <>
-              <Badge tone="warn">Ilustración</Badge>
-              <InfoTip>Dibujo explicativo: no representa el relieve real, la posición real del Sol ni sombras calculadas. Los resultados están en los paneles de datos.</InfoTip>
+              <Badge tone="warn">{L("Ilustración", "Illustration")}</Badge>
+              <InfoTip>{L("Dibujo explicativo: no representa el relieve real, la posición real del Sol ni sombras calculadas. Los resultados están en los paneles de datos.", "Explanatory drawing: it does not show the real relief, the real Sun position or computed shadows. Results are in the data panels.")}</InfoTip>
             </>
           }
           bodyClassName="p-0 sm:p-0 overflow-hidden rounded-b-2xl"
@@ -317,14 +321,14 @@ function EngineerBody({ core }: { core: Core }) {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Panel
-          title={`Horizonte a 0, 2 y 10 m · ${SITE_META[focusSite].label} · ${VARIANT_LABEL[variant]}`}
+          title={`${L("Horizonte a 0, 2 y 10 m", "Horizon at 0, 2 and 10 m")} · ${SITE_META[focusSite].label} · ${VARIANT_LABEL[variant]}`}
           icon="mountain"
           actions={<NatureBadge nature={variant === "nominal" ? "DERIVED" : "MODELED"} />}
-          footer="Perfiles reales del paquete para cada altura (horizons[S].variants[V][H]); en color del sitio, la altura seleccionada."
+          footer={L("Perfiles reales del paquete para cada altura (horizons[S].variants[V][H]); en color del sitio, la altura seleccionada.", "Real package profiles for each height (horizons[S].variants[V][H]); the selected height in the site colour.")}
         >
           {horizonsReady ? (
             <HorizonChart
-              title={`Horizonte de ${SITE_META[focusSite].label} a 0, 2 y 10 m`}
+              title={L(`Horizonte de ${SITE_META[focusSite].label} a 0, 2 y 10 m`, `${SITE_META[focusSite].label} horizon at 0, 2 and 10 m`)}
               series={HEIGHTS_M.map((h, k) => {
                 const chunk = (horizons[k] as { status: "ready"; data: { value: HorizonChunk } }).data.value;
                 const p = chunk.variants[variant];
@@ -340,14 +344,14 @@ function EngineerBody({ core }: { core: Core }) {
               }).sort((p, q) => Number(p.emphasis) - Number(q.emphasis))}
             />
           ) : (
-            <p className="text-sm text-ink-faint">Cargando horizontes…</p>
+            <p className="text-sm text-ink-faint">{L("Cargando horizontes…", "Loading horizons…")}</p>
           )}
-          <Legend className="mt-2" items={HEIGHTS_M.map((h) => ({ label: `${h} m${h === heightM ? " (seleccionada)" : ""}`, color: heightColor(h, heightM, focusSite), shape: "line" as const }))} />
+          <Legend className="mt-2" items={HEIGHTS_M.map((h) => ({ label: `${h} m${h === heightM ? L(" (seleccionada)", " (selected)") : ""}`, color: heightColor(h, heightM, focusSite), shape: "line" as const }))} />
         </Panel>
         <HeightImpact core={core} />
       </div>
 
-      <ChunkGate state={clock} label="reloj">
+      <ChunkGate state={clock} label={L("reloj", "clock")}>
         {(c: EphemerisClockChunk) => <HeightStrips chunks={[s0, s2, s10]} clock={c} />}
       </ChunkGate>
 
@@ -356,9 +360,11 @@ function EngineerBody({ core }: { core: Core }) {
         <WinnersByHeight core={core} />
       </div>
 
-      <Callout tone="neutral" icon="info" title="Qué no calcula Engineer">
-        No hay modelo de estructura, materiales, albedo, potencia eléctrica ni enlace de radio. «Mástil de 2/10 m» es un observador geométrico elevado sobre el terreno
-        (configuration.heights_m), etiquetado como SIMULATED.
+      <Callout tone="neutral" icon="info" title={L("Qué no calcula Engineer", "What Engineer does not compute")}>
+        {L(
+          "No hay modelo de estructura, materiales, albedo, potencia eléctrica ni enlace de radio. «Mástil de 2/10 m» es un observador geométrico elevado sobre el terreno (configuration.heights_m), etiquetado como SIMULATED.",
+          "There is no model of structure, materials, albedo, electrical power or radio link. “2/10 m mast” is a geometric observer raised above the terrain (configuration.heights_m), labelled SIMULATED.",
+        )}
       </Callout>
     </>
   );
@@ -370,7 +376,7 @@ export function EngineerView() {
       <PageHeader
         eyebrow="Engineer"
         title="Engineer Mode"
-        subtitle="¿Cuánto cambia la visibilidad geométrica al elevar el observador 0, 2 o 10 m?"
+        subtitle={L("¿Cuánto cambia la visibilidad geométrica al elevar el observador 0, 2 o 10 m?", "How much does geometric visibility change when the observer is raised 0, 2 or 10 m?")}
         actions={<ExportButtons page="engineer" />}
       />
       <DataGate>{({ core }) => <EngineerBody core={core} />}</DataGate>

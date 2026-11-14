@@ -22,12 +22,15 @@ import { Badge, Callout, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { L, R } from "@/lib/i18n";
 
 function roleOf(site: SiteId, winner: string | undefined) {
-  if (!winner) return { label: "Criterio sin elegir", tone: "neutral" as const };
-  if (winner === "TIE") return { label: "Empate", tone: "neutral" as const };
-  if (winner === "UNKNOWN") return { label: "No determinable", tone: "warn" as const };
-  return winner === site ? { label: "Ganador con este criterio", tone: site === "A" ? ("a" as const) : ("b" as const) } : { label: "Alternativa", tone: "neutral" as const };
+  if (!winner) return { label: L("Criterio sin elegir", "No criterion chosen"), tone: "neutral" as const };
+  if (winner === "TIE") return { label: L("Empate", "Tie"), tone: "neutral" as const };
+  if (winner === "UNKNOWN") return { label: L("No determinable", "Not determinable"), tone: "warn" as const };
+  return winner === site
+    ? { label: L("Ganador con este criterio", "Winner with this criterion"), tone: site === "A" ? ("a" as const) : ("b" as const) }
+    : { label: L("Alternativa", "Alternative"), tone: "neutral" as const };
 }
 
 function SiteCard({
@@ -71,7 +74,7 @@ function SiteCard({
         </div>
         <div className="flex flex-col items-center">
           <WindowRing value={m[ringMetric]} total={m.duration_hours} color={SITE_META[id].colorVar} label={METRIC_META[ringMetric].short} size={148} />
-          <p className="mt-1 max-w-44 text-center text-[11px] text-ink-faint">Fracción real de la ventana ({METRIC_META[ringMetric].label.toLowerCase()}), no una puntuación</p>
+          <p className="mt-1 max-w-44 text-center text-[11px] text-ink-faint">{L(`Fracción real de la ventana (${METRIC_META[ringMetric].label.toLowerCase()}), no una puntuación`, `Actual fraction of the window (${METRIC_META[ringMetric].label.toLowerCase()}), not a score`)}</p>
         </div>
         <ul className="min-w-0 sm:col-span-2">
           {DISPLAY_METRICS.map((k) => (
@@ -80,7 +83,7 @@ function SiteCard({
               <span className="min-w-0 flex-1 text-sm text-ink-muted">{METRIC_META[k].label}</span>
               <span className="tabular text-right text-sm font-semibold text-ink">
                 {formatHoursMinutes(m[k])}
-                <span className="block text-[10px] font-normal text-ink-faint">{formatNumber((m[k] / m.duration_hours) * 100, 1)} % de la ventana</span>
+                <span className="block text-[10px] font-normal text-ink-faint">{formatNumber((m[k] / m.duration_hours) * 100, 1)} % {L("de la ventana", "of the window")}</span>
               </span>
             </li>
           ))}
@@ -88,8 +91,8 @@ function SiteCard({
       </div>
       <footer className="relative mt-auto flex flex-wrap gap-x-5 gap-y-1 border-t border-line px-5 py-2.5 text-xs text-ink-faint">
         <span>{site.name}</span>
-        <span>Suelo {formatNumber(site.nominal_height_m, 1)} m</span>
-        <span>Pendiente {formatNumber(site.values.slp, 2)}° (±{formatNumber(site.values.slperr, 2)}° RMS)</span>
+        <span>{L("Suelo", "Ground")} {formatNumber(site.nominal_height_m, 1)} m</span>
+        <span>{L("Pendiente", "Slope")} {formatNumber(site.values.slp, 2)}° (±{formatNumber(site.values.slperr, 2)}° RMS)</span>
       </footer>
     </section>
   );
@@ -97,7 +100,7 @@ function SiteCard({
 
 function KeyDifferences({ a, b, tol }: { a: ScenarioSummary; b: ScenarioSummary; tol: number }) {
   return (
-    <Panel title="Diferencias clave" icon="compare" actions={<InfoTip>Δ = A − B con valores completos. La flecha indica qué sitio queda mejor solo en métricas con sentido definido por un criterio del motor.</InfoTip>}>
+    <Panel title={L("Diferencias clave", "Key differences")} icon="compare" actions={<InfoTip>{L("Δ = A − B con valores completos. La flecha indica qué sitio queda mejor solo en métricas con sentido definido por un criterio del motor.", "Δ = A − B with full values. The tag shows which site is better only for metrics whose direction is defined by an engine criterion.")}</InfoTip>}>
       <ul className="flex flex-col">
         {DISPLAY_METRICS.map((k) => {
           const d = a.metrics[k] - b.metrics[k];
@@ -109,7 +112,7 @@ function KeyDifferences({ a, b, tol }: { a: ScenarioSummary; b: ScenarioSummary;
               <Icon name={meta.icon} className="size-[18px] shrink-0 text-ink-faint" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-ink">{meta.label}</p>
-                <p className="text-[11px] text-ink-faint">{meta.better ? (meta.better === "higher" ? "Más es mejor (criterio del motor)" : "Menos es mejor (criterio del motor)") : "Sin sentido de decisión definido"}</p>
+                <p className="text-[11px] text-ink-faint">{meta.better ? (meta.better === "higher" ? L("Más es mejor (criterio del motor)", "Higher is better (engine criterion)") : L("Menos es mejor (criterio del motor)", "Lower is better (engine criterion)")) : L("Sin sentido de decisión definido", "No defined decision direction")}</p>
               </div>
               <span className="tabular w-24 text-right text-sm font-semibold text-ink">
                 {d > 0 ? "+" : d < 0 ? "−" : ""}
@@ -119,9 +122,9 @@ function KeyDifferences({ a, b, tol }: { a: ScenarioSummary; b: ScenarioSummary;
                 {within ? (
                   <Badge tone="neutral">≤ 10 min</Badge>
                 ) : favored ? (
-                  <Badge tone={favored === "A" ? "a" : "b"}>{favored} mejor</Badge>
+                  <Badge tone={favored === "A" ? "a" : "b"}>{L(`${favored} mejor`, `${favored} better`)}</Badge>
                 ) : (
-                  <Badge tone="neutral">informativa</Badge>
+                  <Badge tone="neutral">{L("informativa", "informative")}</Badge>
                 )}
               </span>
             </li>
@@ -136,26 +139,26 @@ function MetricTable({ a, b, criterionMetric }: { a: ScenarioSummary; b: Scenari
   const scale = a.metrics.duration_hours;
   return (
     <Panel
-      title="Comparación por métrica"
+      title={L("Comparación por métrica", "Comparison by metric")}
       icon="activity"
       actions={
         <span className="flex items-center gap-3 text-xs text-ink-muted">
-          <span className="flex items-center gap-1.5"><SiteDot site="A" />Sitio A</span>
-          <span className="flex items-center gap-1.5"><SiteDot site="B" />Sitio B</span>
+          <span className="flex items-center gap-1.5"><SiteDot site="A" />{SITE_META.A.label}</span>
+          <span className="flex items-center gap-1.5"><SiteDot site="B" />{SITE_META.B.label}</span>
         </span>
       }
-      footer={`Barras en horas sobre la duración de la ventana (${formatNumber(scale, 0)} h); valores completos del paquete, redondeados solo en pantalla.`}
+      footer={L(`Barras en horas sobre la duración de la ventana (${formatNumber(scale, 0)} h); valores completos del paquete, redondeados solo en pantalla.`, `Bars in hours over the window duration (${formatNumber(scale, 0)} h); full package values, rounded only on screen.`)}
       bodyClassName="p-0 sm:p-0"
     >
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
-          <caption className="sr-only">Métricas de visibilidad de A y B</caption>
+          <caption className="sr-only">{L("Métricas de visibilidad de A y B", "Visibility metrics of A and B")}</caption>
           <thead>
             <tr className="border-b border-line text-left text-xs text-ink-faint">
-              <th scope="col" className="px-5 py-2.5 font-medium">Métrica</th>
-              <th scope="col" className="px-3 py-2.5 text-right font-medium">Sitio A</th>
-              <th scope="col" className="px-3 py-2.5 text-right font-medium">Sitio B</th>
-              <th scope="col" className="w-[38%] px-3 py-2.5 font-medium">Comparación (horas)</th>
+              <th scope="col" className="px-5 py-2.5 font-medium">{L("Métrica", "Metric")}</th>
+              <th scope="col" className="px-3 py-2.5 text-right font-medium">{SITE_META.A.label}</th>
+              <th scope="col" className="px-3 py-2.5 text-right font-medium">{SITE_META.B.label}</th>
+              <th scope="col" className="w-[38%] px-3 py-2.5 font-medium">{L("Comparación (horas)", "Comparison (hours)")}</th>
               <th scope="col" className="px-5 py-2.5 text-right font-medium">Δ A − B</th>
             </tr>
           </thead>
@@ -169,7 +172,7 @@ function MetricTable({ a, b, criterionMetric }: { a: ScenarioSummary; b: Scenari
                     <span className="flex items-center gap-2.5 text-ink">
                       <Icon name={METRIC_META[k].icon} className="size-[18px] text-ink-faint" />
                       {METRIC_META[k].label}
-                      {active ? <Badge tone="accent">Criterio</Badge> : null}
+                      {active ? <Badge tone="accent">{L("Criterio", "Criterion")}</Badge> : null}
                     </span>
                   </th>
                   <td className="tabular px-3 py-3 text-right font-semibold text-site-a">{formatHoursMinutes(a.metrics[k])}</td>
@@ -196,7 +199,7 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
   const { criterion, variant } = selection;
   if (!criterion || !result)
     return (
-      <Panel title="Conclusión" icon="check" className="border-accent/30">
+      <Panel title={L("Conclusión", "Conclusion")} icon="check" className="border-accent/30">
         <CriterionPicker compact />
       </Panel>
     );
@@ -208,7 +211,7 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
   const tone = winner === "A" ? "text-site-a" : winner === "B" ? "text-site-b" : "text-ink";
   return (
     <Panel
-      title="Conclusión"
+      title={L("Conclusión", "Conclusion")}
       icon="check"
       className={winner === "A" ? "border-site-a/40" : winner === "B" ? "border-site-b/40" : "border-line-strong"}
       actions={isNominal ? <NatureBadge nature="DERIVED" /> : <NatureBadge nature={variantFamily(variant) === "own" ? "MODELED" : "OBSERVED"} />}
@@ -221,19 +224,25 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
           <p className="mt-2 text-2xl font-bold leading-tight text-ink">
             {winner === "A" || winner === "B" ? (
               <>
-                Mejor resultado: <span className={tone}>{SITE_META[winner].label}</span>
+                {L("Mejor resultado:", "Best result:")} <span className={tone}>{SITE_META[winner].label}</span>
               </>
             ) : winner === "TIE" ? (
-              <>Empate entre A y B</>
+              <>{L("Empate entre A y B", "Tie between A and B")}</>
             ) : (
-              <>No determinable</>
+              <>{L("No determinable", "Not determinable")}</>
             )}
           </p>
           {adv.hours !== null ? (
             <p className="mt-1 text-sm text-ink-muted">
               {winner === "TIE"
-                ? `Diferencia de ${formatHoursMinutes(adv.hours)}, dentro de la tolerancia de ${formatHoursMinutes(result.tie_tolerance_hours)}.`
-                : `Ventaja de ${formatHoursMinutes(adv.hours)} en ${METRIC_META[CRITERION_METRIC[criterion]].label.toLowerCase()}.`}
+                ? L(
+                    `Diferencia de ${formatHoursMinutes(adv.hours)}, dentro de la tolerancia de ${formatHoursMinutes(result.tie_tolerance_hours)}.`,
+                    `Difference of ${formatHoursMinutes(adv.hours)}, within the ${formatHoursMinutes(result.tie_tolerance_hours)} tolerance.`,
+                  )
+                : L(
+                    `Ventaja de ${formatHoursMinutes(adv.hours)} en ${METRIC_META[CRITERION_METRIC[criterion]].label.toLowerCase()}.`,
+                    `Advantage of ${formatHoursMinutes(adv.hours)} in ${METRIC_META[CRITERION_METRIC[criterion]].label.toLowerCase()}.`,
+                  )}
             </p>
           ) : null}
         </div>
@@ -242,8 +251,13 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
           {SITE_IDS.map((s) => (
             <div key={s} className="rounded-xl border border-line bg-bg-2/60 p-3">
               <p className="flex items-center gap-1.5 text-xs text-ink-faint">
-                Regret de elegir <SiteDot site={s} /> {s}
-                <InfoTip>Horas de la métrica del criterio que se pierden si se elige {s} y la mejor opción es la otra (regret_{s}_hours).</InfoTip>
+                {L("Regret de elegir", "Regret of choosing")} <SiteDot site={s} /> {s}
+                <InfoTip>
+                  {L(
+                    `Horas de la métrica del criterio que se pierden si se elige ${s} y la mejor opción es la otra (regret_${s}_hours).`,
+                    `Hours of the criterion metric lost if ${s} is chosen and the best option is the other one (regret_${s}_hours).`,
+                  )}
+                </InfoTip>
               </p>
               <p className="tabular mt-1 text-lg font-bold text-uncertainty">{formatHoursMinutes(s === "A" ? cs.regret_A_hours : cs.regret_B_hours)}</p>
             </div>
@@ -252,23 +266,25 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
 
         {isNominal ? (
           <blockquote className="border-l-2 border-accent pl-3 text-sm leading-relaxed text-ink-muted">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">Frase del motor (determinista, sin IA)</p>
-            {result.summary_es}
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{L("Frase del motor (determinista, sin IA)", "Engine sentence (deterministic, no AI · original Spanish)")}</p>
+            <span lang="es">{result.summary_es}</span>
           </blockquote>
         ) : (
-          <Callout tone="uncertainty" icon="shuffle" title={`Superficie: ${VARIANT_LABEL[variant]}`}>
-            {FAMILY_META[variantFamily(variant)].description} Con la superficie nominal el resultado es{" "}
-            <strong className="text-ink">{WINNER_LABEL[nominal.winner]}</strong>
-            {nominal.winner !== winner ? " — esta superficie cambia la conclusión." : " — esta superficie no cambia la conclusión."}
+          <Callout tone="uncertainty" icon="shuffle" title={`${L("Superficie", "Surface")}: ${VARIANT_LABEL[variant]}`}>
+            {FAMILY_META[variantFamily(variant)].description}{" "}
+            {R("Con la superficie nominal el resultado es {w}", "With the nominal surface the result is {w}", { w: <strong className="text-ink">{WINNER_LABEL[nominal.winner]}</strong> })}
+            {nominal.winner !== winner
+              ? L(" — esta superficie cambia la conclusión.", " — this surface changes the conclusion.")
+              : L(" — esta superficie no cambia la conclusión.", " — this surface does not change the conclusion.")}
           </Callout>
         )}
 
         <div className="flex flex-wrap gap-2">
           <LinkButton href={`/regret-lab/?${query}`} variant="regret" icon="flask">
-            Poner a prueba en Regret Lab
+            {L("Poner a prueba en Regret Lab", "Stress-test in Regret Lab")}
           </LinkButton>
           <LinkButton href={`/timeline/?${query}`} size="md" icon="timeline">
-            Ver en Timeline
+            {L("Ver en Timeline", "View in Timeline")}
           </LinkButton>
         </div>
       </div>
@@ -282,9 +298,9 @@ function AllCombinations({ core }: { core: Core }) {
   if (!criterion) return null;
   return (
     <Panel
-      title={`Las 6 combinaciones · ${CRITERION_META[criterion].short}`}
+      title={`${L("Las 6 combinaciones", "The 6 combinations")} · ${CRITERION_META[criterion].short}`}
       icon="grid"
-      actions={<InfoTip>Ganador con la superficie seleccionada para cada ventana y altura (comparisons[].criteria[C].cases[V].winner). Pulsa una celda para seleccionarla.</InfoTip>}
+      actions={<InfoTip>{L("Ganador con la superficie seleccionada para cada ventana y altura (comparisons[].criteria[C].cases[V].winner). Pulsa una celda para seleccionarla.", "Winner with the selected surface for each window and height (comparisons[].criteria[C].cases[V].winner). Click a cell to select it.")}</InfoTip>}
     >
       <div className="grid grid-cols-[auto_repeat(3,minmax(0,1fr))] gap-2 text-sm">
         <span />
@@ -314,7 +330,7 @@ function AllCombinations({ core }: { core: Core }) {
                   }}
                   className={`rounded-lg border px-2 py-2.5 text-center font-semibold transition-all hover:-translate-y-0.5 ${tone} ${active ? "ring-2 ring-accent ring-offset-2 ring-offset-surface" : ""}`}
                 >
-                  {win === "TIE" ? "Empate" : win === "UNKNOWN" ? "?" : win}
+                  {win === "TIE" ? L("Empate", "Tie") : win === "UNKNOWN" ? "?" : win}
                 </button>
               );
             })}
@@ -331,13 +347,13 @@ function HorizonPair() {
   const a = useChunk(restored ? () => loadHorizonChunk("A", heightM) : null, [heightM]);
   const b = useChunk(restored ? () => loadHorizonChunk("B", heightM) : null, [heightM]);
   return (
-    <Panel title={`Horizontes · ${heightM} m · ${VARIANT_LABEL[variant]}`} icon="mountain" actions={<NatureBadge nature={variant === "nominal" ? "DERIVED" : "MODELED"} />}>
-      <ChunkGate state={a} label="horizonte de A">
+    <Panel title={`${L("Horizontes", "Horizons")} · ${heightM} m · ${VARIANT_LABEL[variant]}`} icon="mountain" actions={<NatureBadge nature={variant === "nominal" ? "DERIVED" : "MODELED"} />}>
+      <ChunkGate state={a} label={L("horizonte de A", "horizon of A")}>
         {(ha) => (
-          <ChunkGate state={b} label="horizonte de B">
+          <ChunkGate state={b} label={L("horizonte de B", "horizon of B")}>
             {(hb) => (
               <HorizonChart
-                title={`Horizonte de A y B a ${heightM} m`}
+                title={L(`Horizonte de A y B a ${heightM} m`, `Horizon of A and B at ${heightM} m`)}
                 series={[ha, hb].map((h) => ({
                   key: h.site_id,
                   label: SITE_META[h.site_id as SiteId].label,
@@ -360,9 +376,9 @@ export function ComparadorView() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        eyebrow="Comparador"
-        title="Comparador A vs B"
-        subtitle="Mismo periodo, misma altura, misma superficie y un criterio fijado antes de ver el ganador"
+        eyebrow={L("Comparador", "Compare")}
+        title={L("Comparador A vs B", "Compare A vs B")}
+        subtitle={L("Mismo periodo, misma altura, misma superficie y un criterio fijado antes de ver el ganador", "Same period, same height, same surface and a criterion fixed before seeing the winner")}
         actions={<ExportButtons page="comparador" />}
       />
       <DataGate>
@@ -372,13 +388,13 @@ export function ComparadorView() {
           const b = getScenarioSummary(core, { siteId: "B", windowId, heightM, variant });
           const siteA = getSite(core, "A");
           const siteB = getSite(core, "B");
-          if (!a || !b || !siteA || !siteB) return <Callout tone="danger">Selección no disponible en el paquete.</Callout>;
+          if (!a || !b || !siteA || !siteB) return <Callout tone="danger">{L("Selección no disponible en el paquete.", "Selection not available in the package.")}</Callout>;
           const result = criterion ? getCriterionResult(core, windowId, heightM, criterion) : undefined;
           const winner = result?.cases[variant].winner;
           const metric = criterion ? CRITERION_METRIC[criterion] : null;
           return (
             <>
-              <ControlBar aside={variant !== "nominal" ? <Badge tone="uncertainty" icon="shuffle">Superficie alternativa</Badge> : <Badge tone="neutral">Superficie nominal</Badge>}>
+              <ControlBar aside={variant !== "nominal" ? <Badge tone="uncertainty" icon="shuffle">{L("Superficie alternativa", "Alternative surface")}</Badge> : <Badge tone="neutral">{L("Superficie nominal", "Nominal surface")}</Badge>}>
                 <WindowControl core={core} />
                 <HeightControl />
                 <VariantControl />
@@ -403,7 +419,7 @@ export function ComparadorView() {
                 <div className="flex flex-col gap-5">
                   <AllCombinations core={core} />
                   {result ? (
-                    <Panel title="Diferencia D por superficie" icon="shuffle" actions={<InfoTip>D = U_A − U_B en horas del criterio. Derecha: favorece a A; izquierda: a B. Detalle completo en Regret Lab.</InfoTip>}>
+                    <Panel title={L("Diferencia D por superficie", "Difference D by surface")} icon="shuffle" actions={<InfoTip>{L("D = U_A − U_B en horas del criterio. Derecha: favorece a A; izquierda: a B. Detalle completo en Regret Lab.", "D = U_A − U_B in criterion hours. Right: favours A; left: favours B. Full detail in Regret Lab.")}</InfoTip>}>
                       <ul className="flex flex-col gap-2">
                         {(Object.keys(result.cases) as Array<keyof typeof result.cases>).map((v) => {
                           const c = result.cases[v];
@@ -418,8 +434,8 @@ export function ComparadorView() {
                         })}
                       </ul>
                       <p className="mt-3 flex justify-between text-[10px] text-ink-faint">
-                        <span>← favorece a B</span>
-                        <span>favorece a A →</span>
+                        <span>{L("← favorece a B", "← favours B")}</span>
+                        <span>{L("favorece a A →", "favours A →")}</span>
                       </p>
                     </Panel>
                   ) : null}

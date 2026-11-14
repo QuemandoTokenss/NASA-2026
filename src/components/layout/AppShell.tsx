@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { useData } from "@/lib/data/DataProvider";
 import { shortHash } from "@/lib/format";
+import { L } from "@/lib/i18n";
+import { useLocale } from "@/lib/I18nProvider";
 import { NAV, normalizePath } from "@/lib/nav";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { Callout } from "../ui/Display";
@@ -69,11 +71,11 @@ function NavLinks({ onNavigate, vertical = false }: { onNavigate?: () => void; v
 function DataStatusPill() {
   const { state } = useData();
   if (state.status === "loading")
-    return <span className="text-xs text-ink-faint" aria-live="polite">Cargando datos…</span>;
+    return <span className="text-xs text-ink-faint" aria-live="polite">{L("Cargando datos…", "Loading data…")}</span>;
   if (state.status === "error")
     return (
       <span className="inline-flex items-center gap-1 text-xs font-semibold text-danger">
-        <Icon name="alert" className="size-4" /> Datos no válidos
+        <Icon name="alert" className="size-4" /> {L("Datos no válidos", "Invalid data")}
       </span>
     );
   const verified = state.integrity === "verified";
@@ -82,12 +84,33 @@ function DataStatusPill() {
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
         verified ? "border-ok/30 text-ok" : "border-warn/40 text-warn"
       }`}
-      title={`${state.core.schema_version} · paquete sha256 ${state.manifest.source.sha256}`}
+      title={`${state.core.schema_version} · ${L("paquete", "package")} sha256 ${state.manifest.source.sha256}`}
     >
       <Icon name={verified ? "shield" : "alert"} className="size-4" />
-      <span className="hidden sm:inline">{state.core.schema_version}</span>
+      <span className="hidden 2xl:inline">{state.core.schema_version}</span>
       <span className="font-mono">{shortHash(state.manifest.source.sha256, 8)}</span>
     </span>
+  );
+}
+
+function LanguageToggle({ className = "flex" }: { className?: string }) {
+  const { locale, setLocale } = useLocale();
+  return (
+    <div role="group" aria-label={L("Idioma", "Language")} className={`${className} w-fit rounded-full border border-line p-0.5 text-[11px] font-semibold`}>
+      {(["es", "en"] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          lang={l}
+          aria-pressed={locale === l}
+          aria-label={l === "es" ? "Español" : "English"}
+          onClick={() => setLocale(l)}
+          className={`rounded-full px-2 py-0.5 uppercase transition-colors ${locale === l ? "bg-accent-surface text-ink" : "text-ink-muted hover:text-ink"}`}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -115,11 +138,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         href="#contenido"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-accent-strong focus:px-3 focus:py-2 focus:text-white"
       >
-        Saltar al contenido
+        {L("Saltar al contenido", "Skip to content")}
       </a>
       <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1880px] items-center gap-4 px-4 sm:px-6">
-          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="SITE REGRET — inicio">
+          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={L("SITE REGRET — inicio", "SITE REGRET — home")}>
             <Logo />
             <span className="flex flex-col leading-none">
               <span className="text-lg font-bold tracking-[0.08em] text-ink">SITE REGRET</span>
@@ -128,7 +151,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             </span>
           </Link>
-          <nav aria-label="Secciones" className="ml-4 hidden min-w-0 flex-1 justify-center xl:flex">
+          <nav aria-label={L("Secciones", "Sections")} className="mx-2 hidden min-w-0 flex-1 justify-center xl:flex">
             <NavLinks />
           </nav>
           <div className="ml-auto flex items-center gap-2 xl:ml-0">
@@ -136,15 +159,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               href="/historia/"
               className="hidden items-center gap-1.5 rounded-full border border-uncertainty/40 bg-uncertainty-soft px-3 py-1 text-xs font-semibold text-ink transition-colors hover:border-uncertainty sm:inline-flex"
             >
-              <Icon name="play" className="size-3.5 text-uncertainty" /> Presentar
+              <Icon name="play" className="size-3.5 text-uncertainty" /> {L("Presentar", "Present")}
             </Link>
+            <LanguageToggle className="hidden sm:flex" />
             <DataStatusPill />
             <button
               type="button"
               className="rounded-lg border border-line p-2 text-ink-muted hover:text-ink xl:hidden"
               aria-expanded={open}
               aria-controls="menu-movil"
-              aria-label={open ? "Cerrar menú" : "Abrir menú"}
+              aria-label={open ? L("Cerrar menú", "Close menu") : L("Abrir menú", "Open menu")}
               onClick={() => setOpen((v) => !v)}
             >
               <Icon name={open ? "close" : "menu"} />
@@ -152,11 +176,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         {open ? (
-          <nav id="menu-movil" aria-label="Secciones" className="border-t border-line bg-bg px-4 py-3 xl:hidden">
+          <nav id="menu-movil" aria-label={L("Secciones", "Sections")} className="border-t border-line bg-bg px-4 py-3 xl:hidden">
             <NavLinks vertical onNavigate={() => setOpen(false)} />
             <Link href="/historia/" onClick={() => setOpen(false)} className="mt-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-surface-2 hover:text-ink">
-              <Icon name="play" className="size-[18px] text-uncertainty" /> Historia · modo presentación
+              <Icon name="play" className="size-[18px] text-uncertainty" /> {L("Historia · modo presentación", "Story · presentation mode")}
             </Link>
+            <div className="mt-2 flex items-center gap-3 border-t border-line px-3 pt-3 text-sm text-ink-muted sm:hidden">
+              {L("Idioma", "Language")}
+              <LanguageToggle />
+            </div>
           </nav>
         ) : null}
       </header>
@@ -164,8 +192,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main id="contenido" className="mx-auto w-full max-w-[1880px] flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {rejectedParams.length ? (
           <div className="mb-4">
-            <Callout tone="warn" icon="alert" title="Parámetros de URL ignorados">
-              {rejectedParams.join(", ")} no corresponden a combinaciones calculadas; se usan los valores por defecto.
+            <Callout tone="warn" icon="alert" title={L("Parámetros de URL ignorados", "URL parameters ignored")}>
+              {rejectedParams.join(", ")} {L("no corresponden a combinaciones calculadas; se usan los valores por defecto.", "do not match computed combinations; defaults are used.")}
             </Callout>
           </div>
         ) : null}
@@ -175,15 +203,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-line">
         <div className="mx-auto flex max-w-[1880px] flex-col gap-2 px-4 py-5 text-xs text-ink-faint sm:px-6 md:flex-row md:items-center md:justify-between">
           <p>
-            SITE REGRET · equipo QuemandoTokens · NASA International Space Apps Challenge 2026. Datos: NASA PGDA, LRO-LOLA, JPL/NAIF
-            DE421 y JPL Horizons. No implica respaldo de la NASA ni aptitud operacional.
+            {L(
+              "SITE REGRET · equipo QuemandoTokens · NASA International Space Apps Challenge 2026. Datos: NASA PGDA, LRO-LOLA, JPL/NAIF DE421 y JPL Horizons. No implica respaldo de la NASA ni aptitud operacional.",
+              "SITE REGRET · team QuemandoTokens · NASA International Space Apps Challenge 2026. Data: NASA PGDA, LRO-LOLA, JPL/NAIF DE421 and JPL Horizons. Does not imply NASA endorsement or operational readiness.",
+            )}
           </p>
           <p className="flex gap-4">
             <Link href="/sistema-diseno/" className="hover:text-ink">
-              Sistema de diseño
+              {L("Sistema de diseño", "Design system")}
             </Link>
             <Link href="/evidencia/" className="hover:text-ink">
-              Límites y fuentes
+              {L("Límites y fuentes", "Limits and sources")}
             </Link>
           </p>
         </div>

@@ -6,6 +6,7 @@ import { formatHoursMinutes, formatUtc } from "@/lib/format";
 import { SITE_META } from "@/lib/labels";
 import { booleanRuns, longestHiddenRun, samplesToHours, sunVisible } from "@/lib/science/states";
 import { dayTicks } from "../charts/TimeCharts";
+import { L } from "@/lib/i18n";
 
 const W = 1000;
 const LEFT = 64;
@@ -35,13 +36,18 @@ export function DarkStreakStrips({ rows, times }: { rows: StreakRow[]; times: st
   const summary = rows
     .map((r) => {
       const run = longestHiddenRun(r.codes, sunVisible);
-      return run ? `${r.label}: racha más larga sin Sol ${formatHoursMinutes(samplesToHours(run.end - run.start))}, de ${formatUtc(times[run.start])} a ${formatUtc(times[run.end])}` : `${r.label}: sin rachas sin Sol`;
+      return run
+        ? L(
+            `${r.label}: racha más larga sin Sol ${formatHoursMinutes(samplesToHours(run.end - run.start))}, de ${formatUtc(times[run.start])} a ${formatUtc(times[run.end])}`,
+            `${r.label}: longest stretch without Sun ${formatHoursMinutes(samplesToHours(run.end - run.start))}, from ${formatUtc(times[run.start])} to ${formatUtc(times[run.end])}`,
+          )
+        : L(`${r.label}: sin rachas sin Sol`, `${r.label}: no stretches without Sun`);
     })
     .join(". ");
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-labelledby={titleId}>
-      <title id={titleId}>{`Franjas de Sol visible y racha más larga sin Sol. ${summary}.`}</title>
+      <title id={titleId}>{`${L("Franjas de Sol visible y racha más larga sin Sol.", "Sun-visible strips and longest stretch without Sun.")} ${summary}.`}</title>
       {ticks.map((t) => (
         <g key={t.i}>
           <line x1={x(t.i)} x2={x(t.i)} y1={top - 6} y2={H - 6} stroke="var(--color-line)" strokeDasharray="2 4" />

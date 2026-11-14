@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { SiteId, StateName, Winner } from "@/lib/contract/constants";
 import { NATURE_META, SITE_META, STATE_META, WINNER_LABEL, type Nature } from "@/lib/labels";
 import { Icon, type IconName } from "./Icon";
+import { L } from "@/lib/i18n";
 
 /* ----------------------------- Sitios ----------------------------------- */
 
@@ -58,7 +59,7 @@ export function WinnerTag({ winner, short = false }: { winner: Winner; short?: b
   if (winner === "TIE")
     return (
       <Badge tone="neutral" title={WINNER_LABEL.TIE}>
-        {short ? "Empate" : WINNER_LABEL.TIE}
+        {short ? L("Empate", "Tie") : WINNER_LABEL.TIE}
       </Badge>
     );
   return (

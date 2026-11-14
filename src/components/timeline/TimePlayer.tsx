@@ -5,6 +5,7 @@ import { STATE_SAMPLES } from "@/lib/contract/constants";
 import { formatUtc } from "@/lib/format";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { Icon } from "../ui/Icon";
+import { L } from "@/lib/i18n";
 
 /** Velocidades en intervalos de 10 min por segundo (no se interpola nada). */
 const SPEEDS = [
@@ -61,13 +62,13 @@ export function TimePlayer({ times }: { times: string[] }) {
             if (!playing && i >= last) set(0);
             setPlaying((p) => !p);
           }}
-          aria-label={playing ? "Pausar" : "Reproducir"}
+          aria-label={playing ? L("Pausar", "Pause") : L("Reproducir", "Play")}
           className="grid size-12 shrink-0 place-items-center rounded-full border border-accent/60 bg-gradient-to-b from-accent-surface to-[#0b1a36] text-ink shadow-[0_0_24px_-6px_#3a6ff0] transition-transform hover:scale-105"
         >
           <Icon name={playing ? "pause" : "play"} className="size-5" />
         </button>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-ink">Simulación temporal</p>
+          <p className="text-sm font-semibold text-ink">{L("Simulación temporal", "Time playback")}</p>
           <p aria-live="off" className="tabular text-xs text-ink-muted">
             {formatUtc(times[i])} → {formatUtc(times[i + 1])}
           </p>
@@ -75,7 +76,7 @@ export function TimePlayer({ times }: { times: string[] }) {
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <label htmlFor={sliderId} className="sr-only">
-          Instante de la ventana
+          {L("Instante de la ventana", "Instant in the window")}
         </label>
         <input
           id={sliderId}
@@ -91,26 +92,26 @@ export function TimePlayer({ times }: { times: string[] }) {
         <div className="flex justify-between text-[10px] text-ink-faint">
           <span>{formatUtc(times[0])}</span>
           <span>
-            Intervalo {i + 1} de {STATE_SAMPLES} · paso 10 min
+            {L("Intervalo", "Interval")} {i + 1} {L("de", "of")} {STATE_SAMPLES} · {L("paso 10 min", "10 min step")}
           </span>
           <span>{formatUtc(times[times.length - 1])}</span>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button type="button" className={btn} onClick={() => set(Math.max(0, i - 144))} aria-label="Retroceder 1 día" title="−1 día">
+        <button type="button" className={btn} onClick={() => set(Math.max(0, i - 144))} aria-label={L("Retroceder 1 día", "Back 1 day")} title={L("−1 día", "−1 day")}>
           <Icon name="skipBack" className="size-4" />
         </button>
-        <button type="button" className={btn} onClick={() => set(Math.max(0, i - 1))} aria-label="Retroceder 10 minutos" title="−10 min">
+        <button type="button" className={btn} onClick={() => set(Math.max(0, i - 1))} aria-label={L("Retroceder 10 minutos", "Back 10 minutes")} title="−10 min">
           <Icon name="stepBack" className="size-4" />
         </button>
-        <button type="button" className={btn} onClick={() => set(Math.min(last, i + 1))} aria-label="Avanzar 10 minutos" title="+10 min">
+        <button type="button" className={btn} onClick={() => set(Math.min(last, i + 1))} aria-label={L("Avanzar 10 minutos", "Forward 10 minutes")} title="+10 min">
           <Icon name="stepForward" className="size-4" />
         </button>
-        <button type="button" className={btn} onClick={() => set(Math.min(last, i + 144))} aria-label="Avanzar 1 día" title="+1 día">
+        <button type="button" className={btn} onClick={() => set(Math.min(last, i + 144))} aria-label={L("Avanzar 1 día", "Forward 1 day")} title={L("+1 día", "+1 day")}>
           <Icon name="skipForward" className="size-4" />
         </button>
         <label className="sr-only" htmlFor={`${sliderId}-speed`}>
-          Velocidad
+          {L("Velocidad", "Speed")}
         </label>
         <select
           id={`${sliderId}-speed`}

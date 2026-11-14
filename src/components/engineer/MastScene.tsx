@@ -2,6 +2,7 @@
 
 import type { HeightM, SiteId } from "@/lib/contract/constants";
 import { SITE_META } from "@/lib/labels";
+import { L } from "@/lib/i18n";
 
 /**
  * ESCENA ILUSTRATIVA (no a escala, sin cálculo de sombras): explica qué
@@ -22,7 +23,7 @@ export function MastScene({ heightM, site }: { heightM: HeightM; site: SiteId })
   const endX = 960;
   const endY = eyeY + slope * (endX - baseX);
   return (
-    <svg viewBox="0 0 960 400" className="h-auto w-full" role="img" aria-label={`Ilustración: observador a ${heightM} m sobre el terreno y su línea de visión al horizonte`}>
+    <svg viewBox="0 0 960 400" className="h-auto w-full" role="img" aria-label={L(`Ilustración: observador a ${heightM} m sobre el terreno y su línea de visión al horizonte`, `Illustration: observer ${heightM} m above the ground and its line of sight to the horizon`)}>
       <defs>
         <linearGradient id="ms-sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#02040a" />
@@ -87,7 +88,7 @@ export function MastScene({ heightM, site }: { heightM: HeightM; site: SiteId })
       <g>
         <rect x="16" y="356" width="292" height="28" rx="8" fill="#0b1424e6" stroke="#2a3f63" />
         <text x="30" y="375" fontSize="12.5" fill="#9aaac4">
-          ILUSTRACIÓN · no a escala · sin cálculo de sombras
+          {L("ILUSTRACIÓN · no a escala · sin cálculo de sombras", "ILLUSTRATION · not to scale · no shadow computation")}
         </text>
       </g>
     </svg>
