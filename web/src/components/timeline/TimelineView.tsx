@@ -22,6 +22,7 @@ import { Badge, Callout, Legend, NatureBadge, SiteDot, StateLegend } from "../ui
 import { Icon } from "../ui/Icon";
 import { Button, InfoTip } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { OrbitalView } from "./OrbitalView";
 import { TimePlayer } from "./TimePlayer";
 import { L } from "@/lib/i18n";
 
@@ -208,11 +209,14 @@ function TimelineBody({ core }: { core: Core }) {
 
   const scen = useChunk(restored ? () => loadScenarioChunk(core, windowId, heightM) : null, [windowId, heightM]);
   const clock = useChunk(restored ? () => loadEphemerisClock(core, windowId) : null, [windowId]);
-  const eph = useChunk(restored && isNominal ? () => loadEphemerisSite(windowId, focusSite, heightM) : null, [windowId, focusSite, heightM, isNominal]);
+  // Efemérides nominales del sitio: siempre para la vista orbital (no dependen del horizonte);
+  // las curvas sobre el horizonte solo se dibujan con la superficie nominal.
+  const eph = useChunk(restored ? () => loadEphemerisSite(windowId, focusSite, heightM) : null, [windowId, focusSite, heightM]);
   const horizon = useChunk(restored ? () => loadHorizonChunk(focusSite, heightM) : null, [focusSite, heightM]);
   const events = useChunk(restored ? () => loadBoundedEvents() : null, ["events"]);
 
-  const ephData = eph.status === "ready" ? eph.data.value : null;
+  const ephAll = eph.status === "ready" ? eph.data.value : null;
+  const ephData = isNominal ? ephAll : null;
   const horizonData = horizon.status === "ready" ? horizon.data.value : null;
 
   return (
@@ -234,46 +238,40 @@ function TimelineBody({ core }: { core: Core }) {
         <VariantControl />
       </ControlBar>
 
-      <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_360px]">
-        <SiteSidebar core={core} horizon={horizonData} />
-
-        <div className="flex min-w-0 flex-col gap-5">
-          <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
-            {(c: EphemerisClockChunk) => (
-              <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
-                {(s: ScenarioChunk) => <MainCharts core={core} scen={s} times={c.times_utc} eph={ephData} ephState={eph.status} />}
+      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]" data-testid="timeline-physical">
+        <Panel
+          title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
+          icon="orbit"
+          actions={<Badge tone="neutral">{L("Esquema no a escala", "Not to scale")}</Badge>}
+          footer={L(
+            "Direcciones reales del paquete (SPICE DE421, MOON_ME_DE421, observador nominal) convertidas al marco lunar; distancias del dibujo simbólicas, las reales se rotulan. El color de las trayectorias es el estado calculado por el motor, no una decisión de esta vista.",
+            "Real directions from the package (SPICE DE421, MOON_ME_DE421, nominal observer) converted to the lunar frame; drawing distances are symbolic, real ones are labelled. Path colour is the state computed by the engine, not a decision of this view.",
+          )}
+        >
+          <ChunkGate state={eph} label={L("efemérides", "ephemerides")} minHeight="min-h-80">
+            {(e: EphemerisSiteChunk) => (
+              <ChunkGate state={clock} label={L("reloj", "clock")}>
+                {(c: EphemerisClockChunk) => (
+                  <ChunkGate state={scen} label={L("estados", "states")}>
+                    {(sc: ScenarioChunk) => (
+                      <OrbitalView
+                        site={getSite(core, focusSite)!}
+                        eph={e}
+                        codes={getScenarioSeries(sc.rows, focusSite, variant)?.state_codes ?? null}
+                        times={c.times_utc}
+                        index={selection.timeIndex}
+                        surfaceLabel={VARIANT_LABEL[variant]}
+                      />
+                    )}
+                  </ChunkGate>
+                )}
               </ChunkGate>
             )}
           </ChunkGate>
-        </div>
-
-        <div className="flex flex-col gap-5 xl:col-span-2 2xl:col-span-1">
-          <ChunkGate state={scen} label={L("métricas", "metrics")}>
-            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
-          </ChunkGate>
-          <Panel title={L("Leyenda", "Legend")} icon="info">
-            <StateLegend />
-            <Legend
-              className="mt-3"
-              items={[
-                { label: L("Elevación del Sol", "Sun elevation"), color: SUN, shape: "line" },
-                { label: L("Elevación de la Tierra", "Earth elevation"), color: EARTH, shape: "line" },
-                { label: L("Horizonte en el azimut del Sol", "Horizon at the Sun azimuth"), color: SUN, shape: "dash" },
-                { label: L("Horizonte en el azimut de la Tierra", "Horizon at the Earth azimuth"), color: EARTH, shape: "dash" },
-              ]}
-            />
-          </Panel>
-        </div>
-      </div>
-
-      <ChunkGate state={clock} label={L("reloj", "clock")}>
-        {(c: EphemerisClockChunk) => <TimePlayer times={c.times_utc} />}
-      </ChunkGate>
-
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        </Panel>
         <Panel
-          title={`${L("Horizonte y trayectorias", "Horizon and paths")} · ${SITE_META[focusSite].label} · ${heightM} m`}
-          icon="orbit"
+          title={`${L("Cielo local del observador", "Observer local sky")} · ${SITE_META[focusSite].label} · ${heightM} m`}
+          icon="eye"
           actions={<NatureBadge nature={isNominal ? "DERIVED" : "MODELED"} />}
           footer={
             isNominal
@@ -308,6 +306,45 @@ function TimelineBody({ core }: { core: Core }) {
             )}
           </ChunkGate>
         </Panel>
+      </div>
+
+      <ChunkGate state={clock} label={L("reloj", "clock")}>
+        {(c: EphemerisClockChunk) => <TimePlayer times={c.times_utc} />}
+      </ChunkGate>
+
+      <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_360px]">
+        <SiteSidebar core={core} horizon={horizonData} />
+
+        <div className="flex min-w-0 flex-col gap-5">
+          <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
+            {(c: EphemerisClockChunk) => (
+              <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
+                {(s: ScenarioChunk) => <MainCharts core={core} scen={s} times={c.times_utc} eph={ephData} ephState={eph.status} />}
+              </ChunkGate>
+            )}
+          </ChunkGate>
+        </div>
+
+        <div className="flex flex-col gap-5 xl:col-span-2 2xl:col-span-1">
+          <ChunkGate state={scen} label={L("métricas", "metrics")}>
+            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
+          </ChunkGate>
+          <Panel title={L("Leyenda", "Legend")} icon="info">
+            <StateLegend />
+            <Legend
+              className="mt-3"
+              items={[
+                { label: L("Elevación del Sol", "Sun elevation"), color: SUN, shape: "line" },
+                { label: L("Elevación de la Tierra", "Earth elevation"), color: EARTH, shape: "line" },
+                { label: L("Horizonte en el azimut del Sol", "Horizon at the Sun azimuth"), color: SUN, shape: "dash" },
+                { label: L("Horizonte en el azimut de la Tierra", "Horizon at the Earth azimuth"), color: EARTH, shape: "dash" },
+              ]}
+            />
+          </Panel>
+        </div>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-5">
           <ChunkGate state={clock} label={L("reloj", "clock")}>
             {(c: EphemerisClockChunk) => (

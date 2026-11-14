@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-13 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloque A · Regret Lab terminado; siguiente: bloque B · Timeline orbital)**
+**Punto de control:** PC-14 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A y B terminados; siguiente: bloque C · Comparador)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/mission-control-v2`, creada desde `main` = `6e41690` («Merge #18: integrate real lunar terrain and geospatial layers») |
-| HEAD | ver `git log -1` (commit local de PC-13). **Sin push, sin PR, sin despliegue** |
+| HEAD | ver `git log -2`: `ca684bf` (bloque A, PC-13) y el commit de PC-14 (bloque B). **Sin push, sin PR, sin despliegue** |
 | Otra copia | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` (rama `feat/geo-real-terrain`, `47844ba`, ya fusionada en `main` por el PR #18). No se ha tocado; sus originales NASA de `web/data/raw/` se COPIARON a esta carpeta |
 
 **Reconciliación de documentos antiguos:** el HANDOFF anterior (PC-11/12) decía que `feat/geo-real-terrain` no estaba fusionada. Ya lo está: `main` contiene el PR #18 (`6e41690`). En `main` SÍ está la capa geoespacial (G0–G10). `01_REANUDAR_IMPLEMENTACION.md` es histórico (relevo Hugo → Asier) y sus referencias de rama/HEAD están superadas.
@@ -33,8 +33,8 @@ Encargo vigente: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md) §A.5 («Mission C
 | Bloque | Requisito | Estado | Dónde |
 |---|---|---|---|
 | A · G15 | Regret Lab con clones reales, capas de diferencia y enlace al mapa | **HECHO (PC-13)**, verificado con Vitest + E2E + revisión visual en navegador | ver §4 |
-| B | Timeline orbital con efemérides reales | PENDIENTE (siguiente) | — |
-| C | Comparador A/B con cartografía real | PENDIENTE | — |
+| B | Timeline orbital con efemérides reales | **HECHO (PC-14)**, Vitest + E2E + revisión visual | ver §4 bis |
+| C | Comparador A/B con cartografía real | PENDIENTE (siguiente) | ver §5 |
 | D | Engineer con 3D protagonista y alturas 0/2/10 | PENDIENTE (el 3D existe desde PC-03; falta reordenar la vista y revisar lecturas por altura) | `src/components/terrain/` |
 | E | Dashboard → Mission Control, Evidence, Historia | PENDIENTE | — |
 | F | G9 mosaico, G11 NAC, G10 mejoras ODE, G12 IAU, G13 PGDA90 | PENDIENTE (sin cambios desde PC-11) | — |
@@ -58,7 +58,24 @@ Hecho:
    - «Mapa de decisiones» con modo **mapa de calor del regret** (regret de conservar la elección nominal de cada fila, en horas; filas sin elección nominal rayadas).
 6. Hallazgo visible en la UI: en W2·0 m con `published_0001`, el mayor |Δ horizonte| de A es 2,05° a 5,25° y lo fija terreno a 7,5–30 m del observador: las variaciones del ensemble actúan sobre todo en campo cercano. Es una lectura de datos, no una causa demostrada.
 
-## 5. Siguiente tarea exacta: bloque B · Timeline orbital
+## 4 bis. Bloque B terminado (PC-14): Timeline con geometría física
+
+- `src/lib/geospatial/sky.ts`: cambio de base exacto azimut/elevación topocéntricos del paquete → vector en MOON_ME_DE421 con la base local del motor (`localBasis`); longitud y declinación lunar de la dirección; `bodyTrack`; `angleBetween`. No calcula efemérides nuevas.
+- `tests/sky.test.ts` (4, datos reales): ida y vuelta az/el (< 1e-7°); la Tierra queda a < 9° de la longitud 0° y < 7,5° de declinación (libración); el Sol barre 360–380° de longitud en W1 (30 días) con declinación < 1,6°; A y B ven la Tierra en la misma dirección (< 0,01°).
+- `src/components/timeline/OrbitalView.tsx`: esquema NO A ESCALA visto desde debajo del polo sur con la orientación del mapa (0° arriba, 90° E derecha): Luna con hemisferio iluminado según la dirección solar (iluminación global de la esfera, rotulada), trayectorias de Sol y Tierra de toda la ventana coloreadas por el ESTADO DEL MOTOR para la superficie seleccionada, cuerpos en el instante, líneas de visión desde el sitio, medidor de declinación lunar y lecturas reales (distancia km, az/el, ángulo Sol–sitio–Tierra, estado del intervalo).
+- `TimelineView.tsx`: primera fila física = «Geometría Sol–Tierra–Luna» (esquema) + «Cielo local del observador» (horizonte del paquete con trayectorias nominales: geometría real), luego el reproductor y debajo las curvas/franjas existentes. Las efemérides se cargan siempre para la vista orbital; las curvas sobre el horizonte siguen solo con la nominal (no se mezclan con horizontes de variantes).
+- Tres niveles rotulados: esquema no a escala / geometría real del observador / visibilidad respecto al horizonte (estado del motor).
+
+## 5. Siguiente tarea exacta: bloque C · Comparador A/B
+
+En `web/`:
+1. Leer `src/components/comparador/ComparadorView.tsx` (Conclusión, matriz de 24 combinaciones, `HorizonPair`, `PairMap`).
+2. Sustituir el par de miniaturas/figura por cartografía real: `GeoMap` en modo compacto (o un mapa OpenLayers como `DiffMap` de `TerrainDiffLab.tsx`) con A y B, ROI y la capa numérica elegida; recortes georreferenciados de cada sitio lado a lado (misma escala) con lecturas del DEM en A y B (altura, pendiente, retornos LOLA, RMS) leídas de los recortes.
+3. Tabla de métricas contrastadas A vs B para la ventana/altura/superficie, con diferencia explícita y conclusión que dependa del criterio elegido (conservar empates, UNKNOWN y la regla de tolerancia del motor).
+4. Δ de horizonte A − B por azimut (mismo componente `HorizonDeltaChart`) en lugar de dos curvas sueltas, manteniendo la vista superpuesta.
+5. Mantener la prueba de 24 combinaciones (`e2e/app.spec.ts`) y añadir E2E del mapa del comparador; revisión visual.
+
+### Antiguo §5 (bloque B) — HECHO en PC-14
 
 En `web/`:
 1. Leer `src/components/timeline/TimelineView.tsx`, `TimePlayer.tsx` y `src/lib/data/loader.ts` (`loadEphemerisClock`, `loadEphemerisSite`). Las efemérides del paquete dan, por sitio, ventana y altura, azimut/elevación/distancia (km) de Sol y Tierra en 4 321 instantes (SPICE DE421, MOON_ME_DE421) — ver `EphemerisSiteChunk` en `src/lib/contract/schema.ts`.
@@ -72,7 +89,7 @@ Después: bloque C (Comparador con `GeoMap` compacto o recortes A/B), D (Enginee
 ## 6. Cambios locales y archivos de PC-13
 
 Archivos nuevos o modificados (todo en `web/` salvo docs):
-`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
+`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), PC-14: `src/lib/geospatial/sky.ts`, `src/components/timeline/OrbitalView.tsx`, `src/components/timeline/TimelineView.tsx`, `tests/sky.test.ts`, `e2e/timeline-orbital.spec.ts`, `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
 
 No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales + 5 clones, ~410 MB), `web/node_modules`, `web/out`, `web/public/data`.
 
@@ -99,6 +116,11 @@ npm run verify                      # typecheck → lint → test → build → 
 | `npm run build` | PASS |
 | `npx playwright test` completo (2 procesos, 3,0 min) | **64 PASS, 1 FAIL, 1 omitida**. El fallo es «Comparador · las 24 combinaciones…» por TIEMPO (W2·2 m·max_joint_hours, 15 s); Comparador no se ha tocado. Re-ejecutada sola: PASS (11,3 s). Las 3 nuevas de `regret-terrain.spec.ts`: PASS |
 | Revisión visual en navegador (dev, 1440×900) | HECHO: mapa de diferencia, Δ horizonte, tabla del obstáculo, miniaturas y mapa de calor visibles y coherentes. **Pendiente revisión humana del equipo** |
+| PC-14 · `npm test` | **112/112 PASS** (+4 `sky.test.ts`) |
+| PC-14 · `npm run lint`, `tsc`, `npm run build` | PASS |
+| PC-14 · E2E Timeline (`timeline-orbital.spec.ts` 2 + 3 de `app.spec.ts`) | 5/5 PASS |
+| PC-14 · E2E `a11y.spec.ts` (axe WCAG A/AA, 8 rutas) + `responsive.spec.ts` (375 px) + `i18n.spec.ts` | 20/20 PASS |
+| PC-14 · revisión visual Timeline (dev, 1600×1000) | HECHO: esquema orbital, trayectorias coloreadas por estado, hemisferio iluminado orientado al Sol, cielo local. **Pendiente revisión humana**. Batería E2E completa no re-ejecutada tras PC-14 (sí las afectadas) |
 
 Resultados históricos (no re-ejecutados aquí antes de PC-13): Vitest 98/98 y Playwright 62 + 1 omitida (PC-10/11).
 
