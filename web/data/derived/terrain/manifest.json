@@ -1,0 +1,159 @@
+{
+  "schema": "site-regret-terrain/1",
+  "generator": "scripts/geospatial/build-terrain.ts",
+  "generator_version": 1,
+  "region": "Connecting Ridge (PGDA78 Site01), ventana que contiene los sitios A (ROI 4) y B (ROI 6)",
+  "georeferencing": {
+    "window_bounds_xy_m": [
+      -13000,
+      -14000,
+      -9000,
+      -10000
+    ],
+    "width": 800,
+    "height": 800,
+    "pixel_size_m": 5,
+    "source_col_offset": 1200,
+    "source_row_offset": 1200,
+    "pixel_model": "area: x_centro(i) = xmin + (i + 0.5)·px; y_centro(j) = ymax − (j + 0.5)·px; fila 0 al norte de la rejilla (y máxima)",
+    "crs": "Estereográfica polar sur lunar: esfera R = 1737400 m, lat0 = −90°, lon0 = 0°, k0 = 1 (etiquetas GeoTIFF comprobadas)",
+    "frame": "MOON_ME_DE421 (según el proveedor)",
+    "sphere_radius_m": 1737400
+  },
+  "layers": [
+    {
+      "id": "elevation",
+      "registry_id": "pgda78.site01.elevation",
+      "file": "elevation.f32",
+      "dtype": "float32-le",
+      "units": "m",
+      "nodata": "NaN",
+      "bytes": 2560000,
+      "sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65",
+      "stats": {
+        "min": 1219.6500244140625,
+        "max": 1959.4962158203125,
+        "finite_count": 640000,
+        "nodata_count": 0
+      },
+      "source": {
+        "file": "Site01_final_adj_5mpp_surf.tif",
+        "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif",
+        "bytes": 40980810,
+        "sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e"
+      },
+      "processing": "Subconjunto exacto de muestras (sin remuestreo, sin escala, sin relleno de nodata)."
+    },
+    {
+      "id": "lola_count",
+      "registry_id": "pgda78.site01.lola_count",
+      "file": "lola_count.f32",
+      "dtype": "float32-le",
+      "units": "count",
+      "nodata": "NaN",
+      "bytes": 2560000,
+      "sha256": "353cf5c4e9b8aaef48d2674db97c88895766bf04f0bebab8c6ada5b78e19c2da",
+      "stats": {
+        "min": 0,
+        "max": 4,
+        "finite_count": 640000,
+        "nodata_count": 0
+      },
+      "source": {
+        "file": "Site01_final_adj_5mpp_ldec.tif",
+        "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_ldec.tif",
+        "bytes": 40980744,
+        "sha256": "16d6ed21020ad48fa71d94e7437492acf5bf04118f52bcd292f57f22ead4cd23"
+      },
+      "processing": "Subconjunto exacto de muestras (sin remuestreo, sin escala, sin relleno de nodata)."
+    },
+    {
+      "id": "vertical_rms",
+      "registry_id": "pgda78.site01.vertical_rms",
+      "file": "vertical_rms.f32",
+      "dtype": "float32-le",
+      "units": "m",
+      "nodata": "NaN",
+      "bytes": 2560000,
+      "sha256": "182f7ea6f5b1b3a77d740c4103bacc7df9f45bc6271116dd1961502f605ecfed",
+      "stats": {
+        "min": 0.0704401284456253,
+        "max": 4.090360641479492,
+        "finite_count": 640000,
+        "nodata_count": 0
+      },
+      "source": {
+        "file": "Site01_final_adj_5mpp_toterr.tif",
+        "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_toterr.tif",
+        "bytes": 40980810,
+        "sha256": "cf2cf52f52d2aa51e60d058010d10b0ebfb1d3e920f5a2b9a46eb6c51054ab1c"
+      },
+      "processing": "Subconjunto exacto de muestras (sin remuestreo, sin escala, sin relleno de nodata)."
+    },
+    {
+      "id": "slope",
+      "registry_id": "pgda78.site01.slope",
+      "file": "slope.f32",
+      "dtype": "float32-le",
+      "units": "deg",
+      "nodata": "NaN",
+      "bytes": 2560000,
+      "sha256": "fd2d9a3f85d5e2479625766111ca0fa0f1a94b002c98ee5c4428eee9bb51cda2",
+      "stats": {
+        "min": 0.02797645330429077,
+        "max": 51.29602813720703,
+        "finite_count": 640000,
+        "nodata_count": 0
+      },
+      "source": {
+        "file": "Site01_final_adj_5mpp_slp.tif",
+        "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_slp.tif",
+        "bytes": 40980776,
+        "sha256": "3a90035a4946b4a04b7332c52f0b2b1cff71648bd8c105e14d8a7e15c6bcfe8e"
+      },
+      "processing": "Subconjunto exacto de muestras (sin remuestreo, sin escala, sin relleno de nodata)."
+    },
+    {
+      "id": "slope_rms",
+      "registry_id": "pgda78.site01.slope_rms",
+      "file": "slope_rms.f32",
+      "dtype": "float32-le",
+      "units": "deg",
+      "nodata": "NaN",
+      "bytes": 2560000,
+      "sha256": "4dc50eaff64577a4701efb626e5d4aad7df4728a43556fa5b89c2a3c8a05a081",
+      "stats": {
+        "min": 0.7486076354980469,
+        "max": 17.387712478637695,
+        "finite_count": 640000,
+        "nodata_count": 0
+      },
+      "source": {
+        "file": "Site01_final_adj_5mpp_slperr.tif",
+        "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_slperr.tif",
+        "bytes": 40980810,
+        "sha256": "52bc3b239f61605e6bb98bab6d6b17acd22389c59e57336862157f2fbd643a33"
+      },
+      "processing": "Subconjunto exacto de muestras (sin remuestreo, sin escala, sin relleno de nodata)."
+    }
+  ],
+  "rois": {
+    "file": "rois.json",
+    "bytes": 12957,
+    "sha256": "a9884e9f6ffb66adf7f30bf116e433c9bc21ee7a92963637744cb3e1eaa33bfe",
+    "count": 7,
+    "registry_id": "pgda78.site01.rois",
+    "source": {
+      "file": "Site01_ROIs.tgz",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_ROIs.tgz",
+      "bytes": 2934,
+      "sha256": "40b961417a344ce0274aecbab522e171a22f658507d82e8fb4d7bc97526ffc4f"
+    },
+    "processing": "Polígonos y atributos leídos del shapefile sin modificar coordenadas."
+  },
+  "limits": [
+    "La ventana cubre 4 × 4 km; fuera de ella la aplicación no tiene raster numérico preparado.",
+    "El horizonte del motor usa además relieve regional (PGDA90, 80 m y 240 m) hasta 400 km, que no está en esta ventana.",
+    "Rejilla de 5 m: parte de las alturas están interpoladas (ver la capa de retornos LOLA)."
+  ]
+}
