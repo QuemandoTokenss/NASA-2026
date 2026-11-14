@@ -41,12 +41,12 @@ function SiteSidebar({ core, horizon }: { core: Core; horizon: HorizonChunk | nu
   const id = site.id as SiteId;
   return (
     <Panel title={SITE_META[id].label} icon="pin" className={SITE_META[id].borderClass + "/40"}>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <p className="tabular text-center text-sm text-ink-muted">
           {formatLatitude(site.latitude_deg)}, {formatLongitudeEast(site.longitude_east_deg)}
         </p>
         <figure className="flex flex-col gap-1.5" data-testid="timeline-site-map">
-          <GeoMap sites={core.sites} focusSite={id} compact compactHeightClass="h-[220px] sm:h-[260px]" followFocus showCredit reliefFallback />
+          <GeoMap sites={core.sites} focusSite={id} compact compactHeightClass="h-[220px] sm:h-[260px] xl:h-[210px]" followFocus showCredit reliefFallback />
           <figcaption className="text-[10px] leading-snug text-ink-faint">
             {L(
               "Con conexión: mosaico orbital real de NASA Moon Trek (LRO/LROC NAC); sus sombras son las de cada adquisición, no las del instante del reproductor. Sin conexión: relieve derivado del DEM, rotulado en el mapa. Marcador grande: sitio activo; el otro, de referencia.",
@@ -57,7 +57,7 @@ function SiteSidebar({ core, horizon }: { core: Core; horizon: HorizonChunk | nu
         <Button icon="swap" onClick={() => dispatch({ type: "setFocusSite", value: id === "A" ? "B" : "A" })}>
           {L("Cambiar a sitio", "Switch to site")} {id === "A" ? "B" : "A"}
         </Button>
-        <dl className="flex flex-col gap-2 text-sm">
+        <dl className="flex flex-col gap-1.5 text-[13px]">
           {[
             [L("Sitio", "Site"), site.name],
             [L("Suelo (esfera 1 737,4 km)", "Ground (1,737.4 km sphere)"), `${formatNumber(site.nominal_height_m, 1)} m`],
@@ -65,7 +65,7 @@ function SiteSidebar({ core, horizon }: { core: Core; horizon: HorizonChunk | nu
             [L("Altura del observador", "Observer height"), `${selection.heightM} m`],
             [L("Horizonte (mín / máx)", "Horizon (min / max)"), profile ? `${formatDeg(lo, 2)} / ${formatDeg(hi, 2)}` : "…"],
           ].map(([k, v]) => (
-            <div key={k} className="flex justify-between gap-3 border-b border-line/60 pb-2 last:border-b-0">
+            <div key={k} className="flex justify-between gap-3 border-b border-line/60 pb-1.5 last:border-b-0 last:pb-0">
               <dt className="text-ink-muted">{k}</dt>
               <dd className="tabular text-right text-ink">{v}</dd>
             </div>
@@ -88,7 +88,7 @@ function Metrics({ core, scen }: { core: Core; scen: ScenarioChunk }) {
     <Panel title={L("Métricas del periodo", "Period metrics")} icon="activity" actions={<NatureBadge nature={variantFamily(selection.variant) === "nominal" ? "DERIVED" : "MODELED"} />}>
       <ul className="flex flex-col">
         {(["sun_hours", "dte_center_hours", "joint_hours", "longest_dark_hours", "longest_no_earth_hours", "unknown_hours"] as const).map((k) => (
-          <li key={k} className="flex items-center gap-3 border-b border-line/60 py-2.5 last:border-b-0">
+          <li key={k} className="flex items-center gap-3 border-b border-line/60 py-2 first:pt-0 last:border-b-0">
             <Icon name={METRIC_META[k].icon} className="size-[18px] shrink-0 text-ink-faint" />
             <span className="flex-1 text-sm text-ink-muted">{METRIC_META[k].label}</span>
             <span className="tabular text-right text-sm font-semibold text-ink">
@@ -113,7 +113,7 @@ function Metrics({ core, scen }: { core: Core; scen: ScenarioChunk }) {
         ))}
       </ul>
       <p className="mt-3 text-[11px] text-ink-faint">
-        Recuento de los {total} intervalos de 10 min de state_codes; coincide con las métricas del motor.
+        {L(`Recuento de los ${total} intervalos de 10 min de state_codes; coincide con las métricas del motor.`, `Count of the ${total} 10-minute intervals in state_codes; it matches the engine metrics.`)}
       </p>
     </Panel>
   );
@@ -233,13 +233,16 @@ function TimelineBody({ core }: { core: Core }) {
     <>
       <ControlBar
         aside={
-          isNominal ? (
-            <Badge tone="neutral">{L("Superficie nominal · curvas disponibles", "Nominal surface · curves available")}</Badge>
-          ) : (
-            <Badge tone="uncertainty" icon="shuffle">
-              {FAMILY_META[variantFamily(variant)].label}: {L("estados y métricas", "states and metrics")}
-            </Badge>
-          )
+          // Solo donde cabe sin partir la barra en dos filas; el panel del gráfico repite el mismo aviso.
+          <span className="hidden min-[1500px]:inline-flex">
+            {isNominal ? (
+              <Badge tone="neutral">{L("Superficie nominal · curvas disponibles", "Nominal surface · curves available")}</Badge>
+            ) : (
+              <Badge tone="uncertainty" icon="shuffle">
+                {FAMILY_META[variantFamily(variant)].label}: {L("estados y métricas", "states and metrics")}
+              </Badge>
+            )}
+          </span>
         }
       >
         <FocusSiteControl />
@@ -252,7 +255,16 @@ function TimelineBody({ core }: { core: Core }) {
         {(c: EphemerisClockChunk) => <TimePlayer times={c.times_utc} />}
       </ChunkGate>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]" data-testid="timeline-physical">
+      {/*
+        Zona principal: primero la geometría (Sol–Tierra–Luna y cielo local, juntos en escritorio) y debajo
+        «Elevación sobre el horizonte» con sus franjas. A la derecha, la columna de lectura
+        (sitio → instante → métricas → eventos). Sin `order-*`: el orden visual, de lectura y de teclado es
+        el del código; en móvil se apila Geometría → Cielo local → Elevación → lectura.
+      */}
+      <div className="flex flex-col gap-5 xl:grid xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_380px] min-[1700px]:grid-cols-[minmax(0,1fr)_740px]!" data-testid="timeline-layout">
+      <div className="flex min-w-0 flex-col gap-5" data-testid="timeline-main">
+
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-2" data-testid="timeline-physical">
         <Panel
           title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
           icon="orbit"
@@ -331,10 +343,7 @@ function TimelineBody({ core }: { core: Core }) {
         </Panel>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)_360px]">
-        <SiteSidebar core={core} horizon={horizonData} />
-
-        <div className="flex min-w-0 flex-col gap-5">
+        <div className="min-w-0" data-testid="timeline-chart">
           <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
             {(c: EphemerisClockChunk) => (
               <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
@@ -343,28 +352,14 @@ function TimelineBody({ core }: { core: Core }) {
             )}
           </ChunkGate>
         </div>
-
-        <div className="flex flex-col gap-5 xl:col-span-2 2xl:col-span-1">
-          <ChunkGate state={scen} label={L("métricas", "metrics")}>
-            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
-          </ChunkGate>
-          <Panel title={L("Leyenda", "Legend")} icon="info">
-            <StateLegend />
-            <Legend
-              className="mt-3"
-              items={[
-                { label: L("Elevación del Sol", "Sun elevation"), color: SUN, shape: "line" },
-                { label: L("Elevación de la Tierra", "Earth elevation"), color: EARTH, shape: "line" },
-                { label: L("Horizonte en el azimut del Sol", "Horizon at the Sun azimuth"), color: SUN, shape: "dash" },
-                { label: L("Horizonte en el azimut de la Tierra", "Horizon at the Earth azimuth"), color: EARTH, shape: "dash" },
-              ]}
-            />
-          </Panel>
-        </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="flex flex-col gap-5">
+      <div className="flex min-w-0 flex-col gap-5 min-[1700px]:grid! min-[1700px]:grid-cols-2 min-[1700px]:items-start" data-testid="timeline-reading">
+        <div className="flex min-w-0 flex-col gap-5">
+        <div className="min-w-0" data-testid="timeline-site">
+          <SiteSidebar core={core} horizon={horizonData} />
+        </div>
+        <div className="min-w-0" data-testid="timeline-instant">
           <ChunkGate state={clock} label={L("reloj", "clock")}>
             {(c: EphemerisClockChunk) => (
               <ChunkGate state={scen} label={L("estados", "states")}>
@@ -372,6 +367,15 @@ function TimelineBody({ core }: { core: Core }) {
               </ChunkGate>
             )}
           </ChunkGate>
+        </div>
+        </div>
+        <div className="flex min-w-0 flex-col gap-5">
+        <div className="min-w-0" data-testid="timeline-metrics">
+          <ChunkGate state={scen} label={L("métricas", "metrics")}>
+            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
+          </ChunkGate>
+        </div>
+        <div className="min-w-0" data-testid="timeline-events">
           {isNominal ? (
             <ChunkGate state={events} label={L("eventos acotados", "bounded events")}>
               {(e: BoundedEvent[]) => <Events core={core} events={e} />}
@@ -388,6 +392,8 @@ function TimelineBody({ core }: { core: Core }) {
             </Callout>
           )}
         </div>
+        </div>
+      </div>
       </div>
     </>
   );
@@ -436,8 +442,21 @@ function MainCharts({ core, scen, times, eph, ephState }: { core: Core; scen: Sc
     >
       <div className="flex flex-col gap-3">
         {variant === "nominal" ? (
+          <Legend
+            className="sm:justify-end"
+            items={[
+              { label: L("Elevación del Sol", "Sun elevation"), color: SUN, shape: "line" },
+              { label: L("Elevación de la Tierra", "Earth elevation"), color: EARTH, shape: "line" },
+              { label: L("Horizonte en el azimut del Sol", "Horizon at the Sun azimuth"), color: SUN, shape: "dash" },
+              { label: L("Horizonte en el azimut de la Tierra", "Horizon at the Earth azimuth"), color: EARTH, shape: "dash" },
+            ]}
+          />
+        ) : null}
+        {variant === "nominal" ? (
           eph ? (
             <TimeSeriesChart
+              height={360}
+              fontSize={13}
               title={L(`Elevación nominal de Sol y Tierra y del horizonte en su azimut, ${SITE_META[focusSite].label}, ${windowId}`, `Nominal elevation of Sun and Earth and of the horizon at their azimuth, ${SITE_META[focusSite].label}, ${windowId}`)}
               series={series}
               times={times}
@@ -457,6 +476,10 @@ function MainCharts({ core, scen, times, eph, ephState }: { core: Core; scen: Sc
           </Callout>
         )}
         <StateStrips rows={rows} times={times} cursor={timeIndex} onPick={pick} />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2" data-testid="timeline-legend">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{L("Estados", "States")}</span>
+          <StateLegend />
+        </div>
         <p className="text-[11px] text-ink-faint">
           {L(
             "Franjas dibujadas por tramos originales (`intervals`) sin interpolar. Visible = centro geométrico por encima del relieve. Pulsa o arrastra para mover el cursor.",

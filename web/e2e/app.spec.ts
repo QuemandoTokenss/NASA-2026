@@ -128,10 +128,10 @@ test.describe("Regret Lab", () => {
     await expect(page.getByText(/probabilidad de ser mejor/i)).toHaveCount(0);
   });
 
-  test("empate nominal: sin fracción, regret medible si se elige un sitio", async ({ page }) => {
+  test("empate nominal: sin elección inicial que comparar, regret medible si se elige un sitio", async ({ page }) => {
     await page.goto("/regret-lab/?w=W1&h=2&v=nominal&c=min_longest_dark_hours");
     await waitForData(page);
-    await expect(page.getByText("El nominal empata: sin fracción (null)")).toBeVisible();
+    await expect(page.getByText("El escenario de referencia empata, así que no hay una elección inicial que comparar")).toBeVisible();
     await page.getByRole("radio", { name: "Conservar Sitio A" }).click();
     await expect(panel(page, "Superficie seleccionada").getByText("REGRET de conservar A")).toBeVisible();
   });

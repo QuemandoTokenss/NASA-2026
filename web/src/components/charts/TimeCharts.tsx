@@ -44,10 +44,9 @@ export interface Shade {
   color: string;
 }
 
-const H = 300;
+const H0 = 300;
 const MT = 14;
 const MB = 30;
-const PH = H - MT - MB;
 
 function pathOf(values: number[], n: number, y: (v: number) => number) {
   let d = "";
@@ -55,7 +54,8 @@ function pathOf(values: number[], n: number, y: (v: number) => number) {
   return d;
 }
 
-const SeriesLayer = memo(function SeriesLayer({ series, n, yMin, yMax, shades, ticks }: { series: TimeSeries[]; n: number; yMin: number; yMax: number; shades: Shade[]; ticks: Array<{ i: number; label: string }> }) {
+const SeriesLayer = memo(function SeriesLayer({ series, n, yMin, yMax, shades, ticks, H, fs }: { series: TimeSeries[]; n: number; yMin: number; yMax: number; shades: Shade[]; ticks: Array<{ i: number; label: string }>; H: number; fs: number }) {
+  const PH = H - MT - MB;
   const y = (v: number) => MT + ((yMax - v) / (yMax - yMin)) * PH;
   const step = yMax - yMin > 12 ? 4 : yMax - yMin > 6 ? 2 : yMax - yMin > 3 ? 1 : 0.5;
   const yTicks: number[] = [];
@@ -69,7 +69,7 @@ const SeriesLayer = memo(function SeriesLayer({ series, n, yMin, yMax, shades, t
       {yTicks.map((t) => (
         <g key={t}>
           <line x1={TM.left} x2={TM.left + TPW} y1={y(t)} y2={y(t)} stroke={t === 0 ? "var(--color-ink-faint)" : "var(--color-line)"} strokeDasharray={t === 0 ? "5 4" : undefined} />
-          <text x={TM.left - 8} y={y(t) + 4} textAnchor="end" fontSize={11} fill="var(--color-ink-faint)">
+          <text x={TM.left - 8} y={y(t) + 4} textAnchor="end" fontSize={fs} fill="var(--color-ink-faint)">
             {formatNumber(t, Number.isInteger(t) ? 0 : 1)}°
           </text>
         </g>
@@ -77,7 +77,7 @@ const SeriesLayer = memo(function SeriesLayer({ series, n, yMin, yMax, shades, t
       {ticks.map((t) => (
         <g key={t.i}>
           <line x1={tx(t.i, n)} x2={tx(t.i, n)} y1={MT} y2={MT + PH} stroke="var(--color-line)" strokeOpacity={0.6} />
-          <text x={tx(t.i, n)} y={H - 10} textAnchor="middle" fontSize={11} fill="var(--color-ink-muted)">
+          <text x={tx(t.i, n)} y={H - 10} textAnchor="middle" fontSize={fs} fill="var(--color-ink-muted)">
             {t.label}
           </text>
         </g>
@@ -109,6 +109,8 @@ export function TimeSeriesChart({
   onPick,
   shades = [],
   title,
+  height = H0,
+  fontSize = 11,
 }: {
   series: TimeSeries[];
   times: string[];
@@ -116,7 +118,13 @@ export function TimeSeriesChart({
   onPick?: (i: number) => void;
   shades?: Shade[];
   title: string;
+  /** Alto del viewBox (el ancho es fijo, `TW`): por defecto 300. */
+  height?: number;
+  /** Tamaño de los rótulos de los ejes en unidades del viewBox: por defecto 11. */
+  fontSize?: number;
 }) {
+  const H = height;
+  const PH = H - MT - MB;
   const n = times.length - 1;
   const [yMin, yMax] = useMemo(() => {
     let lo = Infinity;
@@ -140,7 +148,7 @@ export function TimeSeriesChart({
   }
   return (
     <svg viewBox={`0 0 ${TW} ${H}`} className="h-auto w-full cursor-crosshair select-none" role="img" aria-label={title} onPointerDown={pick} onPointerMove={(e) => e.buttons === 1 && pick(e)}>
-      <SeriesLayer series={series} n={n} yMin={yMin} yMax={yMax} shades={shades} ticks={ticks} />
+      <SeriesLayer series={series} n={n} yMin={yMin} yMax={yMax} shades={shades} ticks={ticks} H={H} fs={fontSize} />
       <g pointerEvents="none">
         <line x1={tx(cursor, n)} x2={tx(cursor, n)} y1={MT - 4} y2={MT + PH} stroke="#e8eef8" strokeOpacity={0.8} strokeWidth={1.2} />
         {series.map((s) => (s.dash ? null : <circle key={s.key} cx={tx(cursor, n)} cy={y(s.values[cursor])} r={4} fill={s.color} stroke="var(--color-bg)" strokeWidth={1.5} />))}

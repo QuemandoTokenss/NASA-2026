@@ -14,6 +14,7 @@ import { HORIZON_SOURCE_RESOLUTION_M, horizonObstacle } from "@/lib/geospatial/h
 import { rayPoint, xyToLonLat } from "@/lib/geospatial/lunar";
 import { buildTerrainMesh, directionENU, localFrame, toLocal } from "@/lib/geospatial/mesh";
 import type { RasterGrid } from "@/lib/geospatial/raster";
+import { blockBounds, blockForObstacle, sampleRegional } from "@/lib/geospatial/regional";
 import { TERRAIN_BOUNDS, ensembleMember, loadEnsembleMember, loadTerrainLayer } from "@/lib/geospatial/terrain";
 import { L } from "@/lib/i18n";
 import { SITE_META, VARIANT_LABEL } from "@/lib/labels";
@@ -25,6 +26,7 @@ import { Icon } from "../ui/Icon";
 import { InfoTip } from "../ui/Interactive";
 import { CompassBadge } from "./CompassBadge";
 import type { SceneDirection, SceneLabels, SceneSightLine, ViewPreset } from "./TerrainScene";
+import { useRegionalTerrain } from "./useRegionalTerrain";
 
 const TerrainScene = dynamic(() => import("./TerrainScene").then((m) => m.TerrainScene), { ssr: false, loading: () => <div className="h-[520px] animate-pulse rounded-xl border border-line bg-bg-2" aria-busy="true" /> });
 const GeoMap = dynamic(() => import("../maps/GeoMap").then((m) => m.GeoMap), { ssr: false, loading: () => <div className="h-[300px] animate-pulse rounded-xl border border-line bg-bg-2" aria-busy="true" /> });
@@ -209,11 +211,33 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
 
   const insideWindow = obstacle ? obstacle.point.x >= TERRAIN_BOUNDS[0] && obstacle.point.x <= TERRAIN_BOUNDS[2] && obstacle.point.y >= TERRAIN_BOUNDS[1] && obstacle.point.y <= TERRAIN_BOUNDS[3] : false;
 
+  // Relieve regional (PGDA90): anillos fijos alrededor del sitio y, bajo demanda, los bloques nativos de la visual.
+  const siteGeo = useMemo(() => ({ x: site.x_m, y: site.y_m, lonEastDeg: site.longitude_east_deg, latDeg: site.latitude_deg }), [site.x_m, site.y_m, site.longitude_east_deg, site.latitude_deg]);
+  const regionalRay = useMemo(
+    () => (obstacle && !obstacle.unknown && !insideWindow ? { azimuthDeg: obstacle.sampleAzimuthDeg, distanceM: obstacle.distanceM } : null),
+    [obstacle, insideWindow],
+  );
+  const regional = useRegionalTerrain(frame, siteGeo, regionalRay);
+  // El obstáculo fuera del recorte local: ¿hay relieve NATIVO cargado en ese punto? (el mismo punto X/Y del motor que usa el mapa)
+  const regionalHit = useMemo(() => {
+    if (!obstacle || obstacle.unknown || insideWindow) return null;
+    const block = blockForObstacle(obstacle.point, obstacle.source);
+    if (!block) return { status: "uncovered" as const };
+    const grid = regional.grids.find((g) => g.entry.id === block.id);
+    if (!grid) return { status: "loading" as const, blockId: block.id };
+    const s = sampleRegional([grid], obstacle.point.x, obstacle.point.y);
+    if (!s || !Number.isFinite(s.heightM)) return { status: "uncovered" as const };
+    return { status: "ready" as const, blockId: block.id, heightM: s.heightM, deltaM: s.heightM - obstacle.heightM, spacingM: grid.spacingM };
+  }, [obstacle, insideWindow, regional.grids]);
+
   const fmtDist = (m: number) => (m >= 1000 ? `${formatNumber(m / 1000, 2)} km` : `${formatNumber(m, 0)} m`);
   const sightLine = useMemo<SceneSightLine | null>(() => {
     if (!obstacle || obstacle.unknown) return null;
     if (insideWindow)
       return { end: toLocal(frame, obstacle.point.x, obstacle.point.y, obstacle.heightM), reachesObstacle: true, endLabel: `${L("Relieve que limita la vista", "Terrain that limits the view")} · ${fmtDist(obstacle.distanceM)}` };
+    // Fuera del recorte local pero con el bloque regional nativo cargado: la visual llega hasta la cresta.
+    if (regionalHit?.status === "ready")
+      return { end: toLocal(frame, obstacle.point.x, obstacle.point.y, obstacle.heightM), reachesObstacle: true, endLabel: `${L("Cresta regional que limita la vista", "Regional ridge that limits the view")} · ${fmtDist(obstacle.distanceM)}` };
     // Fuera del recorte: la visual discontinua termina donde el rayo sale de la ventana del DEM.
     const ll = { lonEastDeg: site.longitude_east_deg, latDeg: site.latitude_deg };
     const inside = (m: number) => {
@@ -232,9 +256,9 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
     return {
       end: [d[0] * exit, d[1] * exit, d[2] * exit + analysisH],
       reachesObstacle: false,
-      endLabel: `${L("Fin del recorte 3D", "End of the 3D crop")} · ${L("relieve a", "terrain at")} ${fmtDist(obstacle.distanceM)}`,
+      endLabel: `${regionalHit?.status === "loading" ? L("Cargando relieve regional", "Loading regional terrain") : L("Límite del visor 3D", "3D viewer limit")} · ${L("relieve a", "terrain at")} ${fmtDist(obstacle.distanceM)}`,
     };
-  }, [obstacle, insideWindow, frame, analysisH, site.longitude_east_deg, site.latitude_deg]);
+  }, [obstacle, insideWindow, regionalHit, frame, analysisH, site.longitude_east_deg, site.latitude_deg]);
 
   const stateCode = extended ? (xs.status === "ready" ? xs.data.value.state_codes[timeIndex] : undefined) : scen.status === "ready" ? getScenarioSeries(scen.data.value.rows, focusSite, variant)?.state_codes[timeIndex] : undefined;
   const directions = useMemo<SceneDirection[]>(() => {
@@ -248,11 +272,20 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
       { enu: directionENU(s.EARTH.azimuth_deg[timeIndex], s.EARTH.elevation_deg[timeIndex]), color: EARTH_HEX, body: "earth", ray: effectiveMode === "earth", occluded: stateCode !== undefined && stateCode !== 4 && !earthVisible(stateCode), label: near(s.EARTH.azimuth_deg[timeIndex]) ? undefined : L("Tierra", "Earth") },
     ];
   }, [ephData, timeIndex, azimuth, stateCode, effectiveMode]);
-  // Luz de la escena: desde el azimut real del Sol pero a 25° de altura fija, para que el relieve se lea.
-  // Luz de la escena: rasante y lateral respecto a la dirección de mirada, solo para leer el relieve y la torre.
-  const lightEnu = useMemo(() => directionENU((azimuth ?? 0) + 115, 17), [azimuth]);
+  // Luz de la escena = Sol del motor para ESTE sitio, instante, altura y superficie (misma transformación
+  // ENU que su marcador), y solo si el motor lo da por visible. No depende de la mirada ni de la cámara.
+  // Sol oculto, estado desconocido, carga o superficie sin efemérides compatibles → luz neutra, sin sombra solar.
+  const sunAz = ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null;
+  const sunEl = ephData ? ephData.series.bodies.SUN.elevation_deg[timeIndex] : null;
+  const sunLit = showData && sunAz !== null && sunEl !== null && stateCode !== undefined && stateCode !== 4 && sunVisible(stateCode);
+  const lightEnu = useMemo(() => (sunLit && sunAz !== null && sunEl !== null ? directionENU(sunAz, sunEl) : null), [sunLit, sunAz, sunEl]);
 
-  const overlay = useMemo(() => (obstacle ? { line: [{ x: site.x_m, y: site.y_m }, obstacle.point], point: obstacle.point, label: L("Obstáculo", "Obstacle") } : undefined), [obstacle, site.x_m, site.y_m]);
+  // Cobertura del visor 3D en el mapa: recorte local de 5 m y bloques regionales nativos (80 m) cargados.
+  const coverage = useMemo(() => [TERRAIN_BOUNDS as [number, number, number, number], ...regional.grids.filter((g) => g.entry.level === "L0").map((g) => blockBounds(g.entry))], [regional.grids]);
+  const overlay = useMemo(
+    () => (obstacle ? { line: [{ x: site.x_m, y: site.y_m }, obstacle.point], point: obstacle.point, label: regionalHit?.status === "ready" ? L("Cresta", "Ridge") : L("Obstáculo", "Obstacle"), areas: coverage } : undefined),
+    [obstacle, site.x_m, site.y_m, coverage, regionalHit?.status],
+  );
 
   const times = clock.status === "ready" ? clock.data.value.times_utc : null;
   const engineVisible = stateCode === undefined || effectiveMode === "manual" ? null : effectiveMode === "sun" ? sunVisible(stateCode) : earthVisible(stateCode);
@@ -281,7 +314,11 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
         : engineVisible
           ? L(` El centro ${effectiveMode === "sun" ? "del Sol" : "de la Tierra"} está por encima: visible según el motor.`, ` The ${bodyName} centre is above it: visible according to the engine.`)
           : L(` El centro ${effectiveMode === "sun" ? "del Sol" : "de la Tierra"} queda tapado según el motor.`, ` The ${bodyName} centre is hidden according to the engine.`);
-    const crop = insideWindow ? "" : L(" Ese relieve queda fuera del recorte 3D: la visual discontinua acaba en el borde del recorte y el mapa muestra dónde está.", " That terrain lies outside the 3D crop: the dashed line ends at the crop edge and the map shows where it is.");
+    const crop = insideWindow
+      ? ""
+      : regionalHit?.status === "ready"
+        ? L(" Ese relieve está fuera del recorte local de 5 m: se dibuja con el DEM regional de 80 m y la visual llega hasta la cresta, el mismo punto que marca el mapa.", " That terrain lies outside the local 5 m crop: it is drawn with the 80 m regional DEM and the line reaches the ridge, the same point marked on the map.")
+        : L(" Ese relieve queda fuera de lo que dibuja el visor 3D: la visual discontinua acaba en el límite del visor y el mapa muestra dónde está.", " That terrain lies outside what the 3D viewer draws: the dashed line ends at the viewer limit and the map shows where it is.");
     return `${who}, ${where}, ${lim}.${vis}${crop}`;
   })();
 
@@ -307,6 +344,8 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
     rows.push([L("Distancia al terreno que fija el horizonte", "Distance to the terrain that sets the horizon"), obstacle.distanceM >= 1000 ? `${formatNumber(obstacle.distanceM / 1000, 2)} km` : `${formatNumber(obstacle.distanceM, 1)} m`]);
     rows.push([L("Altura de ese terreno (sobre la esfera)", "Height of that terrain (above the sphere)"), `${formatNumber(obstacle.heightM, 1)} m`]);
     rows.push([L("Relieve que lo determina", "Relief that determines it"), [L("DEM local PGDA78", "Local PGDA78 DEM"), L("Regional PGDA90", "Regional PGDA90"), L("Apoyo PGDA90", "PGDA90 support")][obstacle.source] + ` · ${HORIZON_SOURCE_RESOLUTION_M[obstacle.source]} m`]);
+    if (regionalHit?.status === "ready")
+      rows.push([L("Altura del relieve dibujado en ese punto", "Height of the drawn terrain at that point"), `${formatNumber(regionalHit.heightM, 1)} m (Δ ${regionalHit.deltaM >= 0 ? "+" : "−"}${formatNumber(Math.abs(regionalHit.deltaM), 2)} m · ${L("bloque", "block")} ${regionalHit.blockId})`]);
     rows.push([L("Posición del obstáculo", "Obstacle position"), `X ${formatNumber(obstacle.point.x, 0)} m · Y ${formatNumber(obstacle.point.y, 0)} m (${formatNumber(Math.abs(obstacleLonLat!.latDeg), 4)}° S, ${formatNumber(obstacleLonLat!.lonEastDeg, 3)}° E)`]);
   }
 
@@ -325,7 +364,7 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
     return {
       title,
       tone: engineVisible === null ? ("neutral" as const) : engineVisible ? ("ok" as const) : ("hidden" as const),
-      line: `${L("Horizonte", "Horizon")} ${hz} · ${L("relieve a", "terrain at")} ${fmtDist(obstacle.distanceM)}${insideWindow ? "" : ` · ${L("fuera del recorte", "outside the crop")}`}`,
+      line: `${L("Horizonte", "Horizon")} ${hz} · ${L("relieve a", "terrain at")} ${fmtDist(obstacle.distanceM)}${insideWindow ? "" : regionalHit?.status === "ready" ? ` · ${L("cresta regional", "regional ridge")}` : ` · ${L("fuera del visor 3D", "outside the 3D viewer")}`}`,
       margin: bodyEl !== null && engineHorizon !== null ? bodyEl - engineHorizon : null,
     };
   })();
@@ -433,6 +472,7 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
               exaggeration={exaggeration}
               preset={preset}
               lightEnu={lightEnu}
+              regional={regional.pieces}
               azimuthDeg={showData ? azimuth : null}
               labels={showData ? sceneLabels : NO_LABELS}
               label={L(
@@ -479,6 +519,13 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
                 ) : null}
               </div>
             ) : null}
+            <p className="pointer-events-none absolute bottom-2 left-3 rounded-md bg-[#050912c0] px-2 py-1 text-[11px] text-ink-muted" data-testid="scene-light" data-sun-lit={sunLit ? "true" : "false"}>
+              {sunLit
+                ? L(`Luz y sombra: dirección del Sol del motor (azimut ${formatDeg(sunAz!, 1)}, elevación ${formatDeg(sunEl!, 2)})`, `Light and shadow: the engine's Sun direction (azimuth ${formatDeg(sunAz!, 1)}, elevation ${formatDeg(sunEl!, 2)})`)
+                : showData && isNominal && stateCode !== undefined && stateCode !== 4
+                  ? L("Sol tapado según el motor: luz neutra, sin sombra solar", "Sun hidden according to the engine: neutral light, no solar shadow")
+                  : L("Luz neutra, sin sombra solar (sin dirección solar calculada para esta vista)", "Neutral light, no solar shadow (no Sun direction computed for this view)")}
+            </p>
             <CompassBadge azimuthDeg={showData ? azimuth : null} sunAz={showData && ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null} earthAz={showData && ephData ? ephData.series.bodies.EARTH.azimuth_deg[timeIndex] : null} />
           </div>
           {/* Mapa orbital real en planta: posición del observador y dirección hasta el relieve */}
@@ -508,7 +555,7 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
           {(
             [
               ["tower", L("Torre y visual", "Tower and sightline")],
-              ["overview", L("Vista amplia del recorte", "Wide view of the crop")],
+              ["overview", L("Vista amplia", "Wide view")],
               ["behind", L("Mirar hacia el relieve", "Look towards the terrain")],
             ] as const
           ).map(([v, label]) => (
@@ -555,6 +602,22 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
         data-body-el={showData && bodyEl !== null ? String(bodyEl) : undefined}
         data-engine-horizon={showData && engineHorizon !== null ? String(engineHorizon) : undefined}
         data-state={showData && stateCode !== undefined ? String(stateCode) : undefined}
+        data-time-utc={times ? times[timeIndex] : undefined}
+        data-sun-az={showData && sunAz !== null ? String(sunAz) : undefined}
+        data-sun-el={showData && sunEl !== null ? String(sunEl) : undefined}
+        data-sun-lit={showData ? String(sunLit) : undefined}
+        data-obstacle-x={showData && obstacle && !obstacle.unknown ? String(obstacle.point.x) : undefined}
+        data-obstacle-y={showData && obstacle && !obstacle.unknown ? String(obstacle.point.y) : undefined}
+        data-obstacle-distance={showData && obstacle && !obstacle.unknown ? String(obstacle.distanceM) : undefined}
+        data-obstacle-azimuth={showData && obstacle && !obstacle.unknown ? String(obstacle.sampleAzimuthDeg) : undefined}
+        data-obstacle-height={showData && obstacle && !obstacle.unknown ? String(obstacle.heightM) : undefined}
+        data-obstacle-local={showData && obstacle && !obstacle.unknown ? toLocal(frame, obstacle.point.x, obstacle.point.y, obstacle.heightM).map((v) => v.toFixed(2)).join(",") : undefined}
+        data-inside-crop={showData && obstacle ? String(insideWindow) : undefined}
+        data-regional={showData && regionalHit ? regionalHit.status : undefined}
+        data-regional-block={showData && regionalHit && "blockId" in regionalHit ? regionalHit.blockId : undefined}
+        data-regional-delta-m={showData && regionalHit?.status === "ready" ? regionalHit.deltaM.toFixed(3) : undefined}
+        data-map-point={showData && overlay?.point ? `${overlay.point.x},${overlay.point.y}` : undefined}
+        data-map-coverage={String(coverage.length)}
         aria-live="polite"
       >
         <p className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-uncertainty">
@@ -588,7 +651,11 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
           <p className="mt-2 text-[11px] leading-relaxed text-ink-faint">
             {insideWindow
               ? L("El obstáculo está dentro del recorte 3D: la línea violeta llega hasta él.", "The obstacle is inside the 3D crop: the violet line reaches it.")
-              : L("El obstáculo está FUERA del recorte 3D de 4 km: la línea discontinua termina en el borde del recorte; su posición real aparece en el mapa.", "The obstacle is OUTSIDE the 4 km 3D crop: the dashed line ends at the crop edge; its real position is on the map.")}{" "}
+              : regionalHit?.status === "ready"
+                ? L("El obstáculo está fuera del recorte local de 4 km, dentro del relieve regional de 80 m cargado: la línea violeta llega hasta la cresta, en el mismo punto que marca el mapa.", "The obstacle is outside the local 4 km crop, inside the loaded 80 m regional terrain: the violet line reaches the ridge, at the same point marked on the map.")
+                : regionalHit?.status === "loading"
+                  ? L("El obstáculo está fuera del recorte local: se está cargando el bloque regional que lo contiene; mientras, la línea discontinua termina en el límite del visor y su posición real aparece en el mapa.", "The obstacle is outside the local crop: the regional block that contains it is loading; meanwhile the dashed line ends at the viewer limit and its real position is on the map.")
+                  : L("El obstáculo está FUERA del relieve nativo que dibuja el visor 3D: la línea discontinua termina en el límite del visor; su posición real aparece en el mapa.", "The obstacle is OUTSIDE the native terrain drawn by the 3D viewer: the dashed line ends at the viewer limit; its real position is on the map.")}{" "}
             {L(
               `Se usa la muestra del horizonte del motor más cercana (azimut ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), localizada con su mismo rayo curvo.`,
               `The nearest engine horizon sample is used (azimuth ${formatDeg(obstacle.sampleAzimuthDeg, 2)}), located with the same curved ray.`,
@@ -598,8 +665,8 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
         <p className="mt-2 text-[11px] leading-relaxed text-ink-faint">
           {mesh
             ? L(
-                `${formatNumber(mesh.cols * mesh.rows, 0)} vértices = muestras reales del DEM cada ${mesh.spacingM} m (ventana de 4 × 4 km, ${mesh.nodataVertices} sin dato). Presentación ilustrativa, no medida: grano y manchas del regolito procedurales a dos escalas (sin cráteres, rocas ni desplazamientos añadidos), luz de escena rasante y lateral a la mirada y sombra de la torre; no son el Sol real ni el cálculo de visibilidad. Cielo: brillo de la Vía Láctea y estrellas de NASA SVS 4851 (Gaia DR2, ESA/Gaia/DPAC), no orientado al cielo real del sitio. Sol (NASA/SDO AIA 171) y Tierra (Blue Marble, NASA JSC) son marcadores ampliados en su dirección del paquete, atenuados si el motor da su centro por tapado. Exageración ×${exaggeration}${exaggeration > 1 ? " solo en el dibujo" : " (escala real)"}. La torre en celosía es infraestructura ilustrativa; su remate está a la altura real del observador, ${formatNumber(analysisH, 1)} m, que es el origen de la visual.`,
-                `${formatNumber(mesh.cols * mesh.rows, 0)} vertices = real DEM samples every ${mesh.spacingM} m (4 × 4 km window, ${mesh.nodataVertices} without data). Illustrative presentation, not measurement: procedural two-scale regolith grain and mottling (no craters, rocks or displacement added), a grazing scene light from the side of the view and the tower shadow; they are not the real Sun nor the visibility computation. Sky: Milky Way glow and stars from NASA SVS 4851 (Gaia DR2, ESA/Gaia/DPAC), not oriented to the site's real sky. Sun (NASA/SDO AIA 171) and Earth (Blue Marble, NASA JSC) are enlarged markers at their package direction, dimmed when the engine marks their centre as hidden. Exaggeration ×${exaggeration}${exaggeration > 1 ? " in the drawing only" : " (true scale)"}. The lattice tower is illustrative infrastructure; its top is at the real observer height, ${formatNumber(analysisH, 1)} m, which is where the sightline starts.`,
+                `${formatNumber(mesh.cols * mesh.rows, 0)} vértices = muestras reales del DEM cada ${mesh.spacingM} m (ventana de 4 × 4 km, ${mesh.nodataVertices} sin dato). Presentación ilustrativa, no medida: grano y manchas del regolito procedurales a dos escalas (sin cráteres, rocas ni desplazamientos añadidos), la luz y la sombra de la torre siguen la dirección del Sol del motor solo cuando este lo da por visible (si no, luz neutra); la sombra dibujada no es el cálculo de visibilidad. Cielo: brillo de la Vía Láctea y estrellas de NASA SVS 4851 (Gaia DR2, ESA/Gaia/DPAC), no orientado al cielo real del sitio. Sol (NASA/SDO AIA 171) y Tierra (Blue Marble, NASA JSC) son marcadores ampliados en su dirección del paquete, atenuados si el motor da su centro por tapado. Exageración ×${exaggeration}${exaggeration > 1 ? " solo en el dibujo" : " (escala real)"}. La torre en celosía es infraestructura ilustrativa; su remate está a la altura real del observador, ${formatNumber(analysisH, 1)} m, que es el origen de la visual.`,
+                `${formatNumber(mesh.cols * mesh.rows, 0)} vertices = real DEM samples every ${mesh.spacingM} m (4 × 4 km window, ${mesh.nodataVertices} without data). Illustrative presentation, not measurement: procedural two-scale regolith grain and mottling (no craters, rocks or displacement added), light and the tower shadow follow the engine's Sun direction only when it reports the Sun visible (otherwise neutral light); the drawn shadow is not the visibility computation. Sky: Milky Way glow and stars from NASA SVS 4851 (Gaia DR2, ESA/Gaia/DPAC), not oriented to the site's real sky. Sun (NASA/SDO AIA 171) and Earth (Blue Marble, NASA JSC) are enlarged markers at their package direction, dimmed when the engine marks their centre as hidden. Exaggeration ×${exaggeration}${exaggeration > 1 ? " in the drawing only" : " (true scale)"}. The lattice tower is illustrative infrastructure; its top is at the real observer height, ${formatNumber(analysisH, 1)} m, which is where the sightline starts.`,
               )
             : null}{" "}
           <Link href={evidenceHref("pgda78.site01.elevation")} className="text-accent underline-offset-2 hover:underline">

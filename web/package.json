@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "data": "node scripts/prepare-data.ts && node scripts/geospatial/publish-terrain.ts && node scripts/engine/publish-engineer-heights.ts",
+    "data": "node scripts/prepare-data.ts && node scripts/geospatial/publish-terrain.ts && node scripts/geospatial/publish-regional.ts && node scripts/engine/publish-engineer-heights.ts",
+    "geo:regional": "node scripts/geospatial/build-regional.ts",
     "geo:fetch": "node scripts/geospatial/fetch-originals.ts",
     "geo:build": "node scripts/geospatial/build-terrain.ts",
     "geo:coregistration": "node scripts/geospatial/check-coregistration.ts",

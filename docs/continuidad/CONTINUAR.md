@@ -1,5 +1,11 @@
 # Prompt para la siguiente sesión
 
+> **PC-25 (14-11-2026).** Ajustes finales para el jurado (Timeline, cabecera, Presentar con foto de Connecting Ridge, Regret Lab) en la misma rama: lee `HANDOFF.md` **§0-ter** y después §0-bis.
+>
+> **PC-24 (14-11-2026, relevo Hugo → Asier).** El trabajo vigente es el rediseño de la experiencia lunar en la rama local `feat/rediseno-experiencia-lunar` (sin subir): lee primero `docs/continuidad/HANDOFF.md` **§0-bis** (estado de los tres bloques, verificaciones reales, servidor local y siguiente paso exacto) y después §0. No fusiones ni publiques: `main` despliega en producción y la integración la decide el equipo.
+>
+> Comprobaciones al retomar: `git branch --show-current` → `feat/rediseno-experiencia-lunar`; `git log --oneline -6`; `cd web && npm ci`. Para ver la compilación: `npm run build && node scripts/serve-static.ts out 4190`. Capturas y medidas: `node scripts/qa/capture.mjs http://127.0.0.1:4190 docs/capturas/pc24/despues` (añade `--perf --no-shots --gpu` para las medidas). Para regenerar los bloques del relieve regional hacen falta los originales PGDA90 en `web/data/raw/motor/datos_originales/PGDA90_contexto/` (`npm run geo:regional`); para los activos del globo, `python -I scripts/imagery/make_globe_assets.py data/raw data/derived/terrain src/assets/globe`.
+>
 > **Superado el 14-11-2026 (PC-23).** Las ramas y commits que cita el texto de abajo ya están en `main`. Para continuar: lee `docs/continuidad/HANDOFF.md` §0 (estado vigente, propietarios, pruebas y siguiente acción) y trabaja en la rama que indique; no en `main`, que publica en producción. El resto se conserva como registro.
 
 Copia y pega esto en tu IA, dentro del repositorio.

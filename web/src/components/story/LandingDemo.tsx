@@ -26,7 +26,7 @@ import { ChunkGate } from "../data/DataGate";
 import { Icon } from "../ui/Icon";
 import { Button } from "../ui/Interactive";
 import { DemoStrips } from "./DemoStrips";
-import { PairMap } from "./PairMap";
+import { RidgePhotoMap } from "./RidgePhotoMap";
 
 const hm = formatHoursMinutes;
 const SITES: SiteId[] = ["A", "B"];
@@ -45,8 +45,8 @@ function StatusTag({ c }: { c: Compliance }) {
         ? { cls: "border-warn/60 bg-warn/15 text-warn", icon: "alert" as const, text: L(`Supera el límite de ${DEMO_LIMIT_HOURS} h`, `Over the ${DEMO_LIMIT_HOURS} h limit`) }
         : { cls: "border-line-strong bg-surface-2 text-ink-muted", icon: "info" as const, text: L("No determinable: hay horas desconocidas", "Not determinable: some hours are unknown") };
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-sm font-semibold ${meta.cls}`} data-compliance={c}>
-      <Icon name={meta.icon} className="size-4" />
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold whitespace-nowrap ${meta.cls}`} data-compliance={c}>
+      <Icon name={meta.icon} className="size-3.5" />
       {meta.text}
     </span>
   );
@@ -62,39 +62,38 @@ function SiteCard({ r, prev, chosen, revealed, onChoose, roi }: { r: SiteReading
       aria-checked={chosen}
       onClick={onChoose}
       data-testid={`demo-card-${r.site}`}
-      className={`relative flex min-w-0 flex-col items-start gap-2 rounded-2xl border-2 bg-surface/90 p-4 text-left transition-all sm:p-5 ${
-        chosen ? `${meta.borderClass} ${r.site === "A" ? "shadow-[0_0_40px_-12px_#ff8a1f]" : "shadow-[0_0_40px_-12px_#22d3ee]"}` : "border-line hover:border-line-strong"
+      data-revealed={revealed ? "true" : "false"}
+      className={`flex w-full min-w-0 flex-col gap-1 rounded-2xl border bg-[#101a33] px-3.5 py-2.5 text-left transition-colors ${
+        chosen ? `border-2 ${meta.borderClass} ${r.site === "A" ? "shadow-[0_0_32px_-14px_#ff8a1f]" : "shadow-[0_0_32px_-14px_#22d3ee]"}` : `${meta.borderClass} hover:bg-surface-2`
       }`}
     >
-      <span className="flex w-full flex-wrap items-center gap-x-2 gap-y-1">
-        <span className={`inline-block size-3 rounded-full ${meta.bgClass}`} aria-hidden />
-        <span className={`text-lg font-bold whitespace-nowrap ${meta.textClass}`}>{meta.label}</span>
-        <span className="hidden text-xs text-ink-faint sm:inline">ROI {roi}</span>
-      </span>
-      {chosen ? (
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold text-[#050912] ${meta.bgClass}`} data-testid={`demo-choice-${r.site}`}>
-          {L("Tu elección", "Your choice")}
+      <span className="flex w-full min-w-0 items-center gap-2.5">
+        <span className={`grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold text-[#050912] ${meta.bgClass}`} aria-hidden>
+          {r.site}
         </span>
-      ) : (
-        <span className="rounded-full border border-dashed border-line-strong px-2.5 py-0.5 text-xs text-ink-faint">{L("Pulsa para elegir", "Tap to choose")}</span>
-      )}
-      <span key={revealed ? `${r.hours}` : "hidden"} className={`animate-rise tabular flex flex-wrap gap-x-3 text-4xl leading-none font-bold sm:text-5xl 2xl:text-6xl ${meta.textClass}`} data-testid={`demo-hours-${r.site}`} data-revealed={revealed ? "true" : "false"}>
+        <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+          <span className="text-xl font-bold whitespace-nowrap text-ink">{meta.label}</span>
+          <span className="text-xs text-ink-muted">ROI {roi}</span>
+        </span>
+        {chosen ? (
+          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold whitespace-nowrap text-[#050912] ${meta.bgClass}`} data-testid={`demo-choice-${r.site}`}>
+            {L("Tu elección", "Your choice")}
+          </span>
+        ) : null}
         {revealed ? (
-          (r.hours === null ? "—" : hm(r.hours)).split(/(?<=h) /).map((part, i) => (
-            <Fragment key={part}>
-              {i ? " " : null}
-              <span className="whitespace-nowrap">{part}</span>
-            </Fragment>
-          ))
+          <span key={`${r.hours}`} className={`animate-rise tabular ml-auto shrink-0 text-right text-2xl leading-none font-bold whitespace-nowrap ${meta.textClass}`} data-testid={`demo-hours-${r.site}`}>
+            {r.hours === null ? "—" : hm(r.hours)}
+          </span>
         ) : (
-          <span>?</span>
+          <Icon name="chevronRight" className={`ml-auto size-5 shrink-0 ${meta.textClass}`} />
         )}
       </span>
-      <span className="text-sm text-ink-muted">{revealed ? L("Mayor racha sin Sol", "Longest stretch without sunlight") : L("¿Cuántas horas seguidas sin Sol? Elige para descubrirlo", "How many hours in a row without sunlight? Choose to find out")}</span>
-      {revealed ? <StatusTag c={r.compliance} /> : null}
-      {revealed && changed && prev?.hours !== null ? (
-        <span className="text-xs text-ink-faint">
-          {L("antes", "before")}: {hm(prev!.hours!)}
+      {revealed ? (
+        <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-[42px]">
+          <StatusTag c={r.compliance} />
+          <span className="text-xs text-ink-faint">
+            {changed && prev?.hours !== null ? `${L("antes", "before")}: ${hm(prev!.hours!)}` : L("mayor racha sin Sol", "longest stretch without sunlight")}
+          </span>
         </span>
       ) : null}
     </button>
@@ -144,6 +143,12 @@ function Explain({ site, step, compare }: { site: SiteId; step: number; compare:
             </>
           ) : (
             <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-ink-muted" data-testid="demo-plain-explanation">
+              <li>
+                {L(
+                  `Racha sin Sol = el mayor tramo continuo sin el centro del Sol por encima del horizonte, según el motor de SITE REGRET. Las ${DEMO_LIMIT_HOURS} h son un límite ilustrativo de esta demo, no un requisito de misión.`,
+                  `Stretch without sunlight = the longest continuous period without the Sun's centre above the horizon, as computed by the SITE REGRET engine. The ${DEMO_LIMIT_HOURS} h is an illustrative limit for this demo, not a mission requirement.`,
+                )}
+              </li>
               <li>{L("En el polo sur de la Luna el Sol nunca sube: da la vuelta casi a ras del horizonte.", "At the Moon's south pole the Sun never climbs: it circles almost level with the horizon.")}</li>
               <li>{L("Por eso cualquier montaña que quede delante puede taparlo durante horas o días.", "So any mountain in the way can hide it for hours or days.")}</li>
               <li>
@@ -184,9 +189,9 @@ function RegretReveal({ core, choice }: { core: Core; choice: SiteId }) {
   const best1 = stepCase(core, 1)?.winner;
   const name = (w: string | undefined) => (w === "A" || w === "B" ? SITE_META[w].label : w === "TIE" ? L("empate", "a tie") : L("no determinable", "not determinable"));
   return (
-    <div className="animate-rise rounded-2xl border border-uncertainty/60 bg-uncertainty-soft p-4" data-testid="demo-regret" data-regret-hours={mine ?? ""}>
+    <div className="animate-rise rounded-xl border border-uncertainty/60 bg-uncertainty-soft p-3" data-testid="demo-regret" data-regret-hours={mine ?? ""}>
       <p className="text-xs font-bold tracking-[0.18em] text-uncertainty uppercase">{L("Regret · el coste de equivocarse de mapa", "Regret · the cost of trusting the wrong map")}</p>
-      <p className="tabular mt-1 text-3xl leading-none font-bold text-uncertainty sm:text-4xl" data-testid="demo-regret-value">
+      <p className="tabular mt-1 text-2xl leading-none font-bold text-uncertainty sm:text-3xl" data-testid="demo-regret-value">
         {mine === null ? "—" : hm(mine)}
       </p>
       <p className="mt-2 text-sm leading-relaxed text-ink">
@@ -243,7 +248,7 @@ export function LandingDemo({ core }: { core: Core }) {
   let message: React.ReactNode;
   let action: { label: string; onClick: () => void; icon: "arrowRight" | "height" | "reset" } | null = null;
   if (phase === 0 || !choice) {
-    message = L("Pulsa Sitio A o Sitio B para elegir dónde alunizar. Después verás cuántas horas seguidas se queda cada uno sin Sol.", "Tap Site A or Site B to choose where to land. Then you will see how many hours in a row each one goes without sunlight.");
+    message = L("Después de elegir verás cuánto dura la racha sin Sol en cada lugar.", "Once you choose, you will see how long each place goes without sunlight.");
   } else if (phase === 1) {
     const c = read(choice);
     message =
@@ -257,7 +262,7 @@ export function LandingDemo({ core }: { core: Core }) {
       message = (
         <>
           {message}{" "}
-          <span className="font-normal text-ink-muted" data-testid="demo-best-reference">
+          <span className="text-sm font-normal text-ink-muted" data-testid="demo-best-reference">
             {best === choice
               ? L("Con este mapa del terreno es la mejor de las dos opciones.", "With this terrain map it is the better of the two options.")
               : L(`Con este mapa del terreno, ${SITE_META[best].label} era mejor opción.`, `With this terrain map, ${SITE_META[best].label} was the better option.`)}
@@ -318,83 +323,81 @@ export function LandingDemo({ core }: { core: Core }) {
   const revealed = phase > 0 && choice !== null;
 
   return (
-    <section className="story-root relative flex flex-col gap-5 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-[#0a1430] via-bg to-[#120c2c] p-4 sm:p-7" data-testid="landing-demo" data-phase={phase} data-step={step}>
-      <div className="relative flex flex-wrap items-center gap-x-4 gap-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-          Connecting Ridge · {windowId} · {formatUtcDate(win.start)} – {formatUtcDate(win.stop)} UTC
+    <section className="story-root relative flex flex-col gap-3 overflow-hidden rounded-3xl border border-line bg-[#0b1220] p-4 sm:px-6 sm:py-5" data-testid="landing-demo" data-phase={phase} data-step={step}>
+      <div className="relative flex flex-wrap items-center gap-x-4 gap-y-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted">
+          Connecting Ridge <span aria-hidden>/</span> {windowId} · {formatUtcDate(win.start)} – {formatUtcDate(win.stop)} UTC
         </p>
         <a href="#pregunta" className="ml-auto text-sm text-ink-muted underline-offset-2 hover:text-ink hover:underline" data-testid="demo-full-presentation">
-          {L("Presentación completa", "Full presentation")}
+          {L("Presentación completa (7 escenas)", "Full presentation (7 scenes)")}
         </a>
       </div>
 
       <div className="relative">
-        <h1 className="story-heading max-w-5xl text-3xl font-bold leading-tight text-ink sm:text-4xl xl:text-5xl">
-          {L(`Tu misión puede aguantar ${DEMO_LIMIT_HOURS} horas sin Sol. ¿Dónde alunizarías?`, `Your mission can handle ${DEMO_LIMIT_HOURS} hours without sunlight. Where would you land?`)}
-        </h1>
-        <p className="mt-2 max-w-4xl text-sm text-ink-faint">
-          {L(
-            `Las ${DEMO_LIMIT_HOURS} h son un límite ilustrativo de esta demo, no un requisito de misión. Racha sin Sol = el mayor tramo continuo sin el centro del Sol por encima del horizonte, según el motor de SITE REGRET.`,
-            `The ${DEMO_LIMIT_HOURS} h is an illustrative limit for this demo, not a mission requirement. Stretch without sunlight = the longest continuous period without the Sun's centre above the horizon, as computed by the SITE REGRET engine.`,
-          )}
+        <h1 className="story-heading text-3xl leading-tight font-bold text-ink sm:text-4xl xl:text-5xl">{L("¿Dónde alunizarías?", "Where would you land?")}</h1>
+        <p className="mt-1 text-base text-ink sm:text-lg" data-testid="demo-subtitle">
+          {L(`Tu misión de ejemplo aguanta hasta ${DEMO_LIMIT_HOURS} horas seguidas sin Sol.`, `Your example mission can handle up to ${DEMO_LIMIT_HOURS} hours in a row without sunlight.`)}{" "}
+          <span className="text-xs text-ink-faint sm:text-sm">{L("Límite ilustrativo de esta demo, no un requisito de misión.", "Illustrative limit for this demo, not a mission requirement.")}</span>
         </p>
       </div>
 
-      <ol className="relative flex flex-wrap gap-2" aria-label={L("Pasos de la demo", "Demo steps")}>
-        {stepNames.map((n, i) => (
-          <li key={n} aria-current={i === activeStep && phase < 3 ? "step" : undefined} className={`rounded-full border px-3 py-1 text-xs font-semibold ${i === activeStep && phase < 3 ? "border-accent bg-accent-surface text-ink" : i < activeStep ? "border-accent/40 text-ink-muted" : "border-line text-ink-faint"}`}>
-            {i + 1} · {n}
-          </li>
-        ))}
-        {phase === 3 ? (
-          <li aria-current="step" className="rounded-full border border-accent bg-accent-surface px-3 py-1 text-xs font-semibold text-ink" data-testid="demo-extra-step">
-            {L("Extra · Observador a 2 m", "Extra · Observer at 2 m")}
-          </li>
-        ) : null}
-        <li className="ml-auto flex flex-wrap gap-2 text-xs" data-testid="demo-scenario">
-          <span className={`rounded-full border px-3 py-1 ${step > 0 ? "border-uncertainty/60 bg-uncertainty-soft text-uncertainty" : "border-line text-ink-muted"}`}>{terrainLabel(step)}</span>
-          <span className={`rounded-full border px-3 py-1 ${heightM > 0 ? "border-accent bg-accent-surface text-ink" : "border-line text-ink-muted"}`}>
-            {L("Altura del observador", "Observer height")}: {heightM} m
-          </span>
-        </li>
-      </ol>
-
-      <div className="relative grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div className="flex min-w-0 flex-col gap-4">
-          <div role="radiogroup" aria-label={L("¿Dónde alunizarías?", "Where would you land?")} className="grid grid-cols-2 gap-3">
+      {/* Móvil: el panel de decisión va justo tras la pregunta y el mapa después. Escritorio: mapa grande a la izquierda. */}
+      <div className="relative grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] xl:grid-cols-[minmax(0,1fr)_minmax(360px,440px)]">
+        <div className="flex min-w-0 flex-col gap-2.5 rounded-2xl border border-line bg-surface/70 p-3 sm:p-4" data-testid="demo-panel">
+          <ol className="flex flex-wrap gap-1.5" aria-label={L("Pasos de la demo", "Demo steps")}>
+            {stepNames.map((n, i) => (
+              <li key={n} aria-current={i === activeStep && phase < 3 ? "step" : undefined} className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${i === activeStep && phase < 3 ? "border-accent bg-accent-surface text-ink" : i < activeStep ? "border-accent/40 text-ink-muted" : "border-line text-ink-faint"}`}>
+                {i + 1} · {n}
+              </li>
+            ))}
+            {phase === 3 ? (
+              <li aria-current="step" className="rounded-full border border-accent bg-accent-surface px-2.5 py-0.5 text-[11px] font-semibold text-ink" data-testid="demo-extra-step">
+                {L("Extra · Observador a 2 m", "Extra · Observer at 2 m")}
+              </li>
+            ) : null}
+          </ol>
+          <p className="text-xs font-bold tracking-[0.14em] text-ink-muted uppercase" id="demo-choose-label">
+            {phase === 0 ? L("Elige un sitio", "Choose a site") : L("Tu decisión", "Your decision")}
+          </p>
+          <div role="radiogroup" aria-label={L("¿Dónde alunizarías?", "Where would you land?")} className="flex flex-col gap-2.5">
             {readings.map((r) => (
               <SiteCard key={r.site} r={r} prev={prev(r.site)} chosen={choice === r.site} revealed={revealed} onChoose={() => choose(r.site)} roi={getSite(core, r.site)!.roi} />
             ))}
           </div>
-          {phase === 2 && choice ? <RegretReveal core={core} choice={choice} /> : null}
-          <div className="rounded-2xl border border-accent/40 bg-bg-2/90 p-4" aria-live="polite" data-testid="demo-message">
-            <p className="text-lg font-semibold leading-snug text-ink sm:text-xl">{message}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              {action ? (
-                <Button variant={action.icon === "reset" ? "secondary" : "primary"} className="px-5! py-3! text-base! font-semibold" icon={action.icon === "reset" ? "reset" : action.icon === "height" ? "height" : undefined} iconRight={action.icon === "arrowRight" ? "arrowRight" : undefined} onClick={action.onClick}>
-                  {action.label}
-                </Button>
-              ) : null}
-              {phase > 0 && action?.icon !== "reset" ? (
-                <button type="button" onClick={reset} className="text-sm text-ink-faint underline-offset-2 hover:text-ink hover:underline" data-testid="demo-reset">
-                  {L("Reiniciar demo", "Restart demo")}
-                </button>
-              ) : null}
-            </div>
-            <div className="mt-3">
-              <Explain key={phase >= 2 ? "compare" : "plain"} site={choice ?? "A"} step={step} compare={phase >= 2 && choice !== null} />
-            </div>
+          <div className="rounded-xl border border-accent/30 bg-bg-2/80 p-3" aria-live="polite" data-testid="demo-message">
+            <p className="text-[15px] leading-snug font-semibold text-ink">{message}</p>
+            {action || phase > 0 ? (
+              <div className="mt-2.5 flex flex-wrap items-center gap-3">
+                {action ? (
+                  <Button variant={action.icon === "reset" ? "secondary" : "primary"} className="px-4! py-2.5! text-base! font-semibold" icon={action.icon === "reset" ? "reset" : action.icon === "height" ? "height" : undefined} iconRight={action.icon === "arrowRight" ? "arrowRight" : undefined} onClick={action.onClick}>
+                    {action.label}
+                  </Button>
+                ) : null}
+                {phase > 0 && action?.icon !== "reset" ? (
+                  <button type="button" onClick={reset} className="text-sm text-ink-faint underline-offset-2 hover:text-ink hover:underline" data-testid="demo-reset">
+                    {L("Reiniciar demo", "Restart demo")}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
           </div>
+          {phase === 2 && choice ? <RegretReveal core={core} choice={choice} /> : null}
+          <Explain key={phase >= 2 ? "compare" : "plain"} site={choice ?? "A"} step={step} compare={phase >= 2 && choice !== null} />
         </div>
-        <figure className="flex min-w-0 flex-col gap-2 lg:order-first">
-          <PairMap a={getSite(core, "A")!} b={getSite(core, "B")!} />
-          <figcaption className="text-[11px] text-ink-faint">
-            {L(
-              "Relieve de Connecting Ridge (figura DEM PGDA78 del paquete, 40 m/píxel; color = altura). Funciona sin conexión.",
-              "Connecting Ridge relief (PGDA78 DEM figure from the package, 40 m/pixel; colour = height). Works offline.",
-            )}
-          </figcaption>
-        </figure>
+        <div className="min-w-0 lg:order-first" style={{ maxWidth: "max(320px, calc((100dvh - 270px) * 1.6))" }}>
+          <RidgePhotoMap
+            sites={core.sites}
+            chosen={choice}
+            badges={
+              <span className="flex flex-wrap gap-1.5 text-[11px]" data-testid="demo-scenario">
+                <span className={`rounded-full border px-2.5 py-0.5 backdrop-blur-sm ${step > 0 ? "border-uncertainty/70 bg-[#1d1440e6] text-uncertainty" : "border-white/25 bg-[#0b1220d9] text-ink"}`}>{terrainLabel(step)}</span>
+                <span className={`rounded-full border px-2.5 py-0.5 backdrop-blur-sm ${heightM > 0 ? "border-accent bg-accent-surface text-ink" : "border-white/25 bg-[#0b1220d9] text-ink"}`}>
+                  {L("Altura del observador", "Observer height")}: {heightM} m
+                </span>
+              </span>
+            }
+          />
+        </div>
       </div>
 
       {revealed ? (

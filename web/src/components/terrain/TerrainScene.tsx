@@ -6,6 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { rampColor, type Rgb } from "@/lib/geospatial/colormap";
 import type { Vec3 } from "@/lib/geospatial/lunar";
 import type { TerrainMesh } from "@/lib/geospatial/mesh";
+import type { RegionalMesh } from "@/lib/geospatial/regional";
 import { L } from "@/lib/i18n";
 import { BASE_PATH } from "@/lib/data/loader";
 import { Callout } from "../ui/Display";
@@ -54,6 +55,11 @@ export interface SceneLabels {
 
 const toScene = (v: Vec3) => new THREE.Vector3(v[0], v[2], -v[1]);
 const STAR_RADIUS = 30000;
+/** Distancia de los discos de Sol y Tierra: más allá de todo el relieve regional (400 km), para que una cresta pueda taparlos. */
+const BODY_DISTANCE = 900000;
+/** Alcance de la sombra de la torre (m): con el Sol a ~1° una torre de 30 m proyecta ~1,7 km. */
+const SHADOW_REACH = 2600;
+const LIGHT_DISTANCE = 300;
 const DASHES = 18;
 const VIOLET = 0xb79bff;
 
@@ -85,6 +91,10 @@ interface Rig {
   endLabel: THREE.Sprite;
   labels: LabelCache;
   light: THREE.DirectionalLight;
+  /** Iluminación neutra (sin dirección solar ni sombra) para cuando el Sol no alumbra el sitio. */
+  neutral: { hemi: THREE.HemisphereLight; ambient: THREE.AmbientLight; top: THREE.DirectionalLight };
+  regional: Map<string, { src: RegionalMesh; mesh: THREE.Mesh }>;
+  regionalMat: THREE.MeshStandardMaterial;
   stars: { points: THREE.Points | null };
   requestRender: () => void;
   shadowDirty: () => void;
@@ -107,6 +117,7 @@ export function TerrainScene({
   exaggeration,
   preset,
   lightEnu,
+  regional,
   label,
   azimuthDeg = null,
   labels,
@@ -118,8 +129,14 @@ export function TerrainScene({
   sightLine: SceneSightLine | null;
   exaggeration: number;
   preset: { view: ViewPreset; nonce: number };
-  /** Dirección de la luz de la escena [este, norte, arriba]; solo estética. */
+  /**
+   * Dirección del Sol [este, norte, arriba] calculada por el motor para este sitio, instante, altura y
+   * superficie, SOLO cuando el motor lo da por visible. `null` (Sol oculto, estado desconocido, carga o
+   * sin datos compatibles) = iluminación neutra, sin luz directa ni sombra solar.
+   */
   lightEnu: Vec3 | null;
+  /** Bloques del relieve regional (PGDA90) ya colocados en el marco local. */
+  regional?: Array<{ id: string; mesh: RegionalMesh }>;
   label: string;
   /** Azimut consultado (°), para orientar la cámara cuando no hay visual. */
   azimuthDeg?: number | null;
@@ -149,7 +166,8 @@ export function TerrainScene({
     if (!host) return;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+      // Profundidad logarítmica: la escena va de centímetros (torre) a cientos de kilómetros (relieve regional).
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance", logarithmicDepthBuffer: true });
     } catch (e) {
       const t = setTimeout(() => setFailed((e as Error).message || "WebGL"), 0);
       return () => clearTimeout(t);
@@ -167,12 +185,17 @@ export function TerrainScene({
     renderer.domElement.style.display = "block";
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, 1, 0.2, 60000);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.2, 2000000);
     const world = new THREE.Group();
     scene.add(world);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.06));
-    scene.add(new THREE.HemisphereLight(0x8f9fbd, 0x0b0c0f, 0.32));
-    scene.fog = new THREE.Fog(0x020306, 450, 5200);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.06);
+    const hemi = new THREE.HemisphereLight(0x8f9fbd, 0x0b0c0f, 0.32);
+    // Cenital y sin sombra: solo se enciende con la iluminación neutra, para leer el relieve sin sugerir un Sol.
+    const top = new THREE.DirectionalLight(0xf2f4f8, 0);
+    top.position.set(0, 1000, 0);
+    scene.add(ambient, hemi, top, top.target);
+    // Atenuación muy suave con la distancia (cielo negro: sin atmósfera); el horizonte lejano sigue leyéndose.
+    scene.fog = new THREE.Fog(0x020306, 6000, 700000);
     // Cielo: brillo difuso (Vía Láctea) como fondo + estrellas en puntos (NASA SVS 4851). Ilustrativo.
     const glow = new THREE.TextureLoader().load(glowImg.src, () => rig.requestRender());
     glow.mapping = THREE.EquirectangularReflectionMapping;
@@ -197,6 +220,8 @@ export function TerrainScene({
     terrain.frustumCulled = false;
     terrain.receiveShadow = true;
     world.add(terrain);
+    // Relieve regional: mismo gris mineral, sin el grano de presentación del recorte local.
+    const regionalMat = new THREE.MeshStandardMaterial({ color: 0x77736d, roughness: 1, metalness: 0, side: THREE.DoubleSide });
 
     const labelsCache = new LabelCache();
     const tower = new TowerRig();
@@ -248,7 +273,7 @@ export function TerrainScene({
     controls.enableDamping = false;
     controls.maxPolarAngle = Math.PI * 0.495;
     controls.minDistance = 2;
-    controls.maxDistance = 9000;
+    controls.maxDistance = 120000;
 
     let pending = 0;
     // Los shaders se compilan en paralelo (KHR_parallel_shader_compile) antes del primer fotograma:
@@ -283,6 +308,9 @@ export function TerrainScene({
       endLabel,
       labels: labelsCache,
       light,
+      neutral: { hemi, ambient, top },
+      regional: new Map(),
+      regionalMat,
       stars,
       frames: 0,
       // Renderizado bajo demanda, agrupado por fotograma.
@@ -346,6 +374,9 @@ export function TerrainScene({
       controls.dispose();
       terrain.geometry.dispose();
       terrainMat.dispose();
+      for (const r of rig.regional.values()) r.mesh.geometry.dispose();
+      rig.regional.clear();
+      regionalMat.dispose();
       tower.dispose();
       head.geometry.dispose();
       headMat.dispose();
@@ -408,27 +439,90 @@ export function TerrainScene({
     (r.pad.material as THREE.MeshBasicMaterial).color.set(siteColor);
     r.pad.scale.setScalar(0.6);
     r.pad.position.y = 0.05;
-    // Sombra: la caja de la luz cubre la torre y toda su sombra (más larga con la luz rasante).
-    const l = toScene((lightEnu ?? [-0.5, 0.5, 0.7]) as Vec3).normalize();
-    const elev = Math.max(0.15, Math.asin(Math.min(1, l.y)));
-    const hEff = Math.max(1, h * exaggeration);
-    const shadowLen = wide ? 0 : Math.min(160, hEff / Math.tan(elev));
-    const ground = new THREE.Vector3(-l.x, 0, -l.z).normalize();
-    const center = ground.multiplyScalar(shadowLen / 2);
-    const half = wide ? 400 : shadowLen / 2 + Math.max(4, r.tower.baseHalf * 2) + 4;
-    r.light.target.position.copy(center);
-    r.light.position.copy(center).add(l.clone().multiplyScalar(800));
-    const lc = r.light.shadow.camera;
-    lc.left = -half;
-    lc.right = half;
-    lc.top = half;
-    lc.bottom = -half;
-    lc.near = 1;
-    lc.far = 1800;
-    lc.updateProjectionMatrix();
+    r.requestRender();
+  }, [ready, observerHeightM, exaggeration, preset.view, siteColor]);
+
+  /* ---- luz solar y sombra de la torre: dependen del Sol del motor y de la torre, NUNCA de la cámara ni de la mirada ---- */
+  useEffect(() => {
+    const r = rigRef.current;
+    const host = hostRef.current;
+    if (!r || !host) return;
+    if (!lightEnu) {
+      // Sol oculto, desconocido o sin datos: sin luz directa ni sombra solar; luz neutra para leer la escena.
+      // Intensidad 0 en lugar de quitar `castShadow`: cambiar el número de luces con sombra obliga a
+      // three.js a recompilar todos los materiales (≈ 1 s la primera vez). Una luz a 0 no ilumina ni sombrea.
+      r.light.intensity = 0;
+      r.neutral.hemi.intensity = 1.25;
+      r.neutral.ambient.intensity = 0.28;
+      r.neutral.top.intensity = 0.55;
+      host.dataset.sunLight = "off";
+      delete host.dataset.lightAz;
+      delete host.dataset.lightEl;
+      delete host.dataset.shadowAz;
+      delete host.dataset.shadowLengthM;
+    } else {
+      const l = toScene(lightEnu).normalize();
+      const elev = Math.asin(Math.max(-1, Math.min(1, l.y)));
+      // La elevación es la real (rasante en el polo). Solo la intensidad compensa que el suelo reciba ∝ sin(elevación).
+      r.light.intensity = 3.3 * Math.min(5, Math.max(1, 0.3 / Math.max(0.01, Math.sin(elev))));
+      r.neutral.hemi.intensity = 0.42;
+      r.neutral.ambient.intensity = 0.08;
+      r.neutral.top.intensity = 0;
+      // La cámara de la sombra mira a lo largo de la luz: en su plano solo tiene que caber la torre
+      // (la sombra cae justo detrás de ella), así que la resolución no depende de lo larga que sea.
+      const hEff = Math.max(1, observerHeightM * exaggeration);
+      const center = new THREE.Vector3(0, hEff / 2, 0);
+      const half = Math.max(hEff / 2 + 2.5, r.tower.baseHalf * 2 + 3);
+      r.light.target.position.copy(center);
+      r.light.position.copy(center).add(l.clone().multiplyScalar(LIGHT_DISTANCE));
+      const lc = r.light.shadow.camera;
+      lc.left = -half;
+      lc.right = half;
+      lc.top = half;
+      lc.bottom = -half;
+      lc.near = 1;
+      lc.far = LIGHT_DISTANCE + SHADOW_REACH;
+      lc.updateProjectionMatrix();
+      r.light.shadow.bias = -0.06 / (lc.far - lc.near);
+      // Diagnóstico leído de los objetos de three.js (no de las propiedades): dirección de la luz y de la sombra.
+      const d = r.light.position.clone().sub(r.light.target.position).normalize();
+      const az = ((Math.atan2(d.x, -d.z) * 180) / Math.PI + 360) % 360;
+      host.dataset.sunLight = "on";
+      host.dataset.lightAz = az.toFixed(4);
+      host.dataset.lightEl = ((Math.asin(d.y) * 180) / Math.PI).toFixed(4);
+      host.dataset.shadowAz = ((az + 180) % 360).toFixed(4);
+      host.dataset.shadowLengthM = elev > 0 ? (observerHeightM / Math.tan(elev)).toFixed(1) : "inf";
+    }
     r.shadowDirty();
     r.requestRender();
-  }, [ready, observerHeightM, exaggeration, preset.view, siteColor, lightEnu]);
+  }, [ready, lightEnu, observerHeightM, exaggeration]);
+
+  /* ----------------- relieve regional: se añaden, sustituyen o retiran bloques ----------------- */
+  useEffect(() => {
+    const r = rigRef.current;
+    const host = hostRef.current;
+    if (!r || !host) return;
+    const next = new Map((regional ?? []).map((p) => [p.id, p.mesh]));
+    for (const [id, cur] of r.regional) {
+      if (next.get(id) === cur.src) continue;
+      r.world.remove(cur.mesh);
+      cur.mesh.geometry.dispose();
+      r.regional.delete(id);
+    }
+    for (const [id, src] of next) {
+      if (r.regional.has(id)) continue;
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.BufferAttribute(src.positions, 3));
+      g.setIndex(new THREE.BufferAttribute(src.indices, 1));
+      g.computeVertexNormals();
+      const m = new THREE.Mesh(g, r.regionalMat);
+      m.frustumCulled = false;
+      r.world.add(m);
+      r.regional.set(id, { src, mesh: m });
+    }
+    host.dataset.regionalBlocks = String(r.regional.size);
+    r.requestRender();
+  }, [ready, regional]);
 
   /* --------------- direcciones, visual y etiquetas (solo con datos calculados) --------------- */
   useEffect(() => {
@@ -454,7 +548,7 @@ export function TerrainScene({
         continue;
       }
       const dir = toScene(d.enu).normalize();
-      const far = 5200;
+      const far = BODY_DISTANCE;
       const mat = b.sprite.material as THREE.SpriteMaterial;
       // Marcador ampliado (no a escala). Si el motor da el centro por tapado, el marcador se atenúa.
       mat.opacity = d.occluded ? 0.42 : 1;
@@ -475,7 +569,7 @@ export function TerrainScene({
       lm.gapSize = wide ? 20 : near * 0.08;
       b.ray.visible = d.ray !== false;
       r.labels.set(b.label, d.label ? (d.occluded ? `${d.label} · ${key === "earth" ? L("tapada", "hidden") : L("tapado", "hidden")}` : d.label) : undefined, d.color, 16);
-      b.label.position.copy(b.sprite.position).add(new THREE.Vector3(0, 170, 0));
+      b.label.position.copy(b.sprite.position).add(new THREE.Vector3(0, (170 / 5200) * BODY_DISTANCE, 0));
     }
 
     const s = sightLine;
@@ -505,7 +599,8 @@ export function TerrainScene({
         r.sightDashes.visible = true;
         r.sightSolid.visible = false;
       }
-      const markR = wide ? Math.max(3, len * 0.01) : Math.max(0.1, Math.min(len * 0.006, near * 0.06));
+      // Extremo lejano (relieve regional): el marcador crece con la distancia para seguir viéndose.
+      const markR = wide ? Math.max(3, len * 0.01) : len > 1500 ? len * 0.0045 : Math.max(0.1, Math.min(len * 0.006, near * 0.06));
       r.sightMark.scale.setScalar(markR);
       r.sightMark.position.copy(end);
       (r.sightMark.material as THREE.MeshBasicMaterial).color.set(s.reachesObstacle ? VIOLET : 0xe8eef8);
@@ -517,6 +612,16 @@ export function TerrainScene({
       // El extremo suele quedar a la derecha del encuadre: la etiqueta crece hacia la izquierda.
       r.endLabel.center.set(0.92, 0);
       r.endLabel.position.copy(end).add(new THREE.Vector3(0, wide ? Math.max(6, len * 0.02) : markR * 1.6, 0));
+    }
+    const host = hostRef.current;
+    if (host) {
+      if (s) {
+        host.dataset.sightEnd = s.end.map((v) => v.toFixed(2)).join(",");
+        host.dataset.sightReaches = String(s.reachesObstacle);
+      } else {
+        delete host.dataset.sightEnd;
+        delete host.dataset.sightReaches;
+      }
     }
     r.requestRender();
   }, [ready, observerHeightM, siteColor, directions, sightLine, labels, preset.view]);

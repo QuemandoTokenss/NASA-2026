@@ -77,7 +77,7 @@ test.describe("Engineer · torre, brújula y visual", () => {
     await expect(page.getByTestId("terrain-compass")).toContainText("θ = 60,0°");
     const explain = page.getByTestId("terrain-explain");
     await expect(explain).toContainText("mirando al azimut 60,0°");
-    await expect(explain).toContainText("fuera del recorte 3D");
+    await expect(explain).toContainText(/fuera (del recorte local|de lo que dibuja el visor 3D)/);
     await expect(page.getByTestId("terrain-scene")).toHaveAttribute("data-view", "tower");
   });
 });

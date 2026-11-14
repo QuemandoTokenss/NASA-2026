@@ -10,13 +10,13 @@ test.describe("PC-21 · Portada", () => {
     await page.goto("/");
     await waitForData(page);
     const hero = page.getByTestId("home-hero");
-    await expect(hero.getByRole("heading", { level: 1 })).toContainText("¿Dónde alunizarías si solo pudieras aguantar 24 horas sin Sol?");
+    await expect(hero.getByRole("heading", { level: 1 })).toHaveText("¿Dónde alunizarías?");
     const img = hero.locator("img").first();
     await expect(img).toHaveAttribute("src", /hero-moon-svs5187/);
     await expect.poll(() => img.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
     await expect(page.getByTestId("hero-cta")).toHaveAttribute("href", /\/historia\/$/);
-    // Los 10 primeros segundos: dos lugares, las montañas tapan el Sol, la elección puede cambiar; A y B señalados.
-    await expect(page.getByTestId("hero-pitch")).toHaveText("Elegimos entre dos lugares de la Luna. Las montañas pueden tapar el Sol. Y si nuestro mapa del relieve cambia un poco, la mejor elección también puede cambiar.");
+    // PC-24: una frase breve (el relieve cambia cuándo se ven el Sol y la Tierra); A y B señalados.
+    await expect(page.getByTestId("hero-pitch")).toHaveText("En el polo sur de la Luna, el relieve decide cuándo se ven el Sol y la Tierra desde cada sitio.");
     await expect(page.getByTestId("hero-sites").getByRole("listitem")).toHaveText([/Sitio A.*ROI 4/, /Sitio B.*ROI 6/]);
     const why = page.getByTestId("home-why-b");
     await expect(why).toContainText(hm(summary("B", 0, "nominal").longest_dark_hours));

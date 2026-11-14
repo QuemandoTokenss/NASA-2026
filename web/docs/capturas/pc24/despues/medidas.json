@@ -1,0 +1,53 @@
+{
+ "base": "http://127.0.0.1:4190",
+ "gpu": true,
+ "renderer": "ANGLE (Intel, Intel(R) Graphics (0x0000A7AB) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "pages": {
+  "dashboard": {
+   "url": "/",
+   "usefulMs": 329,
+   "settledMs": 4301,
+   "domContentLoaded": 71,
+   "load": 117,
+   "fcp": 296,
+   "transferKB": 6181,
+   "requests": 88,
+   "interaction": {
+    "frames": 90,
+    "medianMs": 6.1,
+    "p95Ms": 6.5,
+    "maxMs": 17
+   }
+  },
+  "timeline": {
+   "url": "/timeline/?s=A&w=W2&h=0&v=nominal&t=3200",
+   "usefulMs": 108,
+   "settledMs": 4119,
+   "domContentLoaded": 19,
+   "load": 82,
+   "fcp": 72,
+   "transferKB": 6373,
+   "requests": 85,
+   "interaction": null
+  },
+  "engineer": {
+   "url": "/engineer/?s=A&w=W1&h=10&v=nominal&t=3200",
+   "usefulMs": 112,
+   "settledMs": 4816,
+   "domContentLoaded": 18,
+   "load": 102,
+   "fcp": 72,
+   "transferKB": 9677,
+   "requests": 126,
+   "interaction": {
+    "orbit": {
+     "frames": 93,
+     "medianMs": 6.1,
+     "p95Ms": 12.1,
+     "maxMs": 36
+    },
+    "sliderTo30Ms": 254
+   }
+  }
+ }
+}

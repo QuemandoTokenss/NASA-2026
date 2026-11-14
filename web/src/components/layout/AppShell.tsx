@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { useData } from "@/lib/data/DataProvider";
-import { shortHash } from "@/lib/format";
 import { L } from "@/lib/i18n";
 import { useLocale } from "@/lib/I18nProvider";
 import { NAV, normalizePath } from "@/lib/nav";
@@ -65,31 +63,6 @@ function NavLinks({ onNavigate, vertical = false }: { onNavigate?: () => void; v
         );
       })}
     </ul>
-  );
-}
-
-function DataStatusPill() {
-  const { state } = useData();
-  if (state.status === "loading")
-    return <span className="text-xs text-ink-faint" aria-live="polite">{L("Cargando datos…", "Loading data…")}</span>;
-  if (state.status === "error")
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold text-danger">
-        <Icon name="alert" className="size-4" /> {L("Datos no válidos", "Invalid data")}
-      </span>
-    );
-  const verified = state.integrity === "verified";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
-        verified ? "border-ok/30 text-ok" : "border-warn/40 text-warn"
-      }`}
-      title={`${state.core.schema_version} · ${L("paquete", "package")} sha256 ${state.manifest.source.sha256}`}
-    >
-      <Icon name={verified ? "shield" : "alert"} className="size-4" />
-      <span className="hidden 2xl:inline">{state.core.schema_version}</span>
-      <span className="font-mono">{shortHash(state.manifest.source.sha256, 8)}</span>
-    </span>
   );
 }
 
@@ -162,9 +135,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Icon name="play" className="size-3.5 text-uncertainty" /> {L("Presentar", "Present")}
             </Link>
             <LanguageToggle className="hidden sm:flex" />
-            <span className="contents xl:hidden 2xl:contents">
-              <DataStatusPill />
-            </span>
             <button
               type="button"
               className="rounded-lg border border-line p-2 text-ink-muted hover:text-ink xl:hidden"
