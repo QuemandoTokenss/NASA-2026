@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type KeyboardEvent, type Ref } from "react";
 import type { SiteId } from "@/lib/contract/constants";
 import type { Core, EphemerisClockChunk, HorizonChunk, ScenarioChunk } from "@/lib/contract/schema";
 import { useChunk } from "@/lib/data/DataProvider";
@@ -52,7 +52,7 @@ function StatusTag({ c }: { c: Compliance }) {
   );
 }
 
-function SiteCard({ r, prev, chosen, revealed, onChoose, roi }: { r: SiteReading; prev: SiteReading | null; chosen: boolean; revealed: boolean; onChoose: () => void; roi: number }) {
+function SiteCard({ r, prev, chosen, tabbable, revealed, onChoose, onKeyDown, cardRef, roi }: { r: SiteReading; prev: SiteReading | null; chosen: boolean; tabbable: boolean; revealed: boolean; onChoose: () => void; onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void; cardRef: Ref<HTMLButtonElement>; roi: number }) {
   const meta = SITE_META[r.site];
   const changed = prev && prev.hours !== r.hours;
   return (
@@ -60,6 +60,9 @@ function SiteCard({ r, prev, chosen, revealed, onChoose, roi }: { r: SiteReading
       type="button"
       role="radio"
       aria-checked={chosen}
+      tabIndex={tabbable ? 0 : -1}
+      ref={cardRef}
+      onKeyDown={onKeyDown}
       onClick={onChoose}
       data-testid={`demo-card-${r.site}`}
       data-revealed={revealed ? "true" : "false"}
@@ -236,7 +239,24 @@ export function LandingDemo({ core }: { core: Core }) {
     setChoice(s);
     if (phase === 0) setPhase(1);
   };
+  // Patrón radiogroup (como `Segmented`): las flechas mueven la selección y el foco; Tab entra y sale del grupo.
+  const cards = useRef<Partial<Record<SiteId, HTMLButtonElement | null>>>({});
+  const onCardKey = (e: KeyboardEvent<HTMLButtonElement>, s: SiteId) => {
+    const dir = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    if (!dir || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const next = SITES[(SITES.indexOf(s) + dir + SITES.length) % SITES.length];
+    choose(next);
+    cards.current[next]?.focus();
+  };
+  // Al reiniciar desaparece el botón que tenía el foco: vuelve a la primera tarjeta.
+  const [resets, setResets] = useState(0);
+  useEffect(() => {
+    if (resets > 0) cards.current[SITES[0]]?.focus();
+  }, [resets]);
   const reset = () => {
+    setResets((n) => n + 1);
     setChoice(null);
     setPhase(0);
   };
@@ -269,7 +289,7 @@ export function LandingDemo({ core }: { core: Core }) {
           </span>
         </>
       );
-    action = { label: L("Prueba otro modelo del terreno", "Test another terrain model"), onClick: () => setPhase(2), icon: "arrowRight" };
+    action = { label: L("Prueba otro mapa del terreno", "Try a different terrain map"), onClick: () => setPhase(2), icon: "arrowRight" };
   } else if (phase === 2) {
     const regret = regretOfChoice(core, 1, choice);
     const c = read(choice);
@@ -293,6 +313,16 @@ export function LandingDemo({ core }: { core: Core }) {
               })
             : R("Tu elección, {s}, ahora queda por delante de {o}.", "Your choice, {s}, is now ahead of {o}.", { s: <strong>{choice}</strong>, o: <strong>{other(choice)}</strong> })
           : L("Con este relieve los dos sitios quedan empatados.", "With this terrain the two sites are tied.");
+    // Las dos tarjetas marcan «supera»: se dice de forma explícita, con el límite y los estados del escenario.
+    if (readings.every((r) => r.compliance === "exceeds"))
+      message = (
+        <>
+          {message}
+          <span className="mt-1 block text-sm font-normal text-ink-muted" data-testid="demo-both-exceed">
+            {L(`En esta prueba, ambos sitios superan el límite de ${DEMO_LIMIT_HOURS} h.`, `In this test, both sites are over the ${DEMO_LIMIT_HOURS} h limit.`)}
+          </span>
+        </>
+      );
     action = { label: L("Eleva el observador a 2 m", "Raise the observer to 2 m"), onClick: () => setPhase(3), icon: "height" };
   } else {
     const z = zeroStreakSurfaces(core, 2);
@@ -361,11 +391,27 @@ export function LandingDemo({ core }: { core: Core }) {
           </p>
           <div role="radiogroup" aria-label={L("¿Dónde alunizarías?", "Where would you land?")} className="flex flex-col gap-2.5">
             {readings.map((r) => (
-              <SiteCard key={r.site} r={r} prev={prev(r.site)} chosen={choice === r.site} revealed={revealed} onChoose={() => choose(r.site)} roi={getSite(core, r.site)!.roi} />
+              <SiteCard
+                key={r.site}
+                r={r}
+                prev={prev(r.site)}
+                chosen={choice === r.site}
+                tabbable={choice === null ? r.site === SITES[0] : choice === r.site}
+                revealed={revealed}
+                onChoose={() => choose(r.site)}
+                onKeyDown={(e) => onCardKey(e, r.site)}
+                cardRef={(el) => {
+                  cards.current[r.site] = el;
+                }}
+                roi={getSite(core, r.site)!.roi}
+              />
             ))}
           </div>
-          <div className="rounded-xl border border-accent/30 bg-bg-2/80 p-3" aria-live="polite" data-testid="demo-message">
-            <p className="text-[15px] leading-snug font-semibold text-ink">{message}</p>
+          <div className="rounded-xl border border-accent/30 bg-bg-2/80 p-3" data-testid="demo-message">
+            {/* Solo el texto del resultado es región viva: los botones, que cambian de etiqueta, quedan fuera. */}
+            <p className="text-[15px] leading-snug font-semibold text-ink" role="status" aria-live="polite" aria-atomic="true" data-testid="demo-result">
+              {message}
+            </p>
             {action || phase > 0 ? (
               <div className="mt-2.5 flex flex-wrap items-center gap-3">
                 {action ? (

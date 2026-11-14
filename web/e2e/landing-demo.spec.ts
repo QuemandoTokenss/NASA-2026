@@ -50,7 +50,7 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await expect(page.getByTestId("demo-best-reference")).toHaveText("With this terrain map it is the better of the two options.");
     await expect(page.getByTestId("demo-strips")).toBeVisible();
     // Paso 3 · Cambiar el terreno: relieve alternativo, misma fecha, altura y elección. El giro es el regret.
-    await page.getByRole("button", { name: "Test another terrain model" }).click();
+    await page.getByRole("button", { name: "Try a different terrain map" }).click();
     await expect(page.getByRole("listitem").filter({ hasText: "3 · Change the terrain" })).toHaveAttribute("aria-current", "step");
     await expect(page.getByTestId("demo-scenario")).toContainText("Alternative terrain · team hypothesis");
     await expect(page.getByTestId("demo-scenario")).toContainText("Observer height: 0 m");
@@ -60,6 +60,7 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await expect(page.getByTestId("demo-choice-B")).toBeVisible();
     await expect(page.getByTestId("demo-message")).toContainText(`Keeping B means ${hm(regretB)} more without sunlight than choosing A in this scenario.`);
     await expect(page.getByTestId("demo-message")).toContainText("16 h 30 min");
+    await expect(page.getByTestId("demo-both-exceed")).toHaveText("In this test, both sites are over the 24 h limit.");
     await expect(page.getByTestId("demo-regret-value")).toHaveText(hm(regretB));
     await expect(page.getByTestId("demo-regret")).toContainText("the price of having chosen with a terrain map that turned out to be different");
     await expect(page.getByTestId("demo-best-choice")).toHaveText("Best choice with the reference map: Site B · with the alternative map: Site A");
@@ -70,6 +71,7 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await page.getByRole("button", { name: "Raise the observer to 2 m" }).click();
     await expect(page.getByTestId("demo-extra-step")).toHaveAttribute("aria-current", "step");
     await expect(page.getByTestId("demo-regret")).toHaveCount(0);
+    await expect(page.getByTestId("demo-both-exceed")).toHaveCount(0);
     await expect(page.getByTestId("demo-scenario")).toContainText("Alternative terrain · team hypothesis");
     await expect(page.getByTestId("demo-scenario")).toContainText("Observer height: 2 m");
     expect(await hours(page, "A")).toBe("0 h");
@@ -93,10 +95,13 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await waitForData(page);
     await page.getByTestId("demo-card-A").click();
     await expect(page.getByTestId("demo-message")).toContainText("Sitio A supera el límite");
+    await expect(page.getByTestId("demo-both-exceed")).toHaveCount(0);
     await expect(page.getByTestId("demo-best-reference")).toHaveText("Con este mapa del terreno, Sitio B era mejor opción.");
-    await page.getByRole("button", { name: "Prueba otro modelo del terreno" }).click();
+    await page.getByRole("button", { name: "Prueba otro mapa del terreno" }).click();
     await expect(page.getByTestId("demo-choice-A")).toBeVisible();
     await expect(page.getByTestId("demo-message")).toContainText("Tu elección, A, ahora queda por delante de B (32 h 30 min frente a 49 h), pero aun así supera las 24 h.");
+    await expect(page.getByTestId("demo-both-exceed")).toHaveText("En esta prueba, ambos sitios superan el límite de 24 h.");
+    await expect(page.getByTestId("demo-scenario")).toContainText("hipótesis del equipo");
     // Quien elige A no paga regret, pero ve el del sitio que era mejor con el primer mapa (valores del motor).
     await expect(page.getByTestId("demo-regret-value")).toHaveText("0 h");
     await expect(page.getByTestId("demo-regret")).toContainText(`Quien se hubiera quedado con Sitio B pagaría ${hm(regretB)} de más sin Sol.`);
@@ -105,6 +110,70 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await expect(page.getByTestId("demo-message")).toContainText("Los dos sitios cumplen el límite de Sol a 2 m en esta prueba.");
     await page.getByRole("button", { name: "Reiniciar demo" }).click();
     await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "0");
+  });
+
+  test("teclado: las tarjetas A/B son un grupo de opciones (flechas, Tab, Enter, Espacio) y el resultado se anuncia aparte", async ({ page }) => {
+    await page.goto("/historia/");
+    await waitForData(page);
+    const a = page.getByTestId("demo-card-A");
+    const b = page.getByTestId("demo-card-B");
+    // Sin elección, Tab entra por la primera tarjeta; la otra queda fuera del orden de tabulación.
+    await expect(a).toHaveAttribute("tabindex", "0");
+    await expect(b).toHaveAttribute("tabindex", "-1");
+    await a.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(b).toBeFocused();
+    await expect(b).toHaveAttribute("aria-checked", "true");
+    await expect(a).toHaveAttribute("aria-checked", "false");
+    await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "1");
+    await page.keyboard.press("ArrowLeft");
+    await expect(a).toBeFocused();
+    await expect(a).toHaveAttribute("aria-checked", "true");
+    await page.keyboard.press("ArrowDown");
+    await expect(b).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await expect(a).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(b).toBeFocused();
+    // Las flechas no sacan de la demo (la presentación de 7 escenas no las recibe).
+    await expect(page.getByTestId("landing-demo")).toBeVisible();
+    // Tab sale del grupo hacia la acción principal; Mayús+Tab vuelve a la tarjeta elegida.
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Prueba otro mapa del terreno" })).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(b).toBeFocused();
+    // El resultado es una región viva de solo texto: los botones quedan fuera.
+    const result = page.getByTestId("demo-result");
+    await expect(result).toHaveAttribute("aria-live", "polite");
+    await expect(result).toHaveAttribute("aria-atomic", "true");
+    await expect(page.getByTestId("landing-demo").locator("[aria-live] button, [role=status] button")).toHaveCount(0);
+    await expect(page.getByTestId("landing-demo").locator("[aria-live], [role=status]")).toHaveCount(1);
+    await expect(result).toContainText("Sitio B cumple el límite");
+    // Enter avanza de paso y el foco sigue en la acción principal, que cambia de etiqueta.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "2");
+    await expect(page.getByRole("button", { name: "Eleva el observador a 2 m" })).toBeFocused();
+    await expect(result).toContainText("Conservar B supone 16 h 30 min más sin Sol que elegir A en este escenario.");
+    await page.keyboard.press("Space");
+    await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "3");
+    await expect(page.getByRole("button", { name: "Reiniciar demo" })).toBeFocused();
+    // Al reiniciar, el foco vuelve a la primera tarjeta; Espacio y Enter eligen.
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "0");
+    await expect(a).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(a).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByTestId("landing-demo")).toHaveAttribute("data-phase", "1");
+    await page.getByTestId("demo-reset").click();
+    await expect(a).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(a).toHaveAttribute("aria-checked", "true");
+    // Clic directo en la otra tarjeta.
+    await b.click();
+    await expect(b).toHaveAttribute("aria-checked", "true");
+    await expect(b).toHaveAttribute("tabindex", "0");
+    await expect(a).toHaveAttribute("tabindex", "-1");
   });
 
   test("la presentación completa sigue accesible y vuelve a la demo", async ({ page }) => {
@@ -123,7 +192,7 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     await waitForData(page);
     await page.getByTestId("demo-card-B").click();
     const cards = await page.getByRole("radiogroup", { name: "Where would you land?" }).boundingBox();
-    const button = await page.getByRole("button", { name: "Test another terrain model" }).boundingBox();
+    const button = await page.getByRole("button", { name: "Try a different terrain map" }).boundingBox();
     expect(button!.y).toBeGreaterThan(cards!.y + cards!.height);
     expect(button!.y - (cards!.y + cards!.height)).toBeLessThan(260);
     await noHorizontalOverflow(page);

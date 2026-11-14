@@ -60,8 +60,8 @@ test.describe("PC-25 · Presentar con la foto de Connecting Ridge", () => {
     await expect(page.getByTestId("ridge-marker-B")).toContainText("tu elección");
     await expect(page.getByTestId("demo-hours-A")).toHaveText("38 h 40 min");
     await expect(page.getByTestId("demo-hours-B")).toHaveText("14 h 40 min");
-    await inView(page, page.getByRole("button", { name: "Prueba otro modelo del terreno" }) as never, 720);
-    await page.getByRole("button", { name: "Prueba otro modelo del terreno" }).click();
+    await inView(page, page.getByRole("button", { name: "Prueba otro mapa del terreno" }) as never, 720);
+    await page.getByRole("button", { name: "Prueba otro mapa del terreno" }).click();
     await expect(page.getByTestId("demo-scenario")).toContainText("Relieve alternativo · hipótesis del equipo");
     await expect(page.getByTestId("demo-hours-A")).toHaveText("32 h 30 min");
     await expect(page.getByTestId("demo-hours-B")).toHaveText("49 h");
@@ -88,7 +88,7 @@ test.describe("PC-25 · Presentar con la foto de Connecting Ridge", () => {
     await page.getByTestId("demo-card-A").click();
     await expect(page.getByTestId("ridge-marker-A")).toHaveAttribute("data-chosen", "true");
     await expect(page.getByTestId("demo-best-reference")).toHaveText("Con este mapa del terreno, Sitio B era mejor opción.");
-    await page.getByRole("button", { name: "Prueba otro modelo del terreno" }).click();
+    await page.getByRole("button", { name: "Prueba otro mapa del terreno" }).click();
     await expect(page.getByTestId("demo-regret-value")).toHaveText("0 h");
     const want = expected();
     for (const [w, h] of [

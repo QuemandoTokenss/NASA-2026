@@ -29,6 +29,33 @@ test.describe("Idioma (ES/EN)", () => {
     await noHorizontalOverflow(page);
   });
 
+  test("un enlace con ?lang=en sigue en inglés al navegar y recargar; ?lang=es vuelve al español", async ({ page }) => {
+    await page.goto("/?lang=en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await page.getByRole("link", { name: "Try the mission" }).click();
+    await expect(page).toHaveURL(/\/historia\/$/);
+    await page.getByTestId("demo-evidence").click();
+    await expect(page).toHaveURL(/\/evidencia\/$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByText("Scientific evidence", { exact: true }).first()).toBeVisible();
+    // La URL explícita manda sobre la preferencia guardada y la sustituye.
+    await page.goto("/?lang=es");
+    await expect(page.getByRole("link", { name: "Probar la misión" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    // El HTML estático ya está en español: se espera a que la página hidrate y guarde la preferencia.
+    await expect.poll(() => page.evaluate(() => window.localStorage.getItem("site-regret-lang"))).toBe("es");
+    await page.goto("/evidencia/");
+    await expect(page.getByText("Evidencia científica", { exact: true }).first()).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    // Un valor no válido no cambia la preferencia.
+    await page.goto("/?lang=en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await page.goto("/?lang=fr");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
   test("Regret Lab en inglés: recuentos por familia sin probabilidades", async ({ page }) => {
     await page.goto("/regret-lab/?lang=en&w=W2&h=0&v=nominal&c=min_longest_dark_hours");
     await expect(page.getByText("Holds 2/4")).toBeVisible();
