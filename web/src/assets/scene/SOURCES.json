@@ -16,8 +16,8 @@
       "processing": "Desplazamiento a la derecha sobre negro (17 % del ancho) y reescalado a 2400 y 1200 px, WebP. Muestra la Luna entera vista desde la Tierra (cuarto creciente), no Connecting Ridge."
     },
     {
-      "file": "stars-svs4851-3k.jpg",
-      "sha256": "486c55e20a7caa8cfa1fe2195a8f3f4c1ffcc44a7d835427c5a3f4fc9425adb6",
+      "file": "sky-glow-svs4851-2k.jpg",
+      "sha256": "91fde1828704a79b8cf28538db27341b26f2cc01d2a1db312340b7eb2667203a",
       "source": {
         "title": "Deep Star Maps 2020 · starmap_2020_4k.exr (coordenadas celestes)",
         "page": "https://svs.gsfc.nasa.gov/4851/",
@@ -25,7 +25,19 @@
         "sha256": "69b841cd048c2ef35543eb1c5819b322530e78aa4b0cab97ec1de3ef56a4ddcd"
       },
       "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Gaia DR2: ESA/Gaia/DPAC.",
-      "processing": "Tono 8 bit (normalizado al percentil 99,9, punto negro en 1,15 × percentil 55 para un cielo oscuro, gamma 2,2, ×0,85), JPEG 3072×1536 equirectangular. Fondo ilustrativo: no orientado al cielo real del sitio."
+      "processing": "Brillo difuso sin estrellas: mediana 9×9 por canal y gaussiana σ = 2 px sobre el EXR lineal 4096×2048; punto negro en el percentil 72, normalizado al percentil 99,7, curva x^0,75, ×0,55; 2048×1024, JPEG calidad 90 sin submuestreo de color. Fondo ilustrativo: no orientado al cielo real del sitio."
+    },
+    {
+      "file": "public/scene/stars-svs4851-v1.bin",
+      "sha256": "0defde75faeab765ee7db37ae47e7ee571b1a2e4d62c6c64facd6b30d0f2b2c0",
+      "source": {
+        "title": "Deep Star Maps 2020 · starmap_2020_4k.exr (coordenadas celestes)",
+        "page": "https://svs.gsfc.nasa.gov/4851/",
+        "url": "https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/starmap_2020_4k.exr",
+        "sha256": "69b841cd048c2ef35543eb1c5819b322530e78aa4b0cab97ec1de3ef56a4ddcd"
+      },
+      "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Gaia DR2: ESA/Gaia/DPAC.",
+      "processing": "9000 estrellas más brillantes: máximos locales 3×3 del residuo (mapa − difuso), centroide subpíxel, flujo 3×3. Binario: 'STR1', uint32 N, N×3 float32 (dirección unitaria, convención equirectangular de three.js), N×4 uint8 (color RGB suavizado, brillo relativo). Ilustrativo: no orientado al cielo real del sitio."
     }
   ]
 }

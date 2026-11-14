@@ -1,0 +1,2822 @@
+{
+ "schema": "site-regret-engineer-heights/1",
+ "package_version": "1.0.0",
+ "generated_at_utc": "2026-11-14T16:30:39+00:00",
+ "scope": "Solo Engineer. Superficie nominal (DEM LOLA PGDA78 Site01 + apoyo PGDA90 80/240 m), sitios A y B, ventanas W1 y W2. No sustituye ni amplía el contrato site-regret/0.1 (120 escenarios), que sigue intacto.",
+ "heights": {
+  "key": "k = 2 × altura (m); entero 0…60",
+  "count": 61,
+  "positions": [
+   {
+    "k": 0,
+    "key": "k000",
+    "height_m": 0
+   },
+   {
+    "k": 1,
+    "key": "k001",
+    "height_m": 0.5
+   },
+   {
+    "k": 2,
+    "key": "k002",
+    "height_m": 1
+   },
+   {
+    "k": 3,
+    "key": "k003",
+    "height_m": 1.5
+   },
+   {
+    "k": 4,
+    "key": "k004",
+    "height_m": 2
+   },
+   {
+    "k": 5,
+    "key": "k005",
+    "height_m": 2.5
+   },
+   {
+    "k": 6,
+    "key": "k006",
+    "height_m": 3
+   },
+   {
+    "k": 7,
+    "key": "k007",
+    "height_m": 3.5
+   },
+   {
+    "k": 8,
+    "key": "k008",
+    "height_m": 4
+   },
+   {
+    "k": 9,
+    "key": "k009",
+    "height_m": 4.5
+   },
+   {
+    "k": 10,
+    "key": "k010",
+    "height_m": 5
+   },
+   {
+    "k": 11,
+    "key": "k011",
+    "height_m": 5.5
+   },
+   {
+    "k": 12,
+    "key": "k012",
+    "height_m": 6
+   },
+   {
+    "k": 13,
+    "key": "k013",
+    "height_m": 6.5
+   },
+   {
+    "k": 14,
+    "key": "k014",
+    "height_m": 7
+   },
+   {
+    "k": 15,
+    "key": "k015",
+    "height_m": 7.5
+   },
+   {
+    "k": 16,
+    "key": "k016",
+    "height_m": 8
+   },
+   {
+    "k": 17,
+    "key": "k017",
+    "height_m": 8.5
+   },
+   {
+    "k": 18,
+    "key": "k018",
+    "height_m": 9
+   },
+   {
+    "k": 19,
+    "key": "k019",
+    "height_m": 9.5
+   },
+   {
+    "k": 20,
+    "key": "k020",
+    "height_m": 10
+   },
+   {
+    "k": 21,
+    "key": "k021",
+    "height_m": 10.5
+   },
+   {
+    "k": 22,
+    "key": "k022",
+    "height_m": 11
+   },
+   {
+    "k": 23,
+    "key": "k023",
+    "height_m": 11.5
+   },
+   {
+    "k": 24,
+    "key": "k024",
+    "height_m": 12
+   },
+   {
+    "k": 25,
+    "key": "k025",
+    "height_m": 12.5
+   },
+   {
+    "k": 26,
+    "key": "k026",
+    "height_m": 13
+   },
+   {
+    "k": 27,
+    "key": "k027",
+    "height_m": 13.5
+   },
+   {
+    "k": 28,
+    "key": "k028",
+    "height_m": 14
+   },
+   {
+    "k": 29,
+    "key": "k029",
+    "height_m": 14.5
+   },
+   {
+    "k": 30,
+    "key": "k030",
+    "height_m": 15
+   },
+   {
+    "k": 31,
+    "key": "k031",
+    "height_m": 15.5
+   },
+   {
+    "k": 32,
+    "key": "k032",
+    "height_m": 16
+   },
+   {
+    "k": 33,
+    "key": "k033",
+    "height_m": 16.5
+   },
+   {
+    "k": 34,
+    "key": "k034",
+    "height_m": 17
+   },
+   {
+    "k": 35,
+    "key": "k035",
+    "height_m": 17.5
+   },
+   {
+    "k": 36,
+    "key": "k036",
+    "height_m": 18
+   },
+   {
+    "k": 37,
+    "key": "k037",
+    "height_m": 18.5
+   },
+   {
+    "k": 38,
+    "key": "k038",
+    "height_m": 19
+   },
+   {
+    "k": 39,
+    "key": "k039",
+    "height_m": 19.5
+   },
+   {
+    "k": 40,
+    "key": "k040",
+    "height_m": 20
+   },
+   {
+    "k": 41,
+    "key": "k041",
+    "height_m": 20.5
+   },
+   {
+    "k": 42,
+    "key": "k042",
+    "height_m": 21
+   },
+   {
+    "k": 43,
+    "key": "k043",
+    "height_m": 21.5
+   },
+   {
+    "k": 44,
+    "key": "k044",
+    "height_m": 22
+   },
+   {
+    "k": 45,
+    "key": "k045",
+    "height_m": 22.5
+   },
+   {
+    "k": 46,
+    "key": "k046",
+    "height_m": 23
+   },
+   {
+    "k": 47,
+    "key": "k047",
+    "height_m": 23.5
+   },
+   {
+    "k": 48,
+    "key": "k048",
+    "height_m": 24
+   },
+   {
+    "k": 49,
+    "key": "k049",
+    "height_m": 24.5
+   },
+   {
+    "k": 50,
+    "key": "k050",
+    "height_m": 25
+   },
+   {
+    "k": 51,
+    "key": "k051",
+    "height_m": 25.5
+   },
+   {
+    "k": 52,
+    "key": "k052",
+    "height_m": 26
+   },
+   {
+    "k": 53,
+    "key": "k053",
+    "height_m": 26.5
+   },
+   {
+    "k": 54,
+    "key": "k054",
+    "height_m": 27
+   },
+   {
+    "k": 55,
+    "key": "k055",
+    "height_m": 27.5
+   },
+   {
+    "k": 56,
+    "key": "k056",
+    "height_m": 28
+   },
+   {
+    "k": 57,
+    "key": "k057",
+    "height_m": 28.5
+   },
+   {
+    "k": 58,
+    "key": "k058",
+    "height_m": 29
+   },
+   {
+    "k": 59,
+    "key": "k059",
+    "height_m": 29.5
+   },
+   {
+    "k": 60,
+    "key": "k060",
+    "height_m": 30
+   }
+  ]
+ },
+ "scenario_count": 244,
+ "nature": {
+  "terrain": "DERIVED_PUBLISHED",
+  "ephemerides": "DERIVED_SPICE",
+  "heights": "SIMULATED"
+ },
+ "clock": {
+  "shared_with": "site-regret/0.1 ephemerides/<W>_clock.json (verificado igual muestra a muestra)",
+  "samples": 4321,
+  "step_minutes": 10
+ },
+ "layouts": {
+  "horizons/<S>_<k>.bin": [
+   {
+    "name": "elevation_deg",
+    "dtype": "<f8",
+    "length": 1440
+   },
+   {
+    "name": "distance_m",
+    "dtype": "<f4",
+    "length": 1440,
+    "note": "exacto: verificado al escribir"
+   },
+   {
+    "name": "source",
+    "dtype": "u1",
+    "length": 1440,
+    "note": "0 local 5 m · 1 regional 80 m · 2 lejano 240 m"
+   },
+   {
+    "name": "unknown",
+    "dtype": "u1",
+    "length": 1440
+   }
+  ],
+  "scenarios/<W>_<S>_<k>.bin": [
+   {
+    "name": "sun_azimuth_deg",
+    "dtype": "<f8",
+    "length": 4321
+   },
+   {
+    "name": "sun_elevation_deg",
+    "dtype": "<f8",
+    "length": 4321
+   },
+   {
+    "name": "earth_azimuth_deg",
+    "dtype": "<f8",
+    "length": 4321
+   },
+   {
+    "name": "earth_elevation_deg",
+    "dtype": "<f8",
+    "length": 4321
+   },
+   {
+    "name": "sun_horizon_deg",
+    "dtype": "<f8",
+    "length": 4321,
+    "note": "NaN = desconocido"
+   },
+   {
+    "name": "earth_horizon_deg",
+    "dtype": "<f8",
+    "length": 4321,
+    "note": "NaN = desconocido"
+   },
+   {
+    "name": "state_codes",
+    "dtype": "u1",
+    "length": 4320,
+    "note": "0 NEITHER · 1 SUN_ONLY · 2 EARTH_ONLY · 3 BOTH · 4 UNKNOWN"
+   }
+  ],
+  "azimuth_deg": "k · 0,25°, k = 0…1439 (igual que v0.1)"
+ },
+ "method": {
+  "engine": "web/data/source/DERIVADOS_SITE_REGRET/motor/pipeline.py (importado sin modificar)",
+  "engine_sha256": "08e52de18993c465f1c0f7b94d815a50ef9643d8929c72c9ce426ec0e2062a54",
+  "generator": "web/scripts/engine/engineer_heights.py",
+  "generator_sha256": "088cf0688a74f089d9d6cdf70c45c513170378e0985175f268d655b82f79283b",
+  "differences_from_engine": [
+   "Bucle de alturas reescrito para k = 2·h (medios metros); cota lejana con la altura real (float) en lugar de int(h); solo superficie nominal"
+  ],
+  "reused_from_engine": [
+   "prepare",
+   "radial_grids",
+   "rays",
+   "sample",
+   "elevation_terrain",
+   "load_kernels",
+   "sky_grid",
+   "classify",
+   "intervals",
+   "CONFIG"
+  ],
+  "configuration": {
+   "frame": "MOON_ME_DE421",
+   "reference_radius_m": 1737400.0,
+   "time_step_minutes": 10,
+   "azimuth_step_deg": 0.25,
+   "max_ray_distance_m": 400000,
+   "minimum_ray_distance_m": 2.5,
+   "base_radial_refinement_factor": 2,
+   "body_visibility": "CENTER_STRICTLY_ABOVE_TERRAIN",
+   "aberration": "NONE",
+   "far_terrain_upper_bound_m": 12000
+  }
+ },
+ "kernel_validation": {
+  "frame": "MOON_ME_DE421",
+  "frame_id": 31007,
+  "kernels": [
+   {
+    "name": "naif0012.tls",
+    "sha256": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b"
+   },
+   {
+    "name": "de421.bsp",
+    "sha256": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3"
+   },
+   {
+    "name": "moon_pa_de421_1900-2050.bpc",
+    "sha256": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf"
+   },
+   {
+    "name": "moon_080317.tf",
+    "sha256": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993"
+   },
+   {
+    "name": "pck00011.tpc",
+    "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1"
+   }
+  ],
+  "coverage_utc": {
+   "10": [
+    [
+     "1899-07-28T23:59:18.817",
+     "2053-10-08T23:58:50.818"
+    ]
+   ],
+   "301": [
+    [
+     "1899-07-28T23:59:18.817",
+     "2053-10-08T23:58:50.818"
+    ]
+   ],
+   "399": [
+    [
+     "1899-07-28T23:59:18.817",
+     "2053-10-08T23:58:50.818"
+    ]
+   ],
+   "PCK_31006": [
+    [
+     "1899-12-31T23:59:18.816",
+     "2050-12-31T23:58:50.816"
+    ]
+   ]
+  }
+ },
+ "source_assets": [
+  {
+   "id": "SITE01_surf",
+   "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif",
+   "path": "datos_originales/PGDA78_Site01/Site01_final_adj_5mpp_surf.tif",
+   "purpose": "Modelo de elevación nominal",
+   "kind": "tiff",
+   "http_status": 200,
+   "final_url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_final_adj_5mpp_surf.tif",
+   "content_type": "image/tiff",
+   "bytes": 40980810,
+   "downloaded_at_utc": "2026-11-13T23:05:29.145043+00:00",
+   "sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e",
+   "last_modified": "Fri, 05 Jun 2020 18:39:35 GMT",
+   "verification_status": "HEADER_INSPECTED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:38.773144+00:00",
+   "raster_header": {
+    "path": "datos_originales/PGDA78_Site01/Site01_final_adj_5mpp_surf.tif",
+    "size": [
+     3200,
+     3200
+    ],
+    "mode": "F",
+    "bits": [
+     32
+    ],
+    "sample_format": [
+     3
+    ],
+    "pixel_scale": [
+     5.0,
+     5.0,
+     0.0
+    ],
+    "tiepoint": [
+     0.0,
+     0.0,
+     0.0,
+     -19000.0,
+     -4000.0,
+     0.0
+    ],
+    "geo_keys": [
+     1,
+     1,
+     0,
+     20,
+     1024,
+     0,
+     1,
+     1,
+     1025,
+     0,
+     1,
+     1,
+     1026,
+     34737,
+     8,
+     0,
+     2048,
+     0,
+     1,
+     32767,
+     2049,
+     34737,
+     83,
+     8,
+     2050,
+     0,
+     1,
+     32767,
+     2054,
+     0,
+     1,
+     9102,
+     2056,
+     0,
+     1,
+     32767,
+     2057,
+     34736,
+     1,
+     5,
+     2058,
+     34736,
+     1,
+     6,
+     2061,
+     34736,
+     1,
+     7,
+     3072,
+     0,
+     1,
+     32767,
+     3074,
+     0,
+     1,
+     32767,
+     3075,
+     0,
+     1,
+     15,
+     3076,
+     0,
+     1,
+     9001,
+     3081,
+     34736,
+     1,
+     0,
+     3082,
+     34736,
+     1,
+     3,
+     3083,
+     34736,
+     1,
+     4,
+     3092,
+     34736,
+     1,
+     2,
+     3095,
+     34736,
+     1,
+     1
+    ],
+    "geo_doubles": [
+     -90.0,
+     0.0,
+     1.0,
+     0.0,
+     0.0,
+     1737400.0,
+     1737400.0,
+     0.0
+    ],
+    "geo_ascii": "unnamed|GCS Name = unnamed ellipse|Datum = unknown|Ellipsoid = unnamed|Primem = Greenwich||",
+    "nodata": "nan",
+    "gdal_metadata": {
+     "NC_GLOBAL#Conventions": "COARDS, CF-1.5",
+     "NC_GLOBAL#description": null,
+     "NC_GLOBAL#GMT_version": "5.4.5 [64-bit]",
+     "NC_GLOBAL#history": "xyz2grd -bi3 -I5 -R-1.90000000000e+04/-3.00000000000e+03/-2.00000000000e+04/-4.00000000000e+03 -Gtest.grd -r",
+     "NC_GLOBAL#node_offset": "1",
+     "NC_GLOBAL#title": null,
+     "x#actual_range": "{-19000,-3000}",
+     "x#long_name": "x",
+     "y#actual_range": "{-20000,-4000}",
+     "y#long_name": "y",
+     "z#actual_range": "{-523.1834106445312,1959.496215820312}",
+     "z#long_name": "z",
+     "z#_FillValue": "nan",
+     "actual_range": "{-523.1834106445312,1959.496215820312}",
+     "long_name": "z",
+     "NETCDF_VARNAME": "z",
+     "_FillValue": "nan"
+    },
+    "verification": "HEADER_INSPECTED; cobertura de rayos y selección A/B pendientes",
+    "bounds_xy_m_from_tags": [
+     -19000.0,
+     -20000.0,
+     -3000.0,
+     -4000.0
+    ]
+   },
+   "original_crs": "Lunar south polar stereographic; R=1737400 m; lon0=0; lat0=-90; scale=1; MOON_ME_DE421 según proveedor",
+   "pixel_resolution_m": [
+    5.0,
+    5.0
+   ],
+   "bbox_xy_m": [
+    -19000.0,
+    -20000.0,
+    -3000.0,
+    -4000.0
+   ],
+   "null_value": "nan",
+   "scale": 1.0,
+   "offset": 0.0,
+   "scale_offset_applied_locally": false,
+   "value_units": "m",
+   "height_reference": "Height above 1737400 m reference sphere",
+   "provider": "NASA GSFC / LRO-LOLA",
+   "source_page": "https://pgda.gsfc.nasa.gov/products/78",
+   "target_frame": "MOON_ME_DE421",
+   "license_note": "Citar Barker et al. 2021; sin identificador SPDX explícito en la ficha",
+   "scientific_nature": "PUBLISHED_DERIVED_PRODUCT",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "SITE01_ROIS",
+   "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_ROIs.tgz",
+   "path": "datos_originales/PGDA78_Site01/Site01_ROIs.tgz",
+   "purpose": "Polígonos de regiones de interés publicados",
+   "kind": "gzip",
+   "http_status": 200,
+   "final_url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Site01_ROIs.tgz",
+   "content_type": "application/octet-stream",
+   "bytes": 2934,
+   "downloaded_at_utc": "2026-11-13T23:05:28.421327+00:00",
+   "sha256": "40b961417a344ce0274aecbab522e171a22f658507d82e8fb4d7bc97526ffc4f",
+   "last_modified": "Tue, 01 Dec 2020 13:05:29 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:39.141798+00:00",
+   "provider": "NASA GSFC / LRO-LOLA",
+   "source_page": "https://pgda.gsfc.nasa.gov/products/78",
+   "target_frame": "MOON_ME_DE421",
+   "license_note": "Citar Barker et al. 2021; sin identificador SPDX explícito en la ficha",
+   "scientific_nature": "PUBLISHED_DERIVED_PRODUCT",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "DEM_REGIONAL_80M",
+   "url": "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_80MPP_ADJ.TIF",
+   "path": "datos_originales/PGDA90_contexto/LDEM_80S_80MPP_ADJ.TIF",
+   "purpose": "Relieve regional para horizonte lejano y contexto, no sustituye el detalle de 5 m",
+   "kind": "tiff",
+   "http_status": 200,
+   "final_url": "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_80MPP_ADJ.TIF",
+   "content_type": "image/tiff",
+   "bytes": 189158392,
+   "downloaded_at_utc": "2026-11-13T23:09:17.837552+00:00",
+   "sha256": "82030dcbdd7c4bb0c7d858e9b4b293b9f2cda5a543ba31ec0f42784bd6beee5a",
+   "last_modified": "Fri, 07 Jul 2023 22:03:02 GMT",
+   "verification_status": "HEADER_INSPECTED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.338083+00:00",
+   "raster_header": {
+    "path": "datos_originales/PGDA90_contexto/LDEM_80S_80MPP_ADJ.TIF",
+    "size": [
+     7600,
+     7600
+    ],
+    "mode": "F",
+    "bits": [
+     32
+    ],
+    "sample_format": [
+     3
+    ],
+    "pixel_scale": [
+     80.0,
+     80.0,
+     0.0
+    ],
+    "tiepoint": [
+     0.0,
+     0.0,
+     0.0,
+     -304000.0,
+     304000.0,
+     0.0
+    ],
+    "geo_keys": [
+     1,
+     1,
+     0,
+     20,
+     1024,
+     0,
+     1,
+     1,
+     1025,
+     0,
+     1,
+     1,
+     1026,
+     34737,
+     46,
+     0,
+     2048,
+     0,
+     1,
+     32767,
+     2049,
+     34737,
+     134,
+     46,
+     2050,
+     0,
+     1,
+     32767,
+     2054,
+     0,
+     1,
+     9102,
+     2056,
+     0,
+     1,
+     32767,
+     2057,
+     34736,
+     1,
+     5,
+     2058,
+     34736,
+     1,
+     6,
+     2061,
+     34736,
+     1,
+     7,
+     3072,
+     0,
+     1,
+     32767,
+     3074,
+     0,
+     1,
+     32767,
+     3075,
+     0,
+     1,
+     15,
+     3076,
+     0,
+     1,
+     9001,
+     3081,
+     34736,
+     1,
+     0,
+     3082,
+     34736,
+     1,
+     3,
+     3083,
+     34736,
+     1,
+     4,
+     3092,
+     34736,
+     1,
+     2,
+     3095,
+     34736,
+     1,
+     1
+    ],
+    "geo_doubles": [
+     -90.0,
+     0.0,
+     1.0,
+     0.0,
+     0.0,
+     1737400.0,
+     1737400.0,
+     0.0
+    ],
+    "geo_ascii": "Moon (2015) - Sphere / Ocentric / South Polar|GCS Name = Moon (2015) - Sphere / Ocentric|Datum = Moon (2015) - Sphere|Ellipsoid = Moon (2015) - Sphere|Primem = Reference Meridian||",
+    "nodata": "nan",
+    "gdal_metadata": {
+     "NC_GLOBAL#Conventions": "CF-1.7",
+     "NC_GLOBAL#description": "Mean value per bin",
+     "NC_GLOBAL#GMT_version": "6.5.0_2402709_2023.01.09 [64-bit]",
+     "NC_GLOBAL#history": "gmt grdmath ldem_80s_final_adj_80mpp_surf.grd 1000.0 MUL = test.grd",
+     "NC_GLOBAL#node_offset": "1",
+     "NC_GLOBAL#title": "Produced by grdmath",
+     "x#actual_range": "{-304,304}",
+     "x#axis": "X",
+     "x#long_name": "x",
+     "y#actual_range": "{-304,304}",
+     "y#axis": "Y",
+     "y#long_name": "y",
+     "z#actual_range": "{-7295.51708984375,7026.3310546875}",
+     "z#long_name": "z",
+     "z#_FillValue": "nan",
+     "actual_range": "{-7295.51708984375,7026.3310546875}",
+     "long_name": "z",
+     "NETCDF_VARNAME": "z",
+     "_FillValue": "nan"
+    },
+    "verification": "HEADER_INSPECTED; cobertura de rayos y selección A/B pendientes",
+    "bounds_xy_m_from_tags": [
+     -304000.0,
+     -304000.0,
+     304000.0,
+     304000.0
+    ]
+   },
+   "original_crs": "Lunar south polar stereographic; R=1737400 m; lon0=0; lat0=-90; scale=1; MOON_ME_DE421 según proveedor",
+   "pixel_resolution_m": [
+    80.0,
+    80.0
+   ],
+   "bbox_xy_m": [
+    -304000.0,
+    -304000.0,
+    304000.0,
+    304000.0
+   ],
+   "null_value": "nan",
+   "scale": 1.0,
+   "offset": 0.0,
+   "scale_offset_applied_locally": false,
+   "value_units": "m",
+   "height_reference": "Height above 1737400 m reference sphere",
+   "provider": "NASA GSFC / LRO-LOLA",
+   "source_page": "https://pgda.gsfc.nasa.gov/products/90",
+   "target_frame": "MOON_ME_DE421",
+   "license_note": "Citar Barker et al. 2023 y DOI 10.60903/gsfcpgda-lola-spole",
+   "scientific_nature": "PUBLISHED_DERIVED_PRODUCT",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "LSK",
+   "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+   "path": "datos_originales/NAIF_DE421/naif0012.tls",
+   "purpose": "Conversión UTC/ET; comprobar actualizaciones de segundos intercalares",
+   "kind": "binary",
+   "http_status": 200,
+   "final_url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+   "content_type": "text/plain; charset=UTF-8",
+   "bytes": 5257,
+   "downloaded_at_utc": "2026-11-13T23:07:04.262533+00:00",
+   "sha256": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+   "last_modified": "Fri, 15 Jul 2016 00:00:37 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.470983+00:00",
+   "provider": "NASA/JPL NAIF",
+   "source_page": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/",
+   "scientific_nature": "PUBLISHED_EPHEMERIS_OR_CONSTANTS",
+   "license_note": "Crédito SPICE/NAIF y registro de kernels",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "SPK_DE421",
+   "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp",
+   "path": "datos_originales/NAIF_DE421/de421.bsp",
+   "purpose": "Efeméride DE421 coherente con el marco de los DEM",
+   "kind": "binary",
+   "http_status": 200,
+   "final_url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp",
+   "content_type": "model/vnd.valve.source.compiled-map",
+   "bytes": 16790528,
+   "downloaded_at_utc": "2026-11-13T23:07:08.883954+00:00",
+   "sha256": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+   "last_modified": "Tue, 08 Apr 2008 21:07:58 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.508117+00:00",
+   "provider": "NASA/JPL NAIF",
+   "source_page": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/",
+   "scientific_nature": "PUBLISHED_EPHEMERIS_OR_CONSTANTS",
+   "license_note": "Crédito SPICE/NAIF y registro de kernels",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "PCK_MOON_DE421",
+   "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de421_1900-2050.bpc",
+   "path": "datos_originales/NAIF_DE421/moon_pa_de421_1900-2050.bpc",
+   "purpose": "Orientación lunar de alta precisión DE421",
+   "kind": "binary",
+   "http_status": 200,
+   "final_url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de421_1900-2050.bpc",
+   "content_type": null,
+   "bytes": 1770496,
+   "downloaded_at_utc": "2026-11-13T23:07:10.876595+00:00",
+   "sha256": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+   "last_modified": "Wed, 19 Mar 2008 04:51:40 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.513647+00:00",
+   "provider": "NASA/JPL NAIF",
+   "source_page": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/",
+   "scientific_nature": "PUBLISHED_EPHEMERIS_OR_CONSTANTS",
+   "license_note": "Crédito SPICE/NAIF y registro de kernels",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "FK_MOON_DE421",
+   "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_080317.tf",
+   "path": "datos_originales/NAIF_DE421/moon_080317.tf",
+   "purpose": "Marcos lunares ME y PA de DE421",
+   "kind": "binary",
+   "http_status": 200,
+   "final_url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_080317.tf",
+   "content_type": "text/plain; charset=UTF-8",
+   "bytes": 21437,
+   "downloaded_at_utc": "2026-11-13T23:07:11.782597+00:00",
+   "sha256": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993",
+   "last_modified": "Thu, 18 Jul 2013 10:07:49 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.514310+00:00",
+   "provider": "NASA/JPL NAIF",
+   "source_page": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/",
+   "scientific_nature": "PUBLISHED_EPHEMERIS_OR_CONSTANTS",
+   "license_note": "Crédito SPICE/NAIF y registro de kernels",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "PCK_CONSTANTS",
+   "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+   "path": "datos_originales/NAIF_DE421/pck00011.tpc",
+   "purpose": "Constantes y radios; no sustituye orientación binaria",
+   "kind": "binary",
+   "http_status": 200,
+   "final_url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+   "content_type": "text/plain; charset=UTF-8",
+   "bytes": 131226,
+   "downloaded_at_utc": "2026-11-13T23:07:13.017941+00:00",
+   "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+   "last_modified": "Tue, 27 Dec 2022 16:28:50 GMT",
+   "verification_status": "BYTES_VERIFIED",
+   "processing_steps": [],
+   "note": "Integridad de transferencia y firma comprobadas; validación científica del escenario no ejecutada.",
+   "verified_at_utc": "2026-11-13T23:16:40.515149+00:00",
+   "provider": "NASA/JPL NAIF",
+   "source_page": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/",
+   "scientific_nature": "PUBLISHED_EPHEMERIS_OR_CONSTANTS",
+   "license_note": "Crédito SPICE/NAIF y registro de kernels",
+   "resource_tab_membership": "NOT_ESTABLISHED_FOR_THIS_ASSET",
+   "effective_use_in_application": "NOT_IMPLEMENTED",
+   "scenario_validation": "NOT_RUN"
+  },
+  {
+   "id": "DEM_LEJANO_240M",
+   "url": "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_60S_240MPP_ADJ.TIF",
+   "path": "datos_originales/PGDA90_contexto/LDEM_60S_240MPP_ADJ.TIF",
+   "purpose": "Tercer nivel de relieve para horizonte lejano hasta 400 km",
+   "kind": "tiff",
+   "bytes": 218961039,
+   "sha256": "3f9663257b63022f2b0d5a623482ff3cadddceb91594a4e4ca14a94d8cec8b34",
+   "verification_status": "BYTES_VERIFIED",
+   "downloaded_at_utc": "2026-11-13T23:41:12.598117+00:00",
+   "last_modified": "Fri, 07 Jul 2023 22:04:03 GMT",
+   "etag": "W/\"d0d148f-18932623038\"",
+   "download_method": "Verified HTTP byte ranges; original bytes concatenated without data transformation",
+   "provider": "NASA GSFC / LRO-LOLA",
+   "source_page": "https://pgda.gsfc.nasa.gov/products/90",
+   "license_note": "Citar Barker et al. 2023 y DOI 10.60903/gsfcpgda-lola-spole",
+   "processing_steps": []
+  }
+ ],
+ "software": {
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "rasterio": "1.5.2",
+  "pyproj": "3.8.0",
+  "spiceypy": "8.4.0",
+  "pyshp": "3.1.8"
+ },
+ "python": "3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]",
+ "timing": {
+  "horizon_seconds": {
+   "A": 38.59,
+   "B": 39.27
+  },
+  "horizon_per_height_seconds": {},
+  "classify_seconds": {
+   "W1_A": 0.31,
+   "W1_B": 0.36,
+   "W2_A": 0.25,
+   "W2_B": 0.18
+  },
+  "total_seconds": 83.4
+ },
+ "contrast_with_v0_1": [
+  {
+   "site": "A",
+   "window": "W1",
+   "height_m": 0,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "A",
+   "window": "W1",
+   "height_m": 2,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "A",
+   "window": "W1",
+   "height_m": 10,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W1",
+   "height_m": 0,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W1",
+   "height_m": 2,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W1",
+   "height_m": 10,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "A",
+   "window": "W2",
+   "height_m": 0,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "A",
+   "window": "W2",
+   "height_m": 2,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "A",
+   "window": "W2",
+   "height_m": 10,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W2",
+   "height_m": 0,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W2",
+   "height_m": 2,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  },
+  {
+   "site": "B",
+   "window": "W2",
+   "height_m": 10,
+   "horizon_elevation_max_abs_deg": 0.0,
+   "horizon_distance_equal": true,
+   "horizon_source_equal": true,
+   "horizon_unknown_equal": true,
+   "far_bound_abs_deg": 0.0,
+   "tail_flag_equal": true,
+   "sun_az_max_abs_deg": 0.0,
+   "sun_el_max_abs_deg": 0.0,
+   "earth_az_max_abs_deg": 0.0,
+   "earth_el_max_abs_deg": 0.0,
+   "sun_horizon_max_abs_deg": 0.0,
+   "earth_horizon_max_abs_deg": 0.0,
+   "states_equal": true,
+   "intervals_equal": true,
+   "metrics_max_abs_hours": 0.0,
+   "status_equal": true,
+   "passed": true
+  }
+ ],
+ "validation": {
+  "passed": 364,
+  "failed": 0,
+  "contrast_passed": 12,
+  "contrast_failed": 0
+ },
+ "files": {
+  "horizons/A_k000.bin": {
+   "sha256": "a9de9887adda4f4af0cae8aa3974a94092c093055086d7c5480059e04cf3a08f",
+   "bytes": 20160
+  },
+  "horizons/A_k001.bin": {
+   "sha256": "146cf1d6e20bffe51288e7f6eb7bbbf29008a1bea595322e4a723b50e241713e",
+   "bytes": 20160
+  },
+  "horizons/A_k002.bin": {
+   "sha256": "169e7f805d0748990a9e201287d85d5f1dbe0bc529d306d28470252eea100065",
+   "bytes": 20160
+  },
+  "horizons/A_k003.bin": {
+   "sha256": "58c3849fb3cc4572d07fa12094967c3424c9ac3c01ec78bb808aeaca041328b6",
+   "bytes": 20160
+  },
+  "horizons/A_k004.bin": {
+   "sha256": "67b9d6490e67e105df6cf9ce424ca700d873ddea229ec97ea2fb28f720478aa5",
+   "bytes": 20160
+  },
+  "horizons/A_k005.bin": {
+   "sha256": "d6d26fa3c70ab2cd989f7925c835cd279a680a609bb8bd62308be15a6cf98b76",
+   "bytes": 20160
+  },
+  "horizons/A_k006.bin": {
+   "sha256": "d1f2be798efb857b6b9652aed8e2d4da5224b5fb38c688875dd40983771c09e0",
+   "bytes": 20160
+  },
+  "horizons/A_k007.bin": {
+   "sha256": "8e905642e713452b459c44112cf910c276e9baaeaa0470de91248f3800209abe",
+   "bytes": 20160
+  },
+  "horizons/A_k008.bin": {
+   "sha256": "9df736e3916d327935092bcd79bf1ee24298a09cb7598003b30ff115cebc75cb",
+   "bytes": 20160
+  },
+  "horizons/A_k009.bin": {
+   "sha256": "6ca8aad12542f15247ee1a8b4a6ed487a298d6e6112f3acf1c8d305f3b052225",
+   "bytes": 20160
+  },
+  "horizons/A_k010.bin": {
+   "sha256": "9f9fd6c309ab0027ad441da8be3c022939be2c63a987cd536c1bba908427549e",
+   "bytes": 20160
+  },
+  "horizons/A_k011.bin": {
+   "sha256": "53cc18c06ce2ff220a1a5de53d4dad7c33395ed5d7d3a0143e79e4942aef60b7",
+   "bytes": 20160
+  },
+  "horizons/A_k012.bin": {
+   "sha256": "ced3b91ebf116a99737d497760b63b35552b52a565efeb41927f5d1267bb51b2",
+   "bytes": 20160
+  },
+  "horizons/A_k013.bin": {
+   "sha256": "5fc7387cf3ee1b391e278e85462dec549e072fd3ece6d04c2ebb38ac5f15d066",
+   "bytes": 20160
+  },
+  "horizons/A_k014.bin": {
+   "sha256": "c8c1dd34d53408ac6002694edc6f369df466f4cf74cab8498efef2f883ff8574",
+   "bytes": 20160
+  },
+  "horizons/A_k015.bin": {
+   "sha256": "f6c551e258eb944eed305f3d9178429d3d86f7b57d3be9ba083ca261d4319408",
+   "bytes": 20160
+  },
+  "horizons/A_k016.bin": {
+   "sha256": "cef8c3547c43a91eca46b07370cbbbb8a4b5c1d8803687bc0c252b8384c79e8d",
+   "bytes": 20160
+  },
+  "horizons/A_k017.bin": {
+   "sha256": "aa7c7f9571c3ff292521adf39b16cd1d0d2433685d26ef5b0fa4ec9e063938da",
+   "bytes": 20160
+  },
+  "horizons/A_k018.bin": {
+   "sha256": "95a176246f281171554b1862c524eca3df3f450f3d64215bb9401b53a6ac2cd4",
+   "bytes": 20160
+  },
+  "horizons/A_k019.bin": {
+   "sha256": "0654440b203acadfd9e34d1898b9fd43b3097008ef4839d6444158da06350187",
+   "bytes": 20160
+  },
+  "horizons/A_k020.bin": {
+   "sha256": "84f661dbfdcf8097278d33ab28f0d83967951ebb1dda85792aad99b575a9f08e",
+   "bytes": 20160
+  },
+  "horizons/A_k021.bin": {
+   "sha256": "f2db7411f5eeec980908189e9734e3486935b5bb9d406a412f58b19d23b0a6d2",
+   "bytes": 20160
+  },
+  "horizons/A_k022.bin": {
+   "sha256": "4da55aeade208f7e9c339cf662b87d5c755fee401d8dd0eaa491d850b3c047c9",
+   "bytes": 20160
+  },
+  "horizons/A_k023.bin": {
+   "sha256": "0618b1a1d6ab902f02accbe58c42f391c01d008f2f36c29db28233ca1461f84b",
+   "bytes": 20160
+  },
+  "horizons/A_k024.bin": {
+   "sha256": "3d9912bbbdb5cd21df6991ce5a89d129fcaec29de8cb31789d0463b3a9d87ca8",
+   "bytes": 20160
+  },
+  "horizons/A_k025.bin": {
+   "sha256": "fdd278d76c0252a7bc7ec11f9e19303d338e4e60f12fc0e33a23656aec8c7c69",
+   "bytes": 20160
+  },
+  "horizons/A_k026.bin": {
+   "sha256": "1e119b8f8321abb7fee72eebb8dbdabc3ee9821619fe433b6a68c5d87380d72e",
+   "bytes": 20160
+  },
+  "horizons/A_k027.bin": {
+   "sha256": "ab0e28b05a7a8c592105a2f4a58c6f4805918aa756fb8486aaad2931a82519a9",
+   "bytes": 20160
+  },
+  "horizons/A_k028.bin": {
+   "sha256": "99c880d336274471a5641e3d937ab3ac41c369510d5aac1c4bb18258174da6e7",
+   "bytes": 20160
+  },
+  "horizons/A_k029.bin": {
+   "sha256": "bb456664a6516b99100867c9eccbc6faabfe71bb104e4c8c4d4dc85c0d004f3d",
+   "bytes": 20160
+  },
+  "horizons/A_k030.bin": {
+   "sha256": "97d9d90ce405f36500905092b17257ee104705c83fb12bd8a8ce640af07b2a8a",
+   "bytes": 20160
+  },
+  "horizons/A_k031.bin": {
+   "sha256": "6a0fdd57e8bb233412565386ed91eeaf78374d9a13ba94763f558129da311f33",
+   "bytes": 20160
+  },
+  "horizons/A_k032.bin": {
+   "sha256": "3e71a8e5e0299ce0f91660d25655ffb7bd56804a4fdb6124c3e9da11ecbb46e0",
+   "bytes": 20160
+  },
+  "horizons/A_k033.bin": {
+   "sha256": "0b7969dc93c45a8c2bd713fb76b890e657ca6f598faa050ebd22f8256ed7689d",
+   "bytes": 20160
+  },
+  "horizons/A_k034.bin": {
+   "sha256": "62d803f136dea5ad4587d142f20578ddaba87f883646fe139f7c3d1a74f838b4",
+   "bytes": 20160
+  },
+  "horizons/A_k035.bin": {
+   "sha256": "0a7ac9aa032c1739f82d7268ad2c3de73783ab403f55bf91d76f93cc542d9f7d",
+   "bytes": 20160
+  },
+  "horizons/A_k036.bin": {
+   "sha256": "ef62f3e4cf6ca0cc25dea947e9011bbd0bd85567407cf11c47296133116fd32c",
+   "bytes": 20160
+  },
+  "horizons/A_k037.bin": {
+   "sha256": "b527694bf8fb6e7503ba03314b941254a3b397094b299f91d42192a89024c880",
+   "bytes": 20160
+  },
+  "horizons/A_k038.bin": {
+   "sha256": "d42ddb40ddd7f2fe6ae85d309bdab275f64a5b13fba6232dd61e064530cd2aa5",
+   "bytes": 20160
+  },
+  "horizons/A_k039.bin": {
+   "sha256": "9a1cd638a118c00b99110f930a52d2e0d8be32f5670b5a815b71a54fdcf3836b",
+   "bytes": 20160
+  },
+  "horizons/A_k040.bin": {
+   "sha256": "fbd8d58dc844daa34f76cf0e4d137a0c6df35c5f9fd7706018367908635061e9",
+   "bytes": 20160
+  },
+  "horizons/A_k041.bin": {
+   "sha256": "92425c16d9d691d79c6dcfedb0ef4c8910cf06f791afc37fd187c3722438e4bf",
+   "bytes": 20160
+  },
+  "horizons/A_k042.bin": {
+   "sha256": "56f4d58307538db87dd15e85f9ad584df19c88b4ce56db30da6083c638ceaca0",
+   "bytes": 20160
+  },
+  "horizons/A_k043.bin": {
+   "sha256": "7ed82f7afc3a5154391785306c24e797139b1fe8f1303d741ac65a62b40b10d3",
+   "bytes": 20160
+  },
+  "horizons/A_k044.bin": {
+   "sha256": "ec471914d998e6999b72275b57ab39dc306a4ce56ea03d3d2ac3337e39587ab3",
+   "bytes": 20160
+  },
+  "horizons/A_k045.bin": {
+   "sha256": "7945e0bde05e22ddd6b0a1d7d10c76f12ec1e355019aaa54b6367b71d6e4a42a",
+   "bytes": 20160
+  },
+  "horizons/A_k046.bin": {
+   "sha256": "3d486bd1e86a656c5a67e8465220a2287fcaf038bb4ae7599281d33d8d50c78b",
+   "bytes": 20160
+  },
+  "horizons/A_k047.bin": {
+   "sha256": "fc7737b82432888daa121c8b2bceadc9c12c76b75d259e4f5485a200dd8f65c6",
+   "bytes": 20160
+  },
+  "horizons/A_k048.bin": {
+   "sha256": "be645404c8d85fa07d9e12aacda8baa5a2fe11df8e6612b540475343acbdf1dc",
+   "bytes": 20160
+  },
+  "horizons/A_k049.bin": {
+   "sha256": "73043b710bee6fbafd82b192502b362443d16a85e6bcd9c472a9957b3b1eceac",
+   "bytes": 20160
+  },
+  "horizons/A_k050.bin": {
+   "sha256": "925cc370c56137673017988bb16cfe44bd13eecce280ccd3b6231d5f08b4eaab",
+   "bytes": 20160
+  },
+  "horizons/A_k051.bin": {
+   "sha256": "d7f91fa7b3bc46b45d0ff06775dcc3d6ff6a4b552784f013f10c36e63c8291e9",
+   "bytes": 20160
+  },
+  "horizons/A_k052.bin": {
+   "sha256": "9e1603f9ba74d9fc6ac0ac15f822ea1f7a9511967b87f0db744fc7bccccba082",
+   "bytes": 20160
+  },
+  "horizons/A_k053.bin": {
+   "sha256": "ed790f9c2f892f0c4a5eeea0f7e4f57a9af033538bca6c675f990d0f6ff28e1f",
+   "bytes": 20160
+  },
+  "horizons/A_k054.bin": {
+   "sha256": "d9e1e4037c46ad6a68eb877ea4790daa457139836f26275a880015e45bccc7ee",
+   "bytes": 20160
+  },
+  "horizons/A_k055.bin": {
+   "sha256": "2df6c496bbc8fd19b5d497221d93f2fbf85319f1f3af020c50775dd92aa6fbe0",
+   "bytes": 20160
+  },
+  "horizons/A_k056.bin": {
+   "sha256": "4e503738b622a012153e77a5c1c58d7f4cf06a9bca598745efd902d483da90ca",
+   "bytes": 20160
+  },
+  "horizons/A_k057.bin": {
+   "sha256": "f2c448ee3ab58092e71cff5f76cf48d9a5b83c1d95cb376ef5f547fa0244f321",
+   "bytes": 20160
+  },
+  "horizons/A_k058.bin": {
+   "sha256": "b06361191e9c0ec20e6bd532424df545ab88e25ac3f80016d4b8c4aaff5210e1",
+   "bytes": 20160
+  },
+  "horizons/A_k059.bin": {
+   "sha256": "eea8df62cd31ca17fdda768f1088c9ab58f172bc8ab3c8706ac6e5609fb2bbf7",
+   "bytes": 20160
+  },
+  "horizons/A_k060.bin": {
+   "sha256": "9db8b09aaafaa63ae2dc52b62c703320b45f6f8359e33e9f45e3a71d59bbd3d2",
+   "bytes": 20160
+  },
+  "horizons/B_k000.bin": {
+   "sha256": "eeb88a35cd0d2b9271791cb46705bbf9d5284ddf751d08e8f11a402e97651627",
+   "bytes": 20160
+  },
+  "horizons/B_k001.bin": {
+   "sha256": "3364758f7f6d411616a6eeb272833cbf424315499f11541d3f8caf16fa56c1a0",
+   "bytes": 20160
+  },
+  "horizons/B_k002.bin": {
+   "sha256": "393e6649d30a9017bb46a416226190aa0f001fb87dc02ac4660e0c0ee46304c5",
+   "bytes": 20160
+  },
+  "horizons/B_k003.bin": {
+   "sha256": "fcfd7aa07c5ba02313625daae76d9bfe92e4388b5179bc816939e6af60b73647",
+   "bytes": 20160
+  },
+  "horizons/B_k004.bin": {
+   "sha256": "16ff462534cbeeb07005267d76cd4c4946ae473d05dcb57293a133ef47fa49a1",
+   "bytes": 20160
+  },
+  "horizons/B_k005.bin": {
+   "sha256": "5e1409779e13f4e44f0b9a96f1492279ac0b64ef1d8d82b00171053943123c04",
+   "bytes": 20160
+  },
+  "horizons/B_k006.bin": {
+   "sha256": "2eff0c9f30b5f36d08d3b7f34930b1b729a68d4c530756b6cf813ad0e92b54f1",
+   "bytes": 20160
+  },
+  "horizons/B_k007.bin": {
+   "sha256": "311adaf161d8b64a753334d9dffe66ec33919e4162311e0c08766949da091716",
+   "bytes": 20160
+  },
+  "horizons/B_k008.bin": {
+   "sha256": "2040abe0ea05a6dcc8d669cf75db173e4bf15443b593ef574a0b8da1dab7dbc2",
+   "bytes": 20160
+  },
+  "horizons/B_k009.bin": {
+   "sha256": "d39013e71964e5284b353e052bc9d161f165d313d5d7df9c845e5108c452b9b7",
+   "bytes": 20160
+  },
+  "horizons/B_k010.bin": {
+   "sha256": "d268292fc7dc9b444068a1097d185d0680e617034f6008fd27d70168cb1810d2",
+   "bytes": 20160
+  },
+  "horizons/B_k011.bin": {
+   "sha256": "38aa59148b46c227fac0a77adbbd6e0f0b6e6d8ae698d52dd93d9b9d196b5673",
+   "bytes": 20160
+  },
+  "horizons/B_k012.bin": {
+   "sha256": "42c84cee278cb52f434e80df81459fe21e807d8045bbceff91723f7ff798c8c1",
+   "bytes": 20160
+  },
+  "horizons/B_k013.bin": {
+   "sha256": "6475ff931e3603675ac5d1637b893a9d57699cf4a5a4b9eadfae7456cf5fbaea",
+   "bytes": 20160
+  },
+  "horizons/B_k014.bin": {
+   "sha256": "9fd9ee6a098e2f067a38e8d796e9c357206a9645de4c459e75332f0bbf69e8b2",
+   "bytes": 20160
+  },
+  "horizons/B_k015.bin": {
+   "sha256": "f35ba6c634e88502fc78ffac221b0c963bf77f4c7ddba7e1220742a85ea0f2a9",
+   "bytes": 20160
+  },
+  "horizons/B_k016.bin": {
+   "sha256": "1eaa8dc4501189d226567651281ccd428e9838ea782e8b1a9f2e6018576e7057",
+   "bytes": 20160
+  },
+  "horizons/B_k017.bin": {
+   "sha256": "9ed0dc30bc54e210a50c305d008c71c77c0e0f11d2cb26e6501167b4d23072e9",
+   "bytes": 20160
+  },
+  "horizons/B_k018.bin": {
+   "sha256": "c14040c5871d5cb432cc199d46cd980b744e0db196f23975181e143b390a60d0",
+   "bytes": 20160
+  },
+  "horizons/B_k019.bin": {
+   "sha256": "5bec5d13c44d5eb38d81e3003e81b9e1ef52372569fcf2d286841958c71676e9",
+   "bytes": 20160
+  },
+  "horizons/B_k020.bin": {
+   "sha256": "09e107e74fb773a8fc98769dd4c1ba649ff4d61b745cb44e5d31c5e5e49681f6",
+   "bytes": 20160
+  },
+  "horizons/B_k021.bin": {
+   "sha256": "8a7ebfe0298a1544a5d542eeb0aae4ef595325b409bcbea3f94201269c4031b2",
+   "bytes": 20160
+  },
+  "horizons/B_k022.bin": {
+   "sha256": "e666806da772a638aa7465e2b6adbe9d1d7600a914ade6c200caea3c024da23f",
+   "bytes": 20160
+  },
+  "horizons/B_k023.bin": {
+   "sha256": "f7b68f313ca5db0c0262ff7486b81dfa7e654a0a91d44bda53bff22507c7d7ed",
+   "bytes": 20160
+  },
+  "horizons/B_k024.bin": {
+   "sha256": "f198c4a366a8a55455302e5a7d91ead4ecb37bbbc023dcb71caee744d443b89f",
+   "bytes": 20160
+  },
+  "horizons/B_k025.bin": {
+   "sha256": "d7847c82f10a98aa30eeb3f9ad83143fba1f5d1a1bd6497ed5d74b288e289604",
+   "bytes": 20160
+  },
+  "horizons/B_k026.bin": {
+   "sha256": "9523ffa135e6903feffdf59a8250dade264c66fc7fcde5f7388d44d345b82886",
+   "bytes": 20160
+  },
+  "horizons/B_k027.bin": {
+   "sha256": "0cc0ee4c17d3228bee7afad06a77e6fc9a6bfff019bb20ce8799f6a2a294c4c9",
+   "bytes": 20160
+  },
+  "horizons/B_k028.bin": {
+   "sha256": "fae9cca6a021c4f424d71dc2da88ddd0fcaa496d8e720ed22bf1134306cefa44",
+   "bytes": 20160
+  },
+  "horizons/B_k029.bin": {
+   "sha256": "64d7e25df6966cef2b9374d124c6212e285271a6cfe93d8c5e5ae55030093ec0",
+   "bytes": 20160
+  },
+  "horizons/B_k030.bin": {
+   "sha256": "b213dd6e32b99d819e8f2f076a39eec02dd9c87e9b76b3fb3dd827ed5d828390",
+   "bytes": 20160
+  },
+  "horizons/B_k031.bin": {
+   "sha256": "328edc77e31973212b1f1723e5834a8dc14981a58bc40b4009c7252be3a96448",
+   "bytes": 20160
+  },
+  "horizons/B_k032.bin": {
+   "sha256": "6337b97258206c7a0c61e2650500bc5ed4e0bff312b0a7885a3fcbb800949cbc",
+   "bytes": 20160
+  },
+  "horizons/B_k033.bin": {
+   "sha256": "9a044036d2f5c504370936124ab91e13c4953b2dce7bbaf2ec5f45082d04d8c1",
+   "bytes": 20160
+  },
+  "horizons/B_k034.bin": {
+   "sha256": "8f54cfaa3feecafc43083873739b9500f5a3adcd5a147556d646af25c57f1d83",
+   "bytes": 20160
+  },
+  "horizons/B_k035.bin": {
+   "sha256": "48142470ff3419e59796490746a1fa35d08a05bf18c037e1c03bf0dd6b6bf20b",
+   "bytes": 20160
+  },
+  "horizons/B_k036.bin": {
+   "sha256": "19bb8c36348c23b180efd6a0ca1e8d1e71620c2970dfda32cd6a4eaa41358986",
+   "bytes": 20160
+  },
+  "horizons/B_k037.bin": {
+   "sha256": "b60319c7c6f73df442c4eae3cec1fab1ae914576518609a61688a76048e88b01",
+   "bytes": 20160
+  },
+  "horizons/B_k038.bin": {
+   "sha256": "beea2df9170342caa0b75ff1857b2711bce3d884de8a2bd4f2fbf1d48751f60d",
+   "bytes": 20160
+  },
+  "horizons/B_k039.bin": {
+   "sha256": "f07be867b0d0154dca5e70b44a2b10b036663c6143a014cab9835398bdce8906",
+   "bytes": 20160
+  },
+  "horizons/B_k040.bin": {
+   "sha256": "7f4744159bbcf71a03369bf77554ac246865bf83187d7d19a88d6c571135492b",
+   "bytes": 20160
+  },
+  "horizons/B_k041.bin": {
+   "sha256": "ceffbac9b983a3270c748a9021de36795085b6031598f87e76063fee6cc47334",
+   "bytes": 20160
+  },
+  "horizons/B_k042.bin": {
+   "sha256": "2964901fc3c2cf12169f6319330c061ba342fad427f5768bdf14da9e4364f040",
+   "bytes": 20160
+  },
+  "horizons/B_k043.bin": {
+   "sha256": "3f43b9fb59711210720d88355d5dab454591c700e03ff10609aa5084f47befa7",
+   "bytes": 20160
+  },
+  "horizons/B_k044.bin": {
+   "sha256": "0e54863ac854770845d1994869185988d85818f37f2c30f19b5cb9d9c0b0b810",
+   "bytes": 20160
+  },
+  "horizons/B_k045.bin": {
+   "sha256": "f56f461b3253ecf69a1e3af17e20e760ca146c9fdb6ded4021bec6acf620d6d0",
+   "bytes": 20160
+  },
+  "horizons/B_k046.bin": {
+   "sha256": "7ae07366b13b5c5ce8d28634532548c965084c3790854d80be2ff710520fbbfd",
+   "bytes": 20160
+  },
+  "horizons/B_k047.bin": {
+   "sha256": "cbd0d44f75151484927f451cf6628736d23bbf1134520ac1727c52866d258e68",
+   "bytes": 20160
+  },
+  "horizons/B_k048.bin": {
+   "sha256": "5bfa069b0755da4a5fec6ea33261017f6d5d8a07228ef42417dda72a78a87d1b",
+   "bytes": 20160
+  },
+  "horizons/B_k049.bin": {
+   "sha256": "438b4d9602a6befa90833859c47a8f2c964f606a258591062962103c5e6fe2ba",
+   "bytes": 20160
+  },
+  "horizons/B_k050.bin": {
+   "sha256": "4e5d6c35e52052b7414b56f4eb2b3b266ee5da556cbe226674c86ea5af0d0ea3",
+   "bytes": 20160
+  },
+  "horizons/B_k051.bin": {
+   "sha256": "2bf3181637adc0abcf849214f3b6a777731bb10b43b3e71b87608c6cd8b5f14f",
+   "bytes": 20160
+  },
+  "horizons/B_k052.bin": {
+   "sha256": "c4a58f8bf51fc90b209e9784fb57e963c460fc769d595714ddb29cba04216583",
+   "bytes": 20160
+  },
+  "horizons/B_k053.bin": {
+   "sha256": "a321d279e196a6d2ae13b9d58ad95ddde07b32e20b03b17b6d191db8f6460175",
+   "bytes": 20160
+  },
+  "horizons/B_k054.bin": {
+   "sha256": "35c77df4267e02e88bad202acbcaf0dc4ae8cbb722b0fa9d4d23a5f61a4bd693",
+   "bytes": 20160
+  },
+  "horizons/B_k055.bin": {
+   "sha256": "4364403de40884c40d6730f7d075898bc085be1298d1837054df3b68fca05b65",
+   "bytes": 20160
+  },
+  "horizons/B_k056.bin": {
+   "sha256": "ffef7087cc8c567d9ef2ebb364ebbd6f12a822cb4f18551ddb477126f4cbe8eb",
+   "bytes": 20160
+  },
+  "horizons/B_k057.bin": {
+   "sha256": "ca4960fc62ff9e9d533ae0cc0a1404af557c7115efbaa37d83449523ae28e697",
+   "bytes": 20160
+  },
+  "horizons/B_k058.bin": {
+   "sha256": "c28184ade669b9c30865af80061486e6ae4651766c3bba998f8716ac2290a599",
+   "bytes": 20160
+  },
+  "horizons/B_k059.bin": {
+   "sha256": "17751472e65687487989ec88f7b6ebabe4f8b9b324acee914b29b16c02835032",
+   "bytes": 20160
+  },
+  "horizons/B_k060.bin": {
+   "sha256": "c073a6d05b087a3b5d86399d1020a8ae7516d95e719344cd93274be7d256d4da",
+   "bytes": 20160
+  },
+  "scenarios/W1_A_k000.bin": {
+   "sha256": "8fc7ff0687e6a7bded9087178d06bc0083c76426d4b4ac48e8fe61ad7d43c515",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k001.bin": {
+   "sha256": "d762b9105c45f112cc48bc3dec37ebdb72046617a3a3d627bbc35773d3b3dfaf",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k002.bin": {
+   "sha256": "b4cb356e143170f6c174e177b764faeefed961e751e4e55446302516958e2137",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k003.bin": {
+   "sha256": "bc2d50b76358e1f3b7c59e992bf42420f9cc95f9cab553b23c43c0f8e53c7c92",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k004.bin": {
+   "sha256": "f4f19ab4fd2a50a1fb2c407bece81be447f6092c694d60ee2c06f6c40879214d",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k005.bin": {
+   "sha256": "5d7a1371d8dc14ec7cfd155556341ab2370e709e75ec774fde875989ca240405",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k006.bin": {
+   "sha256": "942899411adbb3ab53d61f30ec832f2a59459ae43e8c0566b60977e5cab0c143",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k007.bin": {
+   "sha256": "b12397a3b99c1b5fd65945de386527a90a33daafd55a2314c691bf5506244913",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k008.bin": {
+   "sha256": "db0b9391c552fa2e41395b4f7a9772f595198c59d1cf44cfe58c0a9ef7c02364",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k009.bin": {
+   "sha256": "dbd4109e2e887b47c976edfe63b95fdfeab4ccd4a6e048f4204a1eb4c194dda0",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k010.bin": {
+   "sha256": "ea8f24d2dbb98d388252acecb79c8e513be304f9d436ff33d89aadda9f979487",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k011.bin": {
+   "sha256": "da0d7d92d5597adc7d67582b7f79d5cd1fd0787269d1d64e8f0611e53e98f8ff",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k012.bin": {
+   "sha256": "b4f90c587241860e07f8c1564e4b71ea0fa4cede9074853b3a746b48db7fef5e",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k013.bin": {
+   "sha256": "6ceb928f20f31c522885a39d79c05bfa41d795113e202c8584b5db2d458baa6d",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k014.bin": {
+   "sha256": "db938b2fd3b71449ab594ab209116885ea3d8f738d4b08480542e3b62d0a66d6",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k015.bin": {
+   "sha256": "e93c61c728778a8d963c8d1d4dd2ade82ec6da5b51570a405824d42beaa5ef67",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k016.bin": {
+   "sha256": "ff31b8975833f51652a15bf50e14af6720ea269310bfc9e7de2b7e9864ad85e6",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k017.bin": {
+   "sha256": "203a04169d56eed7ec4f66422930027c4921456b3ce1e48966fda4fc48e8a980",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k018.bin": {
+   "sha256": "6dee1502d2a2c40e7f0724b75597cd0611e5df607542b3a07a2b22c21a055b38",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k019.bin": {
+   "sha256": "e570c83afc2ca98ec16b8dc8ac0fdab57ca266dfabcf4b4f6e53c0418fe480b0",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k020.bin": {
+   "sha256": "57b88f40a385316b9bbc80ed8f85d836c65d57ab220774a29660d78da132f00c",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k021.bin": {
+   "sha256": "0599e7d43d9dbf269a4b1af3391e7710d5a6a178f28aaefe1e711f56213a517e",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k022.bin": {
+   "sha256": "8193b076d2468fcc22e851643f7b8ff433e8e20b64a0ff484768ee500eee5af6",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k023.bin": {
+   "sha256": "cd43d4a92d3189288e73bd86979b46f88318ec8dd4c23477c97558e97c461b32",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k024.bin": {
+   "sha256": "8cfa61ef16f083f700416946bff7e7d556374b504d6cc7cd2dcc64ba1e7b43cb",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k025.bin": {
+   "sha256": "b9245fdb0852038d5f8a60c7336fef0c702e8e586bbbdcf8f04fc7cf58729981",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k026.bin": {
+   "sha256": "7fc66e41a4d322e759f7a72390e025dbea04e6bc5dfddde27163217f66ae7152",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k027.bin": {
+   "sha256": "bbb22e23937db6bd48178a26a331a15a0d5d69c9f2e7e7def569701600817068",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k028.bin": {
+   "sha256": "034f0329b75d70b5a5a1ddbc86e764842e64a7e69c12b486170fcbd70d6630d3",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k029.bin": {
+   "sha256": "1f2f5aeb37294016fb22babb713c8024b7c189d46abe69fab16788a1e39d7e22",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k030.bin": {
+   "sha256": "9f04085be02b43033154b7da7248f55a754ff2b40da2cb22d5dcd59082ebfda4",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k031.bin": {
+   "sha256": "ed09716002d0fa98457101c1e45b8255020307fd4262a1acdad0e6126bdfc892",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k032.bin": {
+   "sha256": "d3d09c589637a7cbe88a2f62ed0478ce74a66e8e4fddbd01010e7ca3dcc9fe78",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k033.bin": {
+   "sha256": "2917302cbee1bfdf2e7ed6bb062cd7c5c8f90d102525ef5c6e7b6eba6a0d24ff",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k034.bin": {
+   "sha256": "a9168b931a544476fc88df0f9ab5884fde1bab060a533bc66dff60e1b65f2a67",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k035.bin": {
+   "sha256": "a6b0ea0b70e62949eb7f852bcb25ae03178dfeededb732d80e125c85ebbaa7f5",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k036.bin": {
+   "sha256": "b6c6c01093241b8a5ec6530d6bdbbb058da6d0601356c727036ecb81c0509486",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k037.bin": {
+   "sha256": "43a41dc0e34e89765d59fc293a887bb25bc00e45ae1521a55db6cbeaf9258c7f",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k038.bin": {
+   "sha256": "05fb4d4f72a60f02f9a3d7c1938951a65c2cf91119f0693b8108fb9738f8b56f",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k039.bin": {
+   "sha256": "641e9c7f784396fcb0ea0f12b2349b1f106da5cfc23912c23fb025c6efc9cf1f",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k040.bin": {
+   "sha256": "c88255110fa7f72cdd6618c47c59298bb67335b66298df71a080d431ee85b77b",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k041.bin": {
+   "sha256": "412247146f89f9e2ff52cb82c279e258f94e065e153be5336f3f43f083e729e0",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k042.bin": {
+   "sha256": "23b20fd750d8a5952c88d020f286fb989014894f125aaf1ca17bcaa32eeff043",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k043.bin": {
+   "sha256": "b8ea9ec429819723cb80975c258bfaf49bb24c4a9f9093bddcf32f340dd6d9ff",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k044.bin": {
+   "sha256": "b6d7e36c5289c35cfb227be21ebe2ab5bc5b8157fd4a67367526129aedff478d",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k045.bin": {
+   "sha256": "1792648bb71cacb3c3b3647bc98f16e427cbba1067d4afb3c7a3cb28e23d444b",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k046.bin": {
+   "sha256": "0c111fa346d3065572600e6630ce9b667b3e6b41c21fa7fbc469871281b8b09b",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k047.bin": {
+   "sha256": "ea813058ff94dd24400eb523b0aab67f253ea50d80a1a8fa0e235420013440e7",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k048.bin": {
+   "sha256": "2fd10010ce7e82114d775c889eb6b66be0b98727f6d877bfcda059b3345dcd4c",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k049.bin": {
+   "sha256": "820ccc8ee1b2881fceb955794da2f38f4fc73380f9114c18e49fb85539ec2c40",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k050.bin": {
+   "sha256": "fe7d5250b7fb1524e79c0da6f78bb8edc823d9a7b45065c7cbd846026e1c3d22",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k051.bin": {
+   "sha256": "345256538492e4c6705411a9f5ad35f108e82d90573745fdf594e4e28a5fdb82",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k052.bin": {
+   "sha256": "eb31e77b5d1bac9a48625a8450868efc825425f3d8ca2430fbf90bf1be6cc713",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k053.bin": {
+   "sha256": "6e8eadf6cf7ff06ad92cbf8963738f2c9a13f0fec6d3833ac8ba3b73c74dc1f9",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k054.bin": {
+   "sha256": "edba3048f113d65f336bc823cf9c9291ff32c9e5127eec679cc167cb25e1d05d",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k055.bin": {
+   "sha256": "774adce03b0c6687b77cfb99ed6c789fc12d7680e539ee4980f37f0083802390",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k056.bin": {
+   "sha256": "510b3be9fc10c644e457a5c226a19f59b6578695e0cc584c1c55a6bc5a644ace",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k057.bin": {
+   "sha256": "5a99e29e34224ac9d2407ba2ac48cab23f445749822db00d8e66c70e571d2a3f",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k058.bin": {
+   "sha256": "06ed8cfbf6cb0697be84191f16eeb8e2bee3849f42a349b0a41d895a018765a5",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k059.bin": {
+   "sha256": "92691c61e00b5b5ca9e303875f947a478e316a54ac329b05e8f03fe22829ca0e",
+   "bytes": 211728
+  },
+  "scenarios/W1_A_k060.bin": {
+   "sha256": "46460da9f2a6abc1bec74bd0e1bbb6f6455e583092f3698a98f4c1e49cdbae3e",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k000.bin": {
+   "sha256": "0d86cccee51118b5efc715d2741969f09dedf3c4f3ba5d901354a50ce56acc4d",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k001.bin": {
+   "sha256": "cf3adb707e954b7f8cfa29e8e53494ad8fef2a4119787a51091fe1f15720f808",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k002.bin": {
+   "sha256": "3cb3f3fe7e2b4eaa47be96815f370aa8b201aa9cb3e33dcbe1376afd6505cbd7",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k003.bin": {
+   "sha256": "62b0c24cab61f0aa36e4ce18913bce50911fe6ceae0641a7ccc3f2f9905b0117",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k004.bin": {
+   "sha256": "231fd8b1357b16c983e0a2bc8bda25f4a4d60ad941054ce792704a96db9e5038",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k005.bin": {
+   "sha256": "40cbd3f0beb44f95d4ea7d1bf6969d7379b90190559d3dda4ab9d3a47b505fab",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k006.bin": {
+   "sha256": "c8b42c3cd38449f48e4b79848898560da6e636cf9d1a34eecb723c090e4a34d1",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k007.bin": {
+   "sha256": "19613a25449afd0b41ae60f336e9d8fee0aa3b1cd93d8e260a507f194e7c36e1",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k008.bin": {
+   "sha256": "c21b9465a573319711aa92892f951b3f696e6ea2f3ceee2eb7e449809e4b001d",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k009.bin": {
+   "sha256": "550707680b293fab34b85692f1cc03efd9fff480f3539c73a896c9c4c616556b",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k010.bin": {
+   "sha256": "ebb822f5d031be025c92d2a2c0853ed2d06b7f4b91d2b713106f5936bf642b54",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k011.bin": {
+   "sha256": "4358004fc319c4d6eefa15d0db2b9dae09d15fd5873f0ca5a22bc2bebd595494",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k012.bin": {
+   "sha256": "d42d6506c7a838ee8a5c740a6ba60a62d80d4ff589b9045b0769a9714da8ef3b",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k013.bin": {
+   "sha256": "e6b4ecdb8d057a2960614e3891acde35362061dc59aeefd70ee7e371f6f030ed",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k014.bin": {
+   "sha256": "57189498c842f22492da4d308bd95748a16f7d862b694c7c05a59ef492cf4ffe",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k015.bin": {
+   "sha256": "9abbf40ee0666017b0822fe810103e10c889e2d81bb182825d93a39720dc41ab",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k016.bin": {
+   "sha256": "89dba6d666cd5cb41a7fb6e4c4db68ce872560c33d470b7856b0ff82e298460e",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k017.bin": {
+   "sha256": "098636384da5253e7d5c067cc331df2bb9074db9e0ec1dbf1e5e9a0dbfe308fd",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k018.bin": {
+   "sha256": "f145a3d7b0849885c196ea3e5386b510242c5eac1a8c66146b153fc2891b73e7",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k019.bin": {
+   "sha256": "70b0abe27f4b2da729f87cce5e9de120b1831bd411085d5d55bba12d3c0ca27c",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k020.bin": {
+   "sha256": "d6e1863d16532f66fdb871b20dc31032a7a71b9aeaa78029c6706699a7348bc3",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k021.bin": {
+   "sha256": "09b9e365decdb9f02bd98cc316cd427617575564c7334a096f37bbcccc3c2334",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k022.bin": {
+   "sha256": "312e946e3b82cd0246fadd96ee8dbbc5480c8e8da0f02be8c52fa67b5c4ab83f",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k023.bin": {
+   "sha256": "9cff96cb4cac69dd21961241a58ee413c135999e81264139c144dbb5183071d8",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k024.bin": {
+   "sha256": "da60f31bb39f232671396919c747f36b963b8f250628f428b2224968e3279c20",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k025.bin": {
+   "sha256": "f21c31d05aed51cf2f1a7c40266153eeddddad9d58d35a2c7cd9b7b69e28433b",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k026.bin": {
+   "sha256": "1ef65f38008307cd164e4978e792c0a5284d1c898f43a543d7ed3b9303f124e2",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k027.bin": {
+   "sha256": "da674bba38e1219fc29bf7e675113fc03119d40ed0ac2f0ec380f7ae7e170359",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k028.bin": {
+   "sha256": "6adee692be978313344feb5fc78d14a9b870c678a267d15ac0ba48e6bf6d9516",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k029.bin": {
+   "sha256": "9a99b82d6e38b53f5013fd57bd8a7e4d6f93d39ee96bc108746b14b8dd48b4f9",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k030.bin": {
+   "sha256": "f29428bc6ea5f9c58b6fbfd27f35de548f90b56fdb91a153c2b581b257b6e513",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k031.bin": {
+   "sha256": "1d2ea65abbaa4a695b7307824e89288a2d2518855524837b45474d9655b5c44e",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k032.bin": {
+   "sha256": "f638f4698adc33550a810167c3ba5f715cdefdd2897b4d6597a1b52a230e2122",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k033.bin": {
+   "sha256": "7f28672dcdacd42d96073662dba37e7dadc0e4635783d8a82d812c653ec88ce9",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k034.bin": {
+   "sha256": "58eb25bbced0b991492dfcc89b6aa11b248bb8871ece70228c0ff46d6fb5fa79",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k035.bin": {
+   "sha256": "9933b90f8d2206aa1ebb79a16b4e5db433f7027a3cb832af844c6f652c72268b",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k036.bin": {
+   "sha256": "eca53479b658d521f5800ba8077e9994bbfb48918a5ddb53e72cd37949d51da3",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k037.bin": {
+   "sha256": "49fe9b265404870bf29877ab26b1751013af9fb30718b9207a2ed0f2e845dec2",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k038.bin": {
+   "sha256": "fceb76f1b2ae1823d7be4837d17aca53e720e15e6c127e96c9180cdbbadeee8e",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k039.bin": {
+   "sha256": "cabc27d05acd7d1885acda3cec2c9dea466305ef0f3ae2d652dda6b95d8ed945",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k040.bin": {
+   "sha256": "3d4614d1bf0e76a440fc1c928b6dbcc321ee4a94e9455f93edb957f0b31d8c6e",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k041.bin": {
+   "sha256": "694a0a974bce250722a365e20b1aca42f14ae297221c57a8f15ce6cd8dcafbd1",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k042.bin": {
+   "sha256": "403bce44e4549678a6d91cdeeacaace828b014d0830932a01c0f7814b9d3ca4d",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k043.bin": {
+   "sha256": "06c6ddfeed550efc4d812a99c62402e1903cd3ee3eb475cbe6a99660b7ac5f72",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k044.bin": {
+   "sha256": "05695c57aece49c3b98ece7eef67a449de457f567b09465ce4c65c23689b22fe",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k045.bin": {
+   "sha256": "4cd8d9b63787ba750664d29581234d9dca9dadce03a0daeff46ba409bd4501c5",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k046.bin": {
+   "sha256": "d481f7a9d50cbf5be3c97b0fbd2309e73f6b43528de4e03d2847814c32d5784b",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k047.bin": {
+   "sha256": "05c4572911a5c9fae6d4cd78d8650aa7fb6ec183d5d19cd355c98ad0d45aaed3",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k048.bin": {
+   "sha256": "6c9e42668eb4f306963aa5d8d9edf3bbc275590754e90e918fbc189d724d8c9d",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k049.bin": {
+   "sha256": "df6cd6ffd02bf800366c2953bc44412a3b91640830e182438ea22cf35f9b6dfb",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k050.bin": {
+   "sha256": "ac6fa86e719356b3b5adf942d0371bfe2498240dcc17323eb235a3607601d1ef",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k051.bin": {
+   "sha256": "bd4ce8e765a3002f955b4002174a0b08badff35a3530a5cf1345c67fc8703fee",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k052.bin": {
+   "sha256": "0e6240768d1d001376e47c55e7bd25c53725b54b7aa92405ff322821b2d559aa",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k053.bin": {
+   "sha256": "2791a7cf349406cb64d884867e37ec562ebf590f53c875bc037b97f41456ad45",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k054.bin": {
+   "sha256": "1f79942566c70a8cea62e0b39c1d7e98fdc5ef01c6e0ef4a9c08041b7fa0a894",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k055.bin": {
+   "sha256": "c03740bec611ffcbb6a54636a52aaeec830e944a2f42e49be891fbd4e81d9a32",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k056.bin": {
+   "sha256": "14411d25ec04bfa573c114f7653a0125735d1cf985cb79ae8d221a92b8191298",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k057.bin": {
+   "sha256": "774c602334dee4dddf893abb7f8e38c62da6dd164d54e97b0f84f0d094986ba3",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k058.bin": {
+   "sha256": "a6fe5294347c22666eb44df64e23c6ef4abbdfcb099f477be1104f1aab25f260",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k059.bin": {
+   "sha256": "d108d0cfedd6c53f48fdb7edc47887f3d255209f60ea315ddaff73509f44c006",
+   "bytes": 211728
+  },
+  "scenarios/W1_B_k060.bin": {
+   "sha256": "f87339da96966f2f419fd2a2ffce63fa226f761cfe35402446699462440f6add",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k000.bin": {
+   "sha256": "d425e7f213bcc8441c7058a6478354160369e13e979f5707249fa5ed8c386ced",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k001.bin": {
+   "sha256": "6757d874a9b356949408829ffee1d14b7244c6bd2e0cf659cb7957302b6ca9b6",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k002.bin": {
+   "sha256": "7ff1f39a232802c8bccfa830198e3af6cbd1f74010d32ade7e64c3c7e1159774",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k003.bin": {
+   "sha256": "8d9035eb83c97e3ea24a43832f24b4ceb958ed40023002579a89bc8d26cfc319",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k004.bin": {
+   "sha256": "0997cef207cb5cc1a9a274602f6dade03d9a9e23078191a48a6ca26e0b2561e1",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k005.bin": {
+   "sha256": "4be245e080c74991f74b4753f75797b734bb5ff48cd8474879ebb6b2d5632562",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k006.bin": {
+   "sha256": "8fe3c4b5f082181330dcf05e5f07908d7d9ef5b44fddb59ce89ccdae911d71d7",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k007.bin": {
+   "sha256": "17445b7209095b2171fdca95b8a48edb6563b0841cadef3b9b902179dea3d6a6",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k008.bin": {
+   "sha256": "4d72059122f6c1acde56657d4c1372c75f897a9b9a2ac8fd92181a6199034152",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k009.bin": {
+   "sha256": "7673524d962e014d3e5781346fcf6a8db57b4182c9abbf17cca040fce42bcc39",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k010.bin": {
+   "sha256": "e9f21bb4b659dec5e1f2bf5281adea99b7dcb4ab86a00de9268e79649124ae96",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k011.bin": {
+   "sha256": "8a82c3d4c9b5fc58164cd4815cbc3d7cd5a6a9ad85e2250718b8126dbdc8dd37",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k012.bin": {
+   "sha256": "838841d261a4a3ba39c10b874cac75a68620f13c3a1631209b05bd94b621f359",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k013.bin": {
+   "sha256": "7c653863a168d57c1732c46338305ad32f1c66c0036031e4ce851f9768786719",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k014.bin": {
+   "sha256": "f85ecfea10889002826d9b4d492ce68932c2d6e0f25910b6080534d5083e72ab",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k015.bin": {
+   "sha256": "1f1a9d2dc0f922dc655b0c338ac8f660e91d7be6a6259f2eee2c46696bd2b4e8",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k016.bin": {
+   "sha256": "92aee973e854b4e9f6adc9a5e2b958aa52c4d4dbe3131edbbd31d76afcfd6b37",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k017.bin": {
+   "sha256": "7b6535d997b3c88e447bbfbdb1b122b1b427086c448787c8a102bc8281ffab26",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k018.bin": {
+   "sha256": "b18261c0d7619a5ea47439cca0b5814f719984be27e2c68c1f9dc71df3121217",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k019.bin": {
+   "sha256": "91141ddac2ead0cfadfa1c1dcbe3adc94b082d6d991bab916b402541abbeadc7",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k020.bin": {
+   "sha256": "bd74558827703fb8fcdad67604fd84757d8c2f319e8c7bbd1f1029fa18dd310d",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k021.bin": {
+   "sha256": "7f7fc1e02c6ac12ac0ea69c0fd70df94aa5f70257d5f0ee5e681b09849f74961",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k022.bin": {
+   "sha256": "f3b084cb296dc4e9c89836f7b468ab169a99341835c0675cccadbf21470189cc",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k023.bin": {
+   "sha256": "64d705164524e8409733fc235e3c126d83253a41356020bdf5dbdb2dcaa14171",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k024.bin": {
+   "sha256": "b950759822bc68fe24afe29c781d84696fd2d49885925556a9503c0a5483461c",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k025.bin": {
+   "sha256": "68b005780321e89200c3ae6fe03fc47d7496271e9e32ead4ec7f883e815e861e",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k026.bin": {
+   "sha256": "554c3fc0e1e484aa49011a0a2993960ccd18aed13a5b74cbdfd18fd88c41fbb8",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k027.bin": {
+   "sha256": "9cbf40a44d6452ddf91042690c73eb1a0edc3cc1902227edc3471340ebbfac78",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k028.bin": {
+   "sha256": "3192efbd90d5c026ed4625e92fd9fbf74488bcaed51a15b23c091e46a830aea3",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k029.bin": {
+   "sha256": "713ba251ee2a9a8ee4986ebcb7980f162a9b8e6b7ba7f1820f57e1990d24bf68",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k030.bin": {
+   "sha256": "67624ae9d5e39398f03a4722e8447427d93d4ea1cd71b2917f3b98b5530e70cf",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k031.bin": {
+   "sha256": "6fe8521d09bfd7d97f967d432afa8239a184ec829ef5efab2aa1d0a53a73b055",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k032.bin": {
+   "sha256": "719f7560fa314e253a0b439c7607961193d3e632905d38736fbd379dc626159c",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k033.bin": {
+   "sha256": "aa50e95216c34612203945690ec064121d813e73b10d482c20865afeff0a77fe",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k034.bin": {
+   "sha256": "623a22684023a6ac5e583a4a23202a158a209ec5dbfe2d6021d8df62408921f5",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k035.bin": {
+   "sha256": "f8082cd32491a6e2474fe115a628707289777c752980711df58e5f12fd215ca8",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k036.bin": {
+   "sha256": "25087a17acf59bb4a9efc278a12cfc27ab6bb57092ac0bc77398d72f964df3f9",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k037.bin": {
+   "sha256": "c2d78cefab7b6fbd14643cb8a67f23b217d2f272abd40b73acf03a056b0c7fc1",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k038.bin": {
+   "sha256": "60c7aea1ff42f5fe87f5f25c045ec0232fb52077244c204628f03a90644a2ac6",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k039.bin": {
+   "sha256": "c1d1551589fe4d742ddfabe75d4321606f66bd443f894eea3bb35cd7181ea52d",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k040.bin": {
+   "sha256": "8977cc8e46ceec05a88e14c51657de1d111977fdae43999a6e9d87b18bdc124a",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k041.bin": {
+   "sha256": "f5286c550f31cf805eeb5d8d6325eab6f0f67addbdfe206163102647fc99cccd",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k042.bin": {
+   "sha256": "16a565c4d5d3af54792c87522839d056d0e5855f4e0cdff8d5747c473878942c",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k043.bin": {
+   "sha256": "87c74bfcb813ae21933a73af519336fabec313131a38ee3d2feecc90e9551d36",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k044.bin": {
+   "sha256": "9f992aa559610f92a0f14b792bd2572c54f0622bd94b32e32d26c07f105cb6c6",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k045.bin": {
+   "sha256": "19f24824193855543ec36a50e9b2672fcbe8cd5269a968150003ff18d8f24527",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k046.bin": {
+   "sha256": "e6d06e24dbf27da685e986f5c32a9a87429aa8314186a726cffc5eaba7a74a1c",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k047.bin": {
+   "sha256": "982296df7c23254a338aa3d4cb701c2929bc90da87607747bdbb9abe22c68286",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k048.bin": {
+   "sha256": "5da90b014b8341294c6cef0ab49301d043b9926bd805021fc8e6b2e19ade48e4",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k049.bin": {
+   "sha256": "4cb59224580afd240bff397efa03d7b95d45f46757a38af05f7cb166c3546b45",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k050.bin": {
+   "sha256": "b8f4571b95c045dd42b6126e4441f120687257e04d3c336a4ef3562f8cf95470",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k051.bin": {
+   "sha256": "74ca21b811c68507cdb8f2f68935f4f4f17e64de9e9378f2c45888cf2e401b60",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k052.bin": {
+   "sha256": "58cc2f5b6e3cb3252d6996b507ac7885fb99047b29986d69887b14d291173cc1",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k053.bin": {
+   "sha256": "42eef63c62be6534a97546f12d800f9e3c33cb2bc88bc8d4337fcc930b8498b3",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k054.bin": {
+   "sha256": "5f42eb0905d83a35f62a6303f71efba2b3e0bc7d9879d77289b8037bfe4ac88c",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k055.bin": {
+   "sha256": "ceea1a1e30cba886f7cfac8802d5012ca761955076d03b22c3a473e3d3df80f9",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k056.bin": {
+   "sha256": "20651f76027cc6044547cb5020fab9c850c5f010658d6e77528f97fcc205d359",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k057.bin": {
+   "sha256": "df0f567de910f97ac693a583b4c510174815eddcc93eb9aab806e5e75a2b2333",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k058.bin": {
+   "sha256": "c907ed0d1366a6e48b089eb9011408ada99717ad25511fa03dc830b8132638af",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k059.bin": {
+   "sha256": "e872e5bb6145c49b3f2e69bebbc3302928cc1d2637d8a1ab77469b306db475bb",
+   "bytes": 211728
+  },
+  "scenarios/W2_A_k060.bin": {
+   "sha256": "7a9ba989de970815e8ef4d356d6038a84b2c60cf5422a5d557e292f6f96b8c4d",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k000.bin": {
+   "sha256": "5c3a9a9d06763bfc759fd92111ee51246e767b6fa0b3df152e1d1d50383c5848",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k001.bin": {
+   "sha256": "1ef82385da89481a403783ae3bb649343efd2d06ff1bfd9fef49433880f7f190",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k002.bin": {
+   "sha256": "b248d28fb09cb155ca6f39326124b54abff1a6999de3b7e78071df7eda54053d",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k003.bin": {
+   "sha256": "6b013aa237e8de60b578318ea22ae13133a3a15ebfc5c30841869b8e7eefe097",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k004.bin": {
+   "sha256": "68b6f7266991f12251217dee377b231168951a78fbd05cbe34d4f10653693c49",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k005.bin": {
+   "sha256": "9603c872a4bd6fcc5e7691301af6cd5b9465d27ba0a6c06073d5e9d492686fb7",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k006.bin": {
+   "sha256": "1105cf8f29721289440f87ecd3b8322962747e68490b7387462726f3122f12fb",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k007.bin": {
+   "sha256": "52452c9a0ece5ae10df055bdf1b656edcf24e3ddd4befa64421020d519d77e7a",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k008.bin": {
+   "sha256": "ce304763e777e8d7ac2e66b2e572c0ea87830b555dac529eca9c6ea836b9fc8e",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k009.bin": {
+   "sha256": "86cf3179b8dbcd564b6581348eca517cfdd8af676c08bdc4474cf157c5c43ba8",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k010.bin": {
+   "sha256": "10e8aac4236d677c70d9306e729092c8806ac0c7ec95c62284727346dd9c189b",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k011.bin": {
+   "sha256": "8726396004771b823815ee6617bca038b5ce9aec471340866a4d10a4628325ec",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k012.bin": {
+   "sha256": "79831f879fe168b587b6fb26fd39507fb0ddfd9d632027ace09c0f64f6c30746",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k013.bin": {
+   "sha256": "fdd969aab9b63a73775ecc535bebf2dff97947f3bef078a6486afbf93478f71d",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k014.bin": {
+   "sha256": "79438c18350adb586e83dc7932856a5b278ac7d3bb52e76f371ad3e700beb28f",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k015.bin": {
+   "sha256": "a946e1c5df428c253c46c8d02166c7cd703e575238f49a256f2cb42967c43ec8",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k016.bin": {
+   "sha256": "d9e8b1154704282847bc2c6cfe65caa3c5c2bb9113c60d8181013345d7f89e61",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k017.bin": {
+   "sha256": "037b326f8020811c2dcc8947ad3e7660ff7228b916a68a0ec915242a0b1f94fb",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k018.bin": {
+   "sha256": "4bd4ceaba383eb08763998d1834276b907c964e8f050d5a87daf4bcb60a7fd0e",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k019.bin": {
+   "sha256": "3a624d0d6cb071572b74a25887c3da2b5b37597ad5ac82d33a09995a77279f1b",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k020.bin": {
+   "sha256": "b2e101cc0503dc61f7666d8bf81aab7b0110a462e6461c644faef2dd99e0f819",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k021.bin": {
+   "sha256": "9801800ad8212d82a2d7c1b906f40787108fe6e4b700c9346411d8bf467aadae",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k022.bin": {
+   "sha256": "860ca3f87583d3e19c44f62552a91213f8d7ba85eb6ff56f7056297ea96402cf",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k023.bin": {
+   "sha256": "414918ed14b43acfa7007f57718317e1ad245a9864b9d1b434e9fb265142137f",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k024.bin": {
+   "sha256": "5d5f2a9b9d30cc315b29d9e60b91c1f52a56fd0eccb68ae89df0460679445288",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k025.bin": {
+   "sha256": "a00f3aa6538bd8fa7c921d527d18e38a236285b3c092c408394736de9d0f4f05",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k026.bin": {
+   "sha256": "fba75edb1bda29d30178f991a394551bba72c2d493c8f76f8d14ae0c7058951a",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k027.bin": {
+   "sha256": "429cf624e54e30fc764278cce1e967330188bdd5fcfce641000c5ec34aabe489",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k028.bin": {
+   "sha256": "21c85cfcab5697da57eebcfc622cd91cdad1f094751e2b4cf038ec0662178173",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k029.bin": {
+   "sha256": "8f8f0b7d36e55ded20fbb9c7141ace94c729f12f3c67f0ba1e9e5311085fded6",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k030.bin": {
+   "sha256": "1819c4b0ce5b5ae15e62f4614ed20dabc97a136ed161cf48e994e05c01cef706",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k031.bin": {
+   "sha256": "20cf4249c7c0b13f23989f3500af93ac0d981f19350b971d107a1b179d1fa397",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k032.bin": {
+   "sha256": "2702257c01284f87ca786a7141470b80637bee0b3db4157b3fdefb895611085f",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k033.bin": {
+   "sha256": "21a32f74ea3106e7683fe6303a8f3f376a494a371e68fee687c02b3cdf67a7af",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k034.bin": {
+   "sha256": "f356abd37c56282ce6b840766b231e2a99c1be9e66a0f42e69075a544207889b",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k035.bin": {
+   "sha256": "15158579308d255acc12b14f05fa95df6fde4bb8a635565a86ffc2863bf19cf6",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k036.bin": {
+   "sha256": "f4db4ddbd527449f67a3f732b73843ab5d4042fe180e74806b33221b7e2547a2",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k037.bin": {
+   "sha256": "b00c900142dced11cd5bccea58028cbda26951561983b5ccf9046e9f190297f9",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k038.bin": {
+   "sha256": "b3fde81581f046153a102ce5a832e478a4b6f324f2a1335e2589566f4333104a",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k039.bin": {
+   "sha256": "267f5ac0185e9ab8f4e1e7b481a9f7bd482dada26822c80d353b7be6cb7080fe",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k040.bin": {
+   "sha256": "c20adb01ad9c5d96ef653fd05cf9ee946490cc7d35574d48fe122124196d037d",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k041.bin": {
+   "sha256": "c6b42efc91193ed197bc1234a353f77ce9764ed7780a5a6b78d910429d93c2ef",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k042.bin": {
+   "sha256": "c80ec7c951c857b76e6fba8ff379b1fdf93dd97ca7cf4159e719d0e8e169a6e4",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k043.bin": {
+   "sha256": "28b05cbc2a1dc3cb7f4d080b022b6f0db14d8a8b02e19acb838c23c65e02e129",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k044.bin": {
+   "sha256": "86e560fb14ab6debc1517a8c0cef94e3dc4678415e7c95381017e9727eb5d372",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k045.bin": {
+   "sha256": "15fbb2c6bc8fe3704c718a6696ee87616259276ab130013b8333b1e9ba527589",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k046.bin": {
+   "sha256": "9a563073a70f370de81f2c99a8ae92460674cedcaeee177c214d8a7c7250d495",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k047.bin": {
+   "sha256": "49296f5da55e67d867508738c4c015a5920fe68247b1411210983195f5b3cfcc",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k048.bin": {
+   "sha256": "9ef59cb6a31bba08792645d436390e006184fb9c5168915c600e550cc3f9a25c",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k049.bin": {
+   "sha256": "7154b0d805ef4cfc632881e36c459887cd1154177ab65a0ba75e23db7ad4c8e2",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k050.bin": {
+   "sha256": "42d779cfa274ddaebf38cf57fafffbfb6d2b4a4b3d3480d2f517bd1c8751869c",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k051.bin": {
+   "sha256": "1578e01e66e7eec97c72314809fb67120998465474e1f348178f73969268bae6",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k052.bin": {
+   "sha256": "1e3106768dac4a909bd1c46fb6dc9981d558d0e7e5be8c7ddc80e78d34855eeb",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k053.bin": {
+   "sha256": "0057ac93de687aefab1119de5da9bd7abcb3f1e528199788282fe1e560929185",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k054.bin": {
+   "sha256": "2e1bee9040d9dccf0bc16b5fe2be47aa338a4754aa432909f4b3eed691d6d5c1",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k055.bin": {
+   "sha256": "d7b4498e9bf638027fe87959897eafb7b5435faae1066826669300ecf415041f",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k056.bin": {
+   "sha256": "943bf502138584e136dd25687d82aa1fd5fdf4b1418873450bee43c9c557d06a",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k057.bin": {
+   "sha256": "c67c54959417ad2fda8b353b63a4b76c471886ff79cf586489f6628c2e3d62ae",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k058.bin": {
+   "sha256": "9d61e80d89af32fb7d7dcadf231d82813ea25aaa8f6e574d16117588778be473",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k059.bin": {
+   "sha256": "33e2f92339f2530b6cbdb8357efa46eace3a9a022d160776204626d57ff0dbee",
+   "bytes": 211728
+  },
+  "scenarios/W2_B_k060.bin": {
+   "sha256": "0d07eccc217ef3a1e5f81afea86ca85570cdd396a78d3d4f652e024009d10e8a",
+   "bytes": 211728
+  },
+  "horizons/index.json": {
+   "sha256": "b3bc2c0ca71de112a9f1e06074a74e4920740cb9e5b79e59eba5936f291a1a5e",
+   "bytes": 13992
+  },
+  "scenarios/W1_A.json": {
+   "sha256": "c704bbaa22038a93a3fb7e45c4bac271676b4214acf1ee7b6c6544a7da4428f2",
+   "bytes": 53718
+  },
+  "scenarios/W1_B.json": {
+   "sha256": "9cfabc5367c158e8f7862bf96f8a318b065fdeecd71b9bd91b0f7ce472990374",
+   "bytes": 53386
+  },
+  "scenarios/W2_A.json": {
+   "sha256": "d93845401baa38425050c730ac2fc301bb13a8528d70a3507372fa05f9f644d3",
+   "bytes": 44164
+  },
+  "scenarios/W2_B.json": {
+   "sha256": "8c0a5def2f9b4563513b1817a625fcc28e157b7ce6863716a2e2ded6874a5f60",
+   "bytes": 45479
+  }
+ }
+}

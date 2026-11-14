@@ -72,7 +72,12 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     // Retardo breve: el reproductor de Timeline cambia `t` muchas veces por
     // segundo y el navegador limita las llamadas a replaceState.
     const id = setTimeout(() => {
-      const next = `?${query}`;
+      // Se conservan los parámetros que no son de la selección (p. ej. `torre`, la altura de
+      // Engineer fuera de 0/2/10, que no forma parte de la URL analítica).
+      const own = Object.values(URL_KEYS) as string[];
+      const params = new URLSearchParams(query);
+      for (const [k, v] of new URLSearchParams(window.location.search)) if (!own.includes(k)) params.append(k, v);
+      const next = `?${params.toString()}`;
       if (window.location.search !== next) {
         window.history.replaceState(window.history.state, "", `${window.location.pathname}${next}${window.location.hash}`);
       }

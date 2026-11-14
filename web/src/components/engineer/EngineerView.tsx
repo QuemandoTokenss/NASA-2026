@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CRITERIA, HEIGHTS_M, SITE_IDS, variantFamily, type HeightM, type SiteId } from "@/lib/contract/constants";
 import type { Core, EphemerisClockChunk, HorizonChunk, MetricKey, ScenarioChunk } from "@/lib/contract/schema";
 import { useChunk, type ChunkState } from "@/lib/data/DataProvider";
+import { heightToK, kKey, loadHeightIndex, type HeightIndexEntry } from "@/lib/data/engineerHeights";
 import { loadEphemerisClock, loadHorizonChunk, loadScenarioChunk } from "@/lib/data/loader";
 import { getCriterionResult, getScenarioSeries, getScenarioSummary } from "@/lib/data/selectors";
 import { formatHoursMinutes, formatNumber } from "@/lib/format";
@@ -22,37 +23,89 @@ import { Badge, Callout, Legend, NatureBadge, SiteDot, WinnerTag } from "../ui/D
 import { Icon } from "../ui/Icon";
 import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
-import { TerrainPanel } from "../terrain/TerrainPanel";
+import { TerrainPanel, type EngineerHeightState } from "../terrain/TerrainPanel";
 import { MastScene } from "./MastScene";
 import { L } from "@/lib/i18n";
 
 const heightColor = (h: HeightM, selected: HeightM, site: SiteId) => (h === selected ? SITE_META[site].colorVar : h === 0 ? "#64748f" : h === 2 ? "#9aaac4" : "#d6deeb");
 
-function MetricsAtHeight({ core }: { core: Core }) {
-  const { selection } = useSelection();
-  const { focusSite, windowId, heightM, variant } = selection;
-  const s = getScenarioSummary(core, { siteId: focusSite, windowId, heightM, variant })!;
-  const base = getScenarioSummary(core, { siteId: focusSite, windowId, heightM: 0, variant })!;
+/** Curva de una métrica del motor frente a la altura (61 alturas del terreno nominal), con la altura actual marcada. */
+function HeightCurve({ entries, metric, current, color }: { entries: HeightIndexEntry[]; metric: MetricKey; current: number; color: string }) {
+  const W = 240;
+  const H = 54;
+  const vals = entries.map((e) => e.metrics[metric]);
+  const lo = Math.min(...vals);
+  const hi = Math.max(...vals);
+  const span = hi - lo || 1;
+  const x = (h: number) => 4 + (h / 30) * (W - 8);
+  const y = (v: number) => H - 6 - ((v - lo) / span) * (H - 14);
+  const cur = entries.find((e) => e.height_m === current);
   return (
-    <Panel title={L(`Rendimiento geométrico (altura ${heightM} m)`, `Geometric performance (height ${heightM} m)`)} icon="activity" actions={<SiteDot site={focusSite} className="size-3" />}>
-      <ul className="flex flex-col">
-        {DISPLAY_METRICS.map((k) => {
-          const d = s.metrics[k] - base.metrics[k];
-          return (
-            <li key={k} className="flex items-center gap-3 border-b border-line/60 py-2.5 last:border-b-0">
-              <Icon name={METRIC_META[k].icon} className="size-[18px] text-ink-faint" />
-              <span className="flex-1 text-sm text-ink-muted">{METRIC_META[k].label}</span>
-              <span className="tabular text-right text-sm font-semibold text-ink">
-                {formatHoursMinutes(s.metrics[k])}
-                <span className="block text-[10px] font-normal text-ink-faint">
-                  {heightM === 0 ? L("referencia 0 m", "0 m reference") : `${d > 0 ? "+" : d < 0 ? "−" : "±"}${formatHoursMinutes(Math.abs(d))} vs 0 m`}
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-12 w-full" role="img" aria-label={`${METRIC_META[metric].label}: ${formatHoursMinutes(lo)} – ${formatHoursMinutes(hi)} ${L("entre 0 y 30 m", "between 0 and 30 m")}`}>
+      <polyline points={entries.map((e) => `${x(e.height_m)},${y(e.metrics[metric])}`).join(" ")} fill="none" stroke={color} strokeWidth={1.6} strokeLinejoin="round" />
+      {[0, 2, 10].map((h) => (
+        <line key={h} x1={x(h)} x2={x(h)} y1={H - 5} y2={H - 1} stroke="var(--color-ink-faint)" />
+      ))}
+      {cur ? <circle cx={x(cur.height_m)} cy={y(cur.metrics[metric])} r={3.6} fill={color} stroke="var(--color-bg)" strokeWidth={1.5} /> : null}
+    </svg>
+  );
+}
+
+function MetricsAtHeight({ core, hs }: { core: Core; hs: EngineerHeightState | null }) {
+  const { selection, restored } = useSelection();
+  const { focusSite, windowId, heightM, variant } = selection;
+  const extended = hs?.kind === "extended";
+  const index = useChunk(restored && variant === "nominal" ? () => loadHeightIndex(windowId, focusSite) : null, [windowId, focusSite, variant === "nominal"]);
+  const idx = index.status === "ready" ? index.data.value : null;
+  const entries = useMemo(() => (idx ? Object.values(idx).sort((p, q) => p.height_m - q.height_m) : null), [idx]);
+  const h = extended && hs ? hs.analysisH : heightM;
+  const ext = extended && idx ? idx[kKey(heightToK(h))] : null;
+  const base = getScenarioSummary(core, { siteId: focusSite, windowId, heightM: 0, variant })!;
+  const metrics = extended ? (ext?.metrics ?? null) : getScenarioSummary(core, { siteId: focusSite, windowId, heightM, variant })!.metrics;
+  const hTxt = formatNumber(h, h % 1 ? 1 : 0);
+  return (
+    <Panel
+      title={L(`Rendimiento geométrico (altura ${hTxt} m)`, `Geometric performance (height ${hTxt} m)`)}
+      icon="activity"
+      actions={
+        <span className="flex items-center gap-2">
+          {extended ? <Badge tone="neutral">{L("Paquete de alturas · nominal", "Heights package · nominal")}</Badge> : null}
+          <SiteDot site={focusSite} className="size-3" />
+        </span>
+      }
+    >
+      {metrics ? (
+        <ul className="flex flex-col" data-testid="metrics-at-height" data-height={h}>
+          {DISPLAY_METRICS.map((k) => {
+            const d = metrics[k] - base.metrics[k];
+            return (
+              <li key={k} className="flex items-center gap-3 border-b border-line/60 py-2.5 last:border-b-0">
+                <Icon name={METRIC_META[k].icon} className="size-[18px] text-ink-faint" />
+                <span className="flex-1 text-sm text-ink-muted">{METRIC_META[k].label}</span>
+                {entries && variant === "nominal" ? (
+                  <span className="hidden w-40 sm:block">
+                    <HeightCurve entries={entries} metric={k} current={h} color={SITE_META[focusSite].colorVar} />
+                  </span>
+                ) : null}
+                <span className="tabular w-28 text-right text-sm font-semibold text-ink">
+                  {formatHoursMinutes(metrics[k])}
+                  <span className="block text-[10px] font-normal text-ink-faint">
+                    {h === 0 ? L("referencia 0 m", "0 m reference") : `${d > 0 ? "+" : d < 0 ? "−" : "±"}${formatHoursMinutes(Math.abs(d))} vs 0 m`}
+                  </span>
                 </span>
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-      <p className="mt-3 text-[11px] text-ink-faint">{L("Visibilidad geométrica del centro de Sol y Tierra; no equivale a energía generada ni a enlace de radio.", "Geometric visibility of the Sun and Earth centres; not the same as power generated or a radio link.")}</p>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="text-sm text-ink-faint">{L(`Cargando métricas a ${hTxt} m…`, `Loading metrics at ${hTxt} m…`)}</p>
+      )}
+      <p className="mt-3 text-[11px] text-ink-faint">
+        {variant === "nominal"
+          ? L("Curvas: la misma métrica del motor en las 61 alturas del terreno nominal (0–30 m cada 0,5 m); marcas en 0, 2 y 10 m; punto = altura actual. ", "Curves: the same engine metric at the 61 heights of the nominal terrain (0–30 m every 0.5 m); ticks at 0, 2 and 10 m; dot = current height. ")
+          : null}
+        {L("Visibilidad geométrica del centro de Sol y Tierra; no equivale a energía generada ni a enlace de radio.", "Geometric visibility of the Sun and Earth centres; not the same as power generated or a radio link.")}
+      </p>
     </Panel>
   );
 }
@@ -248,7 +301,10 @@ function HeightStrips({ chunks, clock }: { chunks: ChunkState<ScenarioChunk>[]; 
 
 function EngineerBody({ core }: { core: Core }) {
   const { selection, restored } = useSelection();
-  const [previewH, setPreviewH] = useState<number | null>(null);
+  const [hs, setHs] = useState<EngineerHeightState | null>(null);
+  const onHeightState = useCallback((v: EngineerHeightState) => setHs(v), []);
+  const isPreview = hs?.kind === "preview";
+  const pending = hs !== null && hs.kind !== "preview" && !hs.ready;
   const { windowId, focusSite, heightM, variant } = selection;
   const s0 = useChunk(restored ? () => loadScenarioChunk(core, windowId, 0) : null, [windowId, 0]);
   const s2 = useChunk(restored ? () => loadScenarioChunk(core, windowId, 2) : null, [windowId, 2]);
@@ -263,19 +319,21 @@ function EngineerBody({ core }: { core: Core }) {
   return (
     <>
       <div data-testid="engineer-hero">
-        <TerrainPanel core={core} onPreviewChange={setPreviewH} />
+        <TerrainPanel core={core} onHeightState={onHeightState} />
       </div>
 
-      <ControlBar aside={<Badge tone="neutral">{L("Alturas calculadas: 0 · 2 · 10 m", "Computed heights: 0 · 2 · 10 m")}</Badge>}>
+      <ControlBar aside={<Badge tone="neutral">{L("Calculadas: 0–30 m cada 0,5 m (nominal) · 0, 2 y 10 m (resto)", "Computed: 0–30 m every 0.5 m (nominal) · 0, 2 and 10 m (others)")}</Badge>}>
         <WindowControl core={core} />
         <VariantControl />
       </ControlBar>
 
-      <div className={previewH !== null ? "opacity-55" : undefined} data-testid="engineer-metrics" data-preview={previewH !== null ? "true" : "false"}>
-        {previewH !== null ? (
+      <div className={isPreview || pending ? "opacity-55" : undefined} data-testid="engineer-metrics" data-preview={isPreview ? "true" : "false"} data-pending={pending ? "true" : "false"}>
+        {isPreview ? (
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-warn">{L(`Último análisis calculado · ${selection.heightM} m (la torre en pantalla es una vista previa)`, `Last computed analysis · ${selection.heightM} m (the tower on screen is a preview)`)}</p>
+        ) : pending && hs ? (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-muted">{L(`Actualizando a ${formatNumber(hs.towerH, 1)} m…`, `Updating to ${formatNumber(hs.towerH, 1)} m…`)}</p>
         ) : null}
-        <MetricsAtHeight core={core} />
+        <MetricsAtHeight core={core} hs={isPreview ? null : hs} />
       </div>
 
       <details className="group rounded-2xl border border-line bg-surface/85">
@@ -353,7 +411,7 @@ export function EngineerView() {
       <PageHeader
         eyebrow="Engineer"
         title="Engineer Mode"
-        subtitle={L("¿Cuánto cambia la visibilidad geométrica al elevar el observador 0, 2 o 10 m?", "How much does geometric visibility change when the observer is raised 0, 2 or 10 m?")}
+        subtitle={L("¿Cuánto cambia la visibilidad geométrica al elevar el observador de 0 a 30 m?", "How much does geometric visibility change when the observer is raised from 0 to 30 m?")}
         actions={<ExportButtons page="engineer" />}
       />
       <DataGate>{({ core }) => <EngineerBody core={core} />}</DataGate>

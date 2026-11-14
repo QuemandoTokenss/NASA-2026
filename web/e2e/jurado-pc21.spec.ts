@@ -49,8 +49,8 @@ test.describe("PC-21 · Explore", () => {
   });
 });
 
-test.describe("PC-21 · Engineer: deslizador de 0 a 30 m", () => {
-  test("alturas calculadas frente a vista previa, sin métricas intermedias", async ({ page }) => {
+test.describe("PC-21/22 · Engineer: deslizador de 0 a 30 m", () => {
+  test("en nominal todas las posiciones tienen cálculo; la URL analítica solo guarda 0/2/10", async ({ page }) => {
     const errors = trackErrors(page);
     await page.goto("/engineer/?s=A&w=W2&h=10&v=nominal&t=3200");
     await waitForData(page);
@@ -58,30 +58,31 @@ test.describe("PC-21 · Engineer: deslizador de 0 a 30 m", () => {
     await expect(page.getByTestId("terrain-scene").locator("canvas")).toBeVisible({ timeout: 30_000 });
     await expect(slider).toHaveValue("10");
     await expect(page.getByTestId("terrain-conclusion")).toBeVisible();
-    // 30 m: vista previa, sin conclusiones ni guías dependientes de la altura; la URL sigue en 10 m.
+    // 30 m: resultado propio del paquete de alturas (sin aviso de «sin cálculo»); `h` sigue en 10.
     await slider.fill("30");
-    await expect(page.getByTestId("tower-preview-banner")).toContainText("Vista previa de la torre · sin cálculo de visibilidad a esta altura");
-    await expect(page.getByTestId("terrain-scene")).toHaveAttribute("data-observer-height", "30");
-    await expect(page.getByTestId("terrain-conclusion")).toHaveCount(0);
-    await expect(page.getByTestId("terrain-explain")).toHaveCount(0);
-    await expect(page.getByTestId("last-computed")).toContainText("último análisis CALCULADO, a 10 m");
-    await expect(page.getByTestId("engineer-metrics")).toHaveAttribute("data-preview", "true");
-    await expect(page).toHaveURL(/h=10/);
-    // Vuelta a 2 m: escenario calculado sincronizado.
-    await page.getByTestId("tower-preview-banner").getByRole("button", { name: "Ir a 2 m" }).click();
-    await expect(page).toHaveURL(/h=2/);
+    await expect(page.getByTestId("obstacle-readout")).toHaveAttribute("data-height", "30", { timeout: 20_000 });
     await expect(page.getByTestId("tower-preview-banner")).toHaveCount(0);
-    await expect(page.getByTestId("terrain-scene")).toHaveAttribute("data-observer-height", "2");
+    await expect(page.getByTestId("terrain-scene")).toHaveAttribute("data-observer-height", "30");
     await expect(page.getByTestId("terrain-conclusion")).toBeVisible();
+    await expect(page.getByTestId("terrain-explain")).toContainText("torre de 30 m");
+    await expect(page.getByRole("heading", { name: "Rendimiento geométrico (altura 30 m)" })).toBeVisible();
+    await expect(page).toHaveURL(/h=10/);
+    await expect(page).toHaveURL(/torre=30/);
+    // Acceso rápido a 2 m: escenario original sincronizado.
+    await page.getByRole("radio", { name: "2 m" }).click();
+    await expect(page).toHaveURL(/h=2/);
+    await expect(page).not.toHaveURL(/torre=/);
+    await expect(page.getByTestId("terrain-scene")).toHaveAttribute("data-observer-height", "2");
     await expect(page.getByRole("heading", { name: "Rendimiento geométrico (altura 2 m)" })).toBeVisible();
     // 0 m por el deslizador.
     await slider.fill("0");
     await expect(page).toHaveURL(/h=0/);
     await expect(page.getByTestId("terrain-explain")).toContainText("Desde el suelo");
-    // Una altura intermedia nunca escribe la URL analítica.
+    // 6,5 m: calculado, sin tocar la URL analítica.
     await slider.fill("6.5");
+    await expect(page.getByTestId("obstacle-readout")).toHaveAttribute("data-height", "6.5", { timeout: 20_000 });
     await expect(page).toHaveURL(/h=0/);
-    await expect(page.getByTestId("tower-preview-banner")).toBeVisible();
+    await expect(page).toHaveURL(/torre=6\.5/);
     await noHorizontalOverflow(page);
     expect(errors).toEqual([]);
   });
