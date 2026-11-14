@@ -18,4 +18,15 @@ npm run build
 npm run serve     # http://127.0.0.1:4173, no network needed
 ```
 
-The browser checks every data file against its SHA-256 (requires `localhost`/`127.0.0.1` or https). The prebuilt `web-out/` folder in the team zip can be served the same way: `node web/scripts/serve-static.ts <path>/web-out 4173`. Second-laptop test still pending (issue #5).
+The browser checks every data file against its SHA-256 (requires `localhost`/`127.0.0.1` or https). The prebuilt `web-out/` folder in `SITE_REGRET_paquete_equipo.zip` can be served from the repository root without rebuilding:
+
+```text
+node web/scripts/serve-static.ts <extracted>/web-out 4173
+```
+
+Second-laptop evidence for [issue #5](https://github.com/QuemandoTokenss/NASA-2026/issues/5), recorded 2026-11-14:
+
+- **Human observation, confirmed by Aritz:** on Aritz's Windows laptop, a different laptop from Hugo's, the prebuilt team ZIP export (`web/` commit `3801c17`) was served with the command above at `http://127.0.0.1:4173`. With network connections disabled, the demo loaded in Microsoft Edge, the header displayed the expected package hash `e7c8984b…`, and `/evidencia/` displayed «Verified». The exact browser version was not measured for this human test.
+- **Earlier automated browser test:** external requests were blocked. Its negative case was an unknown route returning HTTP 404. Blocking external requests in browser automation is distinct from Aritz's human observation with network connections disabled.
+
+This is **replay of precalculated results** from the package, not a rerun of the scientific engine. The human observation is recorded as reported by Aritz; these documentation edits do not rerun either check. See [VALIDATION.md](VALIDATION.md) for the evidence and limits.
