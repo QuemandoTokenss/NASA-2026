@@ -25,7 +25,8 @@ export function trackErrors(page: Page) {
 }
 
 export async function waitForData(page: Page) {
-  await expect(page.getByText("Cargando y verificando el paquete científico…")).toHaveCount(0);
+  // 30 s: con dos procesos y WebGL por software la verificación SHA-256 del paquete llega a superar los 15 s por defecto.
+  await expect(page.getByText("Cargando y verificando el paquete científico…")).toHaveCount(0, { timeout: 30_000 });
   await expect(page.locator("main [role=alert]")).toHaveCount(0);
 }
 
