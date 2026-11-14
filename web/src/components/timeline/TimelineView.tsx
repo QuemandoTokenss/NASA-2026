@@ -17,7 +17,7 @@ import { ChunkGate, DataGate } from "../data/DataGate";
 import { ControlBar } from "../data/ControlBar";
 import { ExportButtons } from "../data/ExportButtons";
 import { FocusSiteControl, HeightControl, VariantControl, WindowControl } from "../data/SelectionControls";
-import { SiteThumb } from "../explore/SiteThumb";
+import { GeoMap } from "../maps/GeoMap";
 import { Badge, Callout, Legend, NatureBadge, SiteDot, StateLegend } from "../ui/Display";
 import { Icon } from "../ui/Icon";
 import { Button, InfoTip } from "../ui/Interactive";
@@ -43,7 +43,15 @@ function SiteSidebar({ core, horizon }: { core: Core; horizon: HorizonChunk | nu
         <p className="tabular text-center text-sm text-ink-muted">
           {formatLatitude(site.latitude_deg)}, {formatLongitudeEast(site.longitude_east_deg)}
         </p>
-        <SiteThumb site={site} size={200} scale={1.3} />
+        <figure className="flex flex-col gap-1.5" data-testid="timeline-site-map">
+          <GeoMap sites={core.sites} focusSite={id} compact compactHeightClass="h-[220px] sm:h-[260px]" followFocus showCredit reliefFallback />
+          <figcaption className="text-[10px] leading-snug text-ink-faint">
+            {L(
+              "Con conexión: mosaico orbital real de NASA Moon Trek (LRO/LROC NAC); sus sombras son las de cada adquisición, no las del instante del reproductor. Sin conexión: relieve derivado del DEM, rotulado en el mapa. Marcador grande: sitio activo; el otro, de referencia.",
+              "Online: real orbital mosaic from NASA Moon Trek (LRO/LROC NAC); its shadows are those of each acquisition, not of the player instant. Offline: relief derived from the DEM, labelled on the map. Large marker: active site; the other one for reference.",
+            )}
+          </figcaption>
+        </figure>
         <Button icon="swap" onClick={() => dispatch({ type: "setFocusSite", value: id === "A" ? "B" : "A" })}>
           {L("Cambiar a sitio", "Switch to site")} {id === "A" ? "B" : "A"}
         </Button>

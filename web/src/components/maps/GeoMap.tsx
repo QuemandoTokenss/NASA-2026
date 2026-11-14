@@ -123,6 +123,10 @@ export function GeoMap({
   footprint,
   compact = false,
   initialBasemap = "nac",
+  compactHeightClass = "h-[300px]",
+  followFocus = false,
+  showCredit = false,
+  reliefFallback = false,
 }: {
   sites: Site[];
   focusSite: SiteId;
@@ -132,6 +136,14 @@ export function GeoMap({
   footprint?: { rings: XY[][]; label: string } | null;
   compact?: boolean;
   initialBasemap?: BasemapId;
+  /** Solo modo compacto: altura del mapa. */
+  compactHeightClass?: string;
+  /** Solo modo compacto: centra el sitio activo (y lo sigue al cambiar) con el otro sitio dentro del encuadre. */
+  followFocus?: boolean;
+  /** Solo modo compacto: crédito y estado de la capa visibles sobre el mapa. */
+  showCredit?: boolean;
+  /** Solo modo compacto: si las teselas fallan, usa el relieve del DEM rotulado como derivado. */
+  reliefFallback?: boolean;
 }) {
   const targetRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
@@ -217,6 +229,24 @@ export function GeoMap({
   }, []);
 
   useEffect(() => ensureLayer("elevation"), [ensureLayer]);
+
+  useEffect(() => {
+    if (!compact || !followFocus) return;
+    const map = mapRef.current;
+    const el = targetRef.current;
+    const st = sites.find((x) => x.id === focusSite);
+    const other = sites.find((x) => x.id !== focusSite);
+    if (!map || !el || !st) return;
+    const span = other ? Math.hypot(other.x_m - st.x_m, other.y_m - st.y_m) : 300;
+    // Ancho útil sin la columna de botones de zoom (≈ 56 px).
+    const px = Math.max(140, Math.min((el.clientWidth || 300) - 56, el.clientHeight || 300));
+    // Activo cerca del centro (desplazado un 25 % hacia el otro) y el otro dentro del encuadre con margen;
+    // nunca por debajo del detalle servido (~2 m/px).
+    const resolution = Math.max(2.2, (2.6 * span) / px);
+    const cx = other ? st.x_m + 0.25 * (other.x_m - st.x_m) : st.x_m;
+    const cy = other ? st.y_m + 0.25 * (other.y_m - st.y_m) : st.y_m;
+    map.getView().animate({ center: [cx + 28 * resolution, cy], resolution, duration: 250 });
+  }, [compact, followFocus, focusSite, sites]);
 
   /* ------------------------- fondo: teselas o relieve ------------------------ */
   const elevation = grids.elevation;
@@ -441,6 +471,17 @@ export function GeoMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayKey, compact]);
 
+  const tileFailed = (basemap === "nac" || basemap === "wac") && tiles.key === basemap && (tiles.status === "unavailable" || tiles.status === "invalid");
+  const [fellBack, setFellBack] = useState(false);
+  useEffect(() => {
+    if (!compact || !reliefFallback || !tileFailed) return;
+    const t = setTimeout(() => {
+      setFellBack(true);
+      setBasemap("relief");
+    }, 0);
+    return () => clearTimeout(t);
+  }, [compact, reliefFallback, tileFailed]);
+
   /* ------------------------------- acciones ------------------------------- */
   const zoomBy = (f: number) => {
     const v = mapRef.current?.getView();
@@ -523,7 +564,7 @@ export function GeoMap({
           "Mapa georreferenciado de Connecting Ridge. Con el foco en el mapa: flechas para desplazar, + y − para ampliar. Usa «Leer el centro» para inspeccionar sin ratón.",
           "Georeferenced map of Connecting Ridge. With focus on the map: arrow keys to pan, + and − to zoom. Use “Read the centre” to inspect without a mouse.",
         )}
-        className={`geomap w-full overflow-hidden rounded-xl border border-line-strong bg-[#03060d] ${compact ? "h-[300px]" : "h-[440px] sm:h-[560px]"} ${tool === "measure" ? "cursor-crosshair" : ""}`}
+        className={`geomap w-full overflow-hidden rounded-xl border border-line-strong bg-[#03060d] ${compact ? compactHeightClass : "h-[440px] sm:h-[560px]"} ${tool === "measure" ? "cursor-crosshair" : ""}`}
       />
       <div aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 size-4 -translate-x-1/2 -translate-y-1/2 opacity-70">
         <span className="absolute top-1/2 left-0 h-px w-full bg-white" />
@@ -536,7 +577,7 @@ export function GeoMap({
       </div>
       <div className="pointer-events-none absolute bottom-3 left-3 rounded-lg border border-line-strong bg-[#08101ee6] px-2.5 py-1.5 text-[11px] text-ink-muted">
         <div ref={scaleRef} className="geomap-scale" />
-        <span className="tabular">≈ {formatNumber(view.resolution, 2)} {L("m por píxel de pantalla", "m per screen pixel")}</span>
+        {compact && showCredit ? null : <span className="tabular">≈ {formatNumber(view.resolution, 2)} {L("m por píxel de pantalla", "m per screen pixel")}</span>}
       </div>
       {hover && !compact ? (
         <div className="pointer-events-none absolute right-3 bottom-3 hidden rounded-lg border border-line-strong bg-[#08101ee6] px-2.5 py-1.5 font-mono text-[11px] text-ink-muted sm:block">{fmtXY(hover)}</div>
@@ -544,13 +585,31 @@ export function GeoMap({
     </div>
   );
 
-  if (compact)
+  if (compact) {
+    const status: string = fellBack ? "relief-fallback" : tileState ?? (basemap === "relief" ? "relief" : "none");
     return (
-      <div data-testid="geomap" data-basemap={basemap} className="flex flex-col gap-2">
-        {mapBox}
+      <div data-testid="geomap" data-basemap={basemap} data-basemap-status={status} data-focus-site={focusSite} className="flex flex-col gap-2">
+        <div className="relative">
+          {mapBox}
+          {showCredit ? (
+            <div className="pointer-events-none absolute top-2 left-2 flex max-w-[75%] flex-col items-start gap-1" data-testid="geomap-credit" aria-live="polite">
+              <span className="rounded-md border border-line-strong bg-[#08101ee6] px-2 py-0.5 text-[10px] font-semibold text-ink">
+                {basemap === "relief" ? L("Relieve derivado del DEM PGDA78 · luz sintética", "Shaded relief derived from the PGDA78 DEM · synthetic light") : "NASA Moon Trek · LRO/LROC NAC"}
+              </span>
+              {fellBack ? (
+                <span className="rounded-md border border-warn/50 bg-[#08101ee6] px-2 py-0.5 text-[10px] text-warn">{L("Imagen orbital no disponible (sin conexión)", "Orbital image unavailable (offline)")}</span>
+              ) : tileState === "loading" ? (
+                <span className="rounded-md bg-[#08101ee6] px-2 py-0.5 text-[10px] text-ink-faint">{L("Cargando teselas…", "Loading tiles…")}</span>
+              ) : tileState === "unavailable" || tileState === "invalid" ? (
+                <span className="rounded-md border border-warn/50 bg-[#08101ee6] px-2 py-0.5 text-[10px] text-warn">{L("Imagen orbital no disponible", "Orbital image unavailable")}</span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
         {terrainError ? <Callout tone="danger">{terrainError}</Callout> : null}
       </div>
     );
+  }
 
   return (
     <div

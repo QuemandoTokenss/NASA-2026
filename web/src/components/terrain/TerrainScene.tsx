@@ -8,11 +8,14 @@ import type { Vec3 } from "@/lib/geospatial/lunar";
 import type { TerrainMesh } from "@/lib/geospatial/mesh";
 import { L } from "@/lib/i18n";
 import { Callout } from "../ui/Display";
+import { azimuthDir, groundCompass, latticeTower, strut, textSprite } from "./sceneParts";
 
 export interface SceneDirection {
   /** [este, norte, arriba] unitario. */
   enu: Vec3;
   color: string;
+  /** Etiqueta corta («Sol», «Tierra»). */
+  label?: string;
 }
 
 export interface SceneSightLine {
@@ -20,9 +23,16 @@ export interface SceneSightLine {
   end: Vec3;
   /** `true` si el extremo es el obstáculo; `false` si solo indica la dirección (obstáculo fuera del recorte). */
   reachesObstacle: boolean;
+  /** Etiqueta del extremo («Relieve que limita la vista», «Fin del recorte 3D»…). */
+  endLabel?: string;
 }
 
-export type ViewPreset = "overview" | "near" | "behind";
+export type ViewPreset = "tower" | "overview" | "near" | "behind";
+
+export interface SceneLabels {
+  observer: string;
+  sight: string;
+}
 
 const toScene = (v: Vec3) => new THREE.Vector3(v[0], v[2], -v[1]);
 
@@ -41,6 +51,8 @@ export function TerrainScene({
   preset,
   lightEnu,
   label,
+  azimuthDeg = null,
+  labels,
 }: {
   mesh: TerrainMesh;
   observerHeightM: number;
@@ -52,6 +64,9 @@ export function TerrainScene({
   /** Dirección de la luz de la escena [este, norte, arriba]; solo estética. */
   lightEnu: Vec3 | null;
   label: string;
+  /** Azimut consultado (°), para la brújula y la cuña de orientación. */
+  azimuthDeg?: number | null;
+  labels?: SceneLabels;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const three = useRef<{
@@ -93,7 +108,7 @@ export function TerrainScene({
     host.appendChild(renderer.domElement);
     renderer.domElement.style.display = "block";
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, 1, 1, 60000);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.2, 60000);
     const world = new THREE.Group();
     const dynamic = new THREE.Group();
     world.add(dynamic);
@@ -157,55 +172,106 @@ export function TerrainScene({
       });
     }
     const eye = new THREE.Vector3(0, observerHeightM, 0);
+    const wide = preset.view === "overview";
+    // Escala de los elementos gráficos según el encuadre (cerca de la torre o vista amplia).
+    const near = Math.max(6, observerHeightM * 1.6 + 4);
     // Marcador del sitio (anillo plano, no es una estructura real).
-    const ring = new THREE.Mesh(new THREE.RingGeometry(14, 17, 48), new THREE.MeshBasicMaterial({ color: siteColor, side: THREE.DoubleSide, transparent: true, opacity: 0.9 }));
+    const ringR = wide ? 15 : Math.max(1.2, near * 0.18);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(ringR * 0.82, ringR, 48), new THREE.MeshBasicMaterial({ color: siteColor, side: THREE.DoubleSide, transparent: true, opacity: 0.9 }));
     ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.4;
+    ring.position.y = 0.12;
     g.add(ring);
-    // Mástil a su altura real (0, 2 o 10 m) y punto del observador.
-    if (observerHeightM > 0) {
-      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, observerHeightM, 12), new THREE.MeshBasicMaterial({ color: 0xe8eef8 }));
-      mast.position.y = observerHeightM / 2;
-      g.add(mast);
-    }
-    const head = new THREE.Mesh(new THREE.SphereGeometry(1.4, 20, 12), new THREE.MeshBasicMaterial({ color: siteColor }));
+    // Torre ilustrativa en celosía: el remate está a la altura REAL del observador.
+    g.add(latticeTower(observerHeightM, 0xdfe7f3));
+    const headR = wide ? 3 : Math.max(0.22, observerHeightM * 0.045);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(headR, 20, 12), new THREE.MeshBasicMaterial({ color: siteColor }));
     head.position.copy(eye);
     g.add(head);
+    if (observerHeightM <= 0) {
+      // A 0 m: observador a ras del suelo (pin vertical corto, sin estructura).
+      const pin = strut(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, near * 0.22, 0), 0.04, 0.04, new THREE.MeshBasicMaterial({ color: siteColor }));
+      g.add(pin);
+    }
+    if (labels) {
+      const obs = textSprite(labels.observer, siteColor);
+      obs.position.copy(eye).add(new THREE.Vector3(0, wide ? 30 : Math.max(0.6, near * 0.12), 0));
+      g.add(obs);
+    }
+    // Brújula en el suelo con la cuña hasta el azimut consultado.
+    g.add(groundCompass(wide ? 160 : near * 1.35, azimuthDeg, 0.25));
     for (const d of directions) {
-      const arrow = new THREE.ArrowHelper(toScene(d.enu).normalize(), eye, 420, new THREE.Color(d.color), 36, 14);
+      const len = wide ? 420 : near * 2.6;
+      const dir = toScene(d.enu).normalize();
+      const arrow = new THREE.ArrowHelper(dir, eye, len, new THREE.Color(d.color), len * 0.09, len * 0.035);
       g.add(arrow);
+      if (d.label) {
+        const tag = textSprite(d.label, d.color, 22);
+        tag.position.copy(eye).add(dir.clone().multiplyScalar(len * 1.04));
+        g.add(tag);
+      }
     }
     if (sightLine) {
       const end = toScene(sightLine.end);
-      const material = sightLine.reachesObstacle ? new THREE.LineBasicMaterial({ color: 0xa78bfa }) : new THREE.LineDashedMaterial({ color: 0xa78bfa, dashSize: 40, gapSize: 28 });
-      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([eye, end]), material);
-      line.computeLineDistances();
-      g.add(line);
-      if (sightLine.reachesObstacle) {
-        const mark = new THREE.Mesh(new THREE.SphereGeometry(Math.max(3, eye.distanceTo(end) * 0.012), 20, 12), new THREE.MeshBasicMaterial({ color: 0xa78bfa }));
-        mark.position.copy(end);
-        g.add(mark);
+      const len = eye.distanceTo(end);
+      const violet = new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.95 });
+      const r0 = wide ? 1.2 : Math.max(0.05, observerHeightM * 0.012 + 0.04);
+      const r1 = Math.max(r0, len * 0.0028);
+      if (sightLine.reachesObstacle) g.add(strut(eye, end, r0, r1, violet));
+      else {
+        // Discontinua: solo indica la dirección hasta el borde del recorte 3D.
+        const segs = 16;
+        for (let k = 0; k < segs; k++) {
+          const a = eye.clone().lerp(end, k / segs);
+          const b = eye.clone().lerp(end, (k + 0.55) / segs);
+          g.add(strut(a, b, r0 + (r1 - r0) * (k / segs), r0 + (r1 - r0) * ((k + 0.55) / segs), violet));
+        }
+      }
+      const markR = wide ? Math.max(3, len * 0.012) : Math.max(0.12, Math.min(len * 0.01, near * 0.1));
+      const mark = new THREE.Mesh(new THREE.SphereGeometry(markR, 20, 12), new THREE.MeshBasicMaterial({ color: sightLine.reachesObstacle ? 0xa78bfa : 0xe8eef8 }));
+      mark.position.copy(end);
+      g.add(mark);
+      if (labels) {
+        const along = eye.clone().lerp(end, Math.min(0.5, (wide ? 0.3 : (near * 2.2) / Math.max(1, len))));
+        const sight = textSprite(labels.sight, "#a78bfa", 22);
+        sight.position.copy(along).add(new THREE.Vector3(0, wide ? 20 : near * 0.08, 0));
+        g.add(sight);
+      }
+      if (sightLine.endLabel) {
+        const endTag = textSprite(sightLine.endLabel, sightLine.reachesObstacle ? "#a78bfa" : "#e8eef8");
+        endTag.position.copy(end).add(new THREE.Vector3(0, wide ? Math.max(6, len * 0.02) : markR * 1.6, 0));
+        g.add(endTag);
       }
     }
     t.world.scale.set(1, exaggeration, 1);
     const l = lightEnu ?? [-0.5, 0.5, 0.7];
     t.light.position.copy(toScene(l as Vec3).normalize().multiplyScalar(1000));
     t.render();
-  }, [mesh, colors, observerHeightM, siteColor, directions, sightLine, exaggeration, lightEnu]);
+  }, [mesh, colors, observerHeightM, siteColor, directions, sightLine, exaggeration, lightEnu, azimuthDeg, labels, preset.view]);
 
   /* --------------------------------- cámara --------------------------------- */
   useEffect(() => {
     const t = three.current;
     if (!t) return;
-    const target = new THREE.Vector3(0, observerHeightM * exaggeration, 0);
+    let target = new THREE.Vector3(0, observerHeightM * exaggeration, 0);
     let pos: THREE.Vector3;
-    if (preset.view === "near") pos = new THREE.Vector3(-70, 28 + observerHeightM, 95);
+    if (preset.view === "tower") {
+      // Oblicua, detrás y a un lado de la torre, mirando en la dirección de la visual:
+      // se ven la estructura, su remate y el arranque del rayo.
+      const h = observerHeightM * exaggeration;
+      // En pantallas estrechas (móvil) la cámara se aleja para que quepan torre y visual.
+      const d = Math.max(7, observerHeightM * 1.9 + 6) * (t.camera.aspect < 0.9 ? 1.7 : 1);
+      const look = sightLine ? toScene(sightLine.end).setY(0).normalize() : azimuthDeg !== null ? azimuthDir(azimuthDeg) : new THREE.Vector3(0, 0, -1);
+      const side = new THREE.Vector3(-look.z, 0, look.x);
+      pos = look.clone().multiplyScalar(-d * 0.85).add(side.multiplyScalar(d * 0.6)).setY(h * 0.75 + d * 0.32 + 1.2);
+      target = new THREE.Vector3(0, h * 0.55 + 0.4, 0).add(look.clone().multiplyScalar(d * 0.35));
+    } else if (preset.view === "near") pos = new THREE.Vector3(-70, 28 + observerHeightM, 95);
     else if (preset.view === "behind" && sightLine) {
       // Detrás del observador, mirando hacia el extremo de la visual.
       const dir = toScene(sightLine.end).setY(0).normalize();
       pos = new THREE.Vector3(-dir.x * 260, 110, -dir.z * 260);
     } else pos = new THREE.Vector3(-1300, 1150, 1600);
     t.camera.position.copy(pos);
+    t.controls.minDistance = preset.view === "tower" ? 2 : 15;
     t.controls.target.copy(target);
     t.controls.update();
     t.render();
@@ -219,5 +285,5 @@ export function TerrainScene({
         {L("Este navegador no ha podido iniciar WebGL. Los datos del obstáculo y el mapa siguen disponibles; no se muestra ninguna imagen de sustitución.", "This browser could not start WebGL. The obstacle data and the map remain available; no substitute image is shown.")}
       </Callout>
     );
-  return <div ref={hostRef} role="img" aria-label={label} data-testid="terrain-scene" className="h-[420px] w-full overflow-hidden rounded-xl border border-line-strong bg-[#03060d] sm:h-[520px]" />;
+  return <div ref={hostRef} role="img" aria-label={label} data-testid="terrain-scene" data-observer-height={observerHeightM} data-view={preset.view} className="h-[420px] w-full overflow-hidden rounded-xl border border-line-strong bg-[#03060d] sm:h-[520px]" />;
 }

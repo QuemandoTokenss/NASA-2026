@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-18 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E en PR #19; demo interactiva de /historia/ en la rama local `feat/historia-demo-interactiva`, pendiente de ensayo del equipo; bloque F pendiente)**
+**Punto de control:** PC-19 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E en PR #19; demo de /historia/ en `feat/historia-demo-interactiva` (`4fe3247`); iteración visual de Timeline/Engineer en la rama local `feat/timeline-engineer-visual`, encima de la anterior; todo pendiente de revisión del equipo; bloque F pendiente)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -78,6 +78,17 @@ Hecho:
 - El panel 3D del DEM pasa a ser la vista principal (primera fila, ancho completo) con el selector de altura 0/2/10 m y «Rendimiento geométrico» a su lado: cambiar la altura actualiza a la vez el mástil, el obstáculo y las métricas del escenario.
 - Con un clon publicado la malla 3D es el recorte de ESE clon (verificado con SHA-256) y el origen vertical es la altura de suelo del clon del paquete; con hipótesis propias se dibuja el nominal con aviso explícito. `data-mesh-surface` en el panel.
 - `MastScene` sigue plegado y rotulado como ilustración.
+
+## 4 sexies. Iteración visual de Timeline y Engineer (PC-19, rama `feat/timeline-engineer-visual`)
+
+Rama local creada desde `feat/historia-demo-interactiva` (`4fe3247`). **Sin push, PR, merge ni despliegue.**
+
+- **Timeline** (`timeline/TimelineView.tsx`): la ficha del sitio sustituye `SiteThumb` por el `GeoMap` compacto con teselas reales NASA Moon Trek (LRO/LROC NAC). Encuadra el sitio activo (marcador grande) con el otro de referencia y lo sigue al alternar A ↔ B; nombre, coordenadas y datos cambian; ventana, altura, superficie e instante se conservan. Crédito visible «NASA Moon Trek · LRO/LROC NAC» y pie que recuerda que las sombras son de la adquisición. Sin conexión: relieve del DEM rotulado «Relieve derivado del DEM PGDA78 · luz sintética» + «Imagen orbital no disponible».
+- **GeoMap** (`maps/GeoMap.tsx`): opciones nuevas SOLO para el modo compacto y desactivadas por defecto (`compactHeightClass`, `followFocus`, `showCredit`, `reliefFallback`); con `showCredit` se oculta la línea «m por píxel». Dashboard, Comparador, Historia y Engineer usan el compacto sin estas opciones: sin cambios.
+- **Engineer** (`terrain/TerrainScene.tsx`, `terrain/sceneParts.ts`, `terrain/CompassBadge.tsx`, `terrain/TerrainPanel.tsx`): torre de vigilancia en celosía (patas, anillos, diagonales cruzadas, plataforma y barandilla) cuyo remate está a la altura REAL del observador (0/2/10 m); a 0 m, observador a ras del suelo. Encuadre inicial «Torre y visual» (cámara oblicua cercana que sigue la dirección de mirada y se aleja en pantallas estrechas); «Vista amplia del recorte» y «Mirar hacia el relieve» siguen disponibles. Brújula en el suelo (N, cardinales, arco hasta el azimut) y brújula 2D superpuesta (norte local arriba, θ, Sol y Tierra si el paquete trae direcciones). Visual gruesa desde el remate hasta el relieve que fija el horizonte; si cae fuera del recorte, discontinua hasta el BORDE REAL del recorte con la etiqueta «Fin del recorte 3D · relieve a X km». Etiquetas: «Observador · h», «Dirección de mirada · θ», «Relieve que limita la vista · d», «Sol», «Tierra». Frase explicativa encima de la escena y de la tabla técnica (estado visible/oculto del motor). La torre es ilustrativa (rotulado); el sombreado gráfico no es el cálculo.
+- **Pruebas PC-19**: tsc y lint limpios; Vitest 119/119; build PASS; `e2e/timeline-engineer-visual.spec.ts` 4/4; Playwright completo con 2 procesos: 79 PASS, 2 FAIL (Comparador «24 combinaciones» y «exportación JSON», por tiempo), 1 omitida; esos 5 de Comparador con 1 proceso: 5/5 PASS.
+- **Capturas** (build estático, red real a Moon Trek; Edge headless con WebGL por software): `web/docs/capturas/pc19/` — `timeline-{1440x900,1280x720,375x812}.png`, `timeline-B-1440x900.png`, `timeline-sitecard-{A,B}-1440x900.png`, `timeline-offline-1440x900.png`, `engineer-10m-{1440x900,1280x720,375x812}.png`, `engineer-2m-1440x900.png`, `engineer-0m-1440x900.png`, `engineer-manual-60deg-2m-1440x900.png`, `engineer-manual-300deg-10m-1440x900.png`.
+- **Pendiente / observado**: a 1280 px la cabecera común solapa «Evidencia» con «Presentar» (AppShell, previo a esta iteración, no tocado); a veces la etiqueta «Sol» se superpone a «Dirección de mirada» cuando ambos azimuts coinciden; revisión humana en proyector.
 
 ## 4 quinquies. Demo interactiva de /historia/ (PC-18, rama `feat/historia-demo-interactiva`)
 
