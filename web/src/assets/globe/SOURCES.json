@@ -1,0 +1,79 @@
+{
+  "description": "Activos del globo lunar del Dashboard. Solo presentación: la textura es apariencia y los relieves sombreados usan luz sintética; ninguna decisión ni métrica sale de aquí.",
+  "generator": "web/scripts/imagery/make_globe_assets.py",
+  "projection": "Detalle polar: estereográfica polar sur lunar, esfera R = 1737400 m, lat0 = −90°, lon0 = 0°, X hacia 90° E, Y hacia 0° (misma que el mapa de la app).",
+  "assets": [
+    {
+      "file": "moon-lroc-color-2k.webp",
+      "also": "moon-lroc-color-1k.webp",
+      "sha256": "fa2f31eb684709c74f9d864808a67754593d7219d4ad536e803bac7cdb52667e",
+      "source": {
+        "title": "CGI Moon Kit · LROC color map (2k JPEG)",
+        "page": "https://svs.gsfc.nasa.gov/4720/",
+        "url": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg",
+        "sha256": "f7130a1822681fa7512d7dcfd40db8c10b9ba4f06777910348698260ed7a2170"
+      },
+      "credit": "NASA's Scientific Visualization Studio · LROC WAC (Arizona State University)",
+      "georeferencing": "Equirectangular: columna 0 = longitud −180°, centro = 0° (cara visible), fila 0 = +90°. Orientación comprobada con Tycho, Mare Crisium, Mare Imbrium, Mare Orientale y Tsiolkovskiy.",
+      "processing": "Recodificación a WebP (2048×1024 y 1024×512), sin reproyectar. El proveedor indica que el mapa está optimizado para estética, no para ciencia."
+    },
+    {
+      "file": "pole-lola240-cap.webp",
+      "sha256": "55a6efca3e78a1237c34d562da3658665bb7d7a9b73ae77f009d4edb60cb68e6",
+      "level": 1,
+      "bounds_xy_m": [
+        -480000.0,
+        -480000.0,
+        480000.0,
+        480000.0
+      ],
+      "pixel_size_m": 960.0,
+      "source": {
+        "title": "LOLA south-pole DEM 240 m/px (PGDA product 90) · LDEM_60S_240MPP_ADJ.TIF",
+        "page": "https://pgda.gsfc.nasa.gov/products/90",
+        "sha256": "3f9663257b63022f2b0d5a623482ff3cadddceb91594a4e4ca14a94d8cec8b34"
+      },
+      "credit": "NASA GSFC · LOLA / PGDA (Barker et al.)",
+      "processing": "Ventana exacta ±480 km, media de bloques 4×4 (960 m/px), relieve sombreado con luz sintética (acimut 315°, altura 38°, exageración ×3 solo del sombreado), alfa con borde difuminado."
+    },
+    {
+      "file": "pole-lola80-ridge.webp",
+      "sha256": "cb101cd7eae5d0778f8f56feedaf7b59ec1b25fdd16fbf45f964cb438f566ee9",
+      "level": 2,
+      "bounds_xy_m": [
+        -51040.0,
+        -51920.0,
+        28960.0,
+        28080.0
+      ],
+      "pixel_size_m": 80.0,
+      "source": {
+        "title": "LOLA south-pole DEM 80 m/px (PGDA product 90) · LDEM_80S_80MPP_ADJ.TIF",
+        "page": "https://pgda.gsfc.nasa.gov/products/90",
+        "sha256": "82030dcbdd7c4bb0c7d858e9b4b293b9f2cda5a543ba31ec0f42784bd6beee5a"
+      },
+      "credit": "NASA GSFC · LOLA / PGDA (Barker et al.)",
+      "processing": "Ventana exacta de 80 × 80 km a resolución nativa, relieve sombreado con luz sintética (acimut 315°, altura 38°, exageración ×2 solo del sombreado), alfa con borde difuminado."
+    },
+    {
+      "file": "pole-pgda78-site01.webp",
+      "sha256": "4cc90ddff96cb6f3646284f174bf31b1ba73787d272c1d604ad80d8938ec6ba7",
+      "level": 3,
+      "bounds_xy_m": [
+        -13000,
+        -14000,
+        -9000,
+        -10000
+      ],
+      "pixel_size_m": 5,
+      "source": {
+        "title": "LOLA 5 m/px DEM, Site01 Connecting Ridge (PGDA product 78) · recorte versionado web/data/derived/terrain/elevation.f32",
+        "page": "https://pgda.gsfc.nasa.gov/products/78",
+        "sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e",
+        "derived_sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65"
+      },
+      "credit": "NASA GSFC · LOLA / PGDA (Barker et al. 2021)",
+      "processing": "Relieve sombreado con luz sintética (acimut 315°, altura 38°, exageración ×1,5 solo del sombreado) de las 800 × 800 muestras del recorte, alfa con borde difuminado."
+    }
+  ]
+}
