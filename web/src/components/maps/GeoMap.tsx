@@ -34,8 +34,8 @@ import { Icon } from "../ui/Icon";
 import { ProfileChart } from "./ProfileChart";
 
 /** Estereográfica polar sur lunar en metros (R = 1 737 400 m). No es un CRS terrestre. */
-const PROJECTION = new Projection({ code: "SITE_REGRET:MOON_SOUTH_POLAR_STEREOGRAPHIC", units: "m", extent: [-1095930, -1095930, 1095930, 1095930] });
-const SITE_HEX: Record<SiteId, string> = { A: "#ff8a1f", B: "#22d3ee" };
+export const PROJECTION = new Projection({ code: "SITE_REGRET:MOON_SOUTH_POLAR_STEREOGRAPHIC", units: "m", extent: [-1095930, -1095930, 1095930, 1095930] });
+export const SITE_HEX: Record<SiteId, string> = { A: "#ff8a1f", B: "#22d3ee" };
 const UNCERTAINTY_HEX = "#a78bfa";
 
 export type BasemapId = "nac" | "wac" | "relief" | "none";
@@ -55,7 +55,7 @@ export interface GeoMapOverlay {
   label?: string;
 }
 
-function rgbaToUrl(rgba: Uint8ClampedArray<ArrayBuffer>, w: number, h: number): string {
+export function rgbaToUrl(rgba: Uint8ClampedArray<ArrayBuffer>, w: number, h: number): string {
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;

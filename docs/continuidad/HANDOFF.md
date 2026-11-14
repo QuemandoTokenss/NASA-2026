@@ -1,147 +1,127 @@
-# HANDOFF · SITE REGRET · capa geoespacial real
+# HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-11 · 2026-11-14 13:00 (+01:00, Europe/Madrid) · **Estado: LISTO_PARA_RELEVO**
+**Punto de control:** PC-13 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloque A · Regret Lab terminado; siguiente: bloque B · Timeline orbital)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
 
 | | |
 |---|---|
-| Directorio de trabajo (raíz Git) | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` |
+| Directorio de trabajo (raíz Git) | `C:\Users\Hugo\Projects\NASA-2026` (clon del equipo; antes estaba 29 commits por detrás y se avanzó con `merge --ff-only origin/main`, sin pérdidas) |
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
-| Rama | `feat/geo-real-terrain` — subida a GitHub el 2026-11-14 (PC-07); sin PR ni despliegue |
-| HEAD | remoto `ae18165` o posterior (subido en PC-12, 2026-11-14). Local y remoto al dia: comprobar con `git status -sb` y `git log -3`. Base `main` = `987899d` |
-| Worktree | único (no hay worktrees separados) |
-| Otra copia que NO es la activa | `…\NASA-SpaceApps-2026\site-regret\` (copia antigua previa al repo del equipo; no editar) |
+| Rama | `feat/mission-control-v2`, creada desde `main` = `6e41690` («Merge #18: integrate real lunar terrain and geospatial layers») |
+| HEAD | ver `git log -1` (commit local de PC-13). **Sin push, sin PR, sin despliegue** |
+| Otra copia | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` (rama `feat/geo-real-terrain`, `47844ba`, ya fusionada en `main` por el PR #18). No se ha tocado; sus originales NASA de `web/data/raw/` se COPIARON a esta carpeta |
 
-Quien retome en otro equipo: clonar el repo y hacer `git switch feat/geo-real-terrain`. En `main` no hay nada de lo descrito aquí.
+**Reconciliación de documentos antiguos:** el HANDOFF anterior (PC-11/12) decía que `feat/geo-real-terrain` no estaba fusionada. Ya lo está: `main` contiene el PR #18 (`6e41690`). En `main` SÍ está la capa geoespacial (G0–G10). `01_REANUDAR_IMPLEMENTACION.md` es histórico (relevo Hugo → Asier) y sus referencias de rama/HEAD están superadas.
 
 ## 2. Encargo y decisiones que se conservan
 
-Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.md`. Decisiones:
+Encargo vigente: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md) §A.5 («Mission Control v2»: transformar Regret Lab, Timeline, Comparador, Engineer, Dashboard, Evidence e Historia). Reglas: `AGENTS.md`. Decisiones:
 
-- La web solo LEE el paquete precalculado `site-regret/0.1`; no se recalcula visibilidad en el navegador. `web/data/source/` no se toca.
-- Geometría lunar transcrita del motor (`web/data/source/DERIVADOS_SITE_REGRET/motor/pipeline.py`) en `web/src/lib/geospatial/lunar.ts`: esfera R = 1 737 400 m, estereográfica polar sur, marco MOON_ME_DE421. Nada terrestre.
-- Originales NASA en `web/data/raw/` (ignorado por Git). Derivados ligeros versionados en `web/data/derived/terrain/` (recorte exacto, sin remuestrear) con manifiesto y SHA-256.
-- Teselas de Moon Trek: se leen de GetCapabilities; el CRS declarado `EPSG::0` es ambiguo y nunca se trata como terrestre. Si el servicio falla, NO hay imagen de sustitución.
-- Con superficies no nominales no se muestran direcciones Sol/Tierra (el paquete solo las trae para la nominal).
+- La web solo LEE el paquete precalculado `site-regret/0.1`; no se recalcula visibilidad ni métricas en el navegador. `web/data/source/` no se toca.
+- Geometría lunar del motor en `web/src/lib/geospatial/lunar.ts`: esfera R = 1 737 400 m, estereográfica polar sur, MOON_ME_DE421. Nada terrestre.
+- Originales NASA en `web/data/raw/` (ignorado por Git). Derivados versionados en `web/data/derived/terrain/` con manifiesto y SHA-256.
+- Con superficies no nominales no hay direcciones Sol/Tierra (el paquete solo las trae para la nominal). Nunca combinar efemérides nominales con horizontes de variantes.
+- **Nuevo (PC-13):** la diferencia clon − nominal se calcula píxel a píxel en float32 con `src/lib/geospatial/difference.ts`, la misma función en Node (manifiesto) y en el navegador (mapa). Es una descripción del terreno, no una atribución causal de la inversión.
+- **Nuevo (PC-13):** las 4 hipótesis propias (`bias_*`, `correlated_*`) NO se reconstruyen en la web (PCG64 + filtro gaussiano del motor). Solo se muestran sus horizontes.
 - Texto de interfaz bilingüe: `L("es", "en")`.
 
-## 3. Estado por tareas (requisitos del encargo)
+## 3. Estado por bloques del encargo vigente
 
-| ID | Requisito | Estado | Dónde |
+| Bloque | Requisito | Estado | Dónde |
 |---|---|---|---|
-| G0 | Inventario y clasificación de TODOS los assets visuales (§3) | IMPLEMENTADO (revisión humana pendiente) | `web/docs/GEOESPACIAL.md` |
-| G1 | Registro de activos con procedencia (§5) | VERIFICADO (8 activos) | `web/data/geospatial/registry.json` |
-| G2 | Descargador verificable de originales (§8) | VERIFICADO | `web/scripts/geospatial/fetch-originals.ts` |
-| G3 | Recortes numéricos del DEM + ROI con manifiesto | VERIFICADO | `scripts/geospatial/build-terrain.ts`, `data/derived/terrain/` |
-| G4 | Lector WMTS Moon Trek (§6) | VERIFICADO (unit + tesela real) | `src/lib/geospatial/wmts.ts` |
-| G5 | Mapa georreferenciado en Explore: fondo orbital, capas numéricas, ROI, A/B, lectura, medida y perfil (§4 A–E, §10) | VERIFICADO (E2E PC-06) | `src/components/maps/GeoMap.tsx`, `ProfileChart.tsx` |
-| G6 | Terreno 3D real en Engineer + «qué tapa el Sol/la Tierra» (§4 F, §11) | VERIFICADO (E2E PC-06) | `src/components/terrain/`, `src/lib/geospatial/mesh.ts`, `horizon.ts` |
-| G7 | Timeline y resultados de referencia intactos (§4 G, T9) | VERIFICADO: batería completa PASS en PC-06 | — |
-| G8 | Evidencia por capa (§4 H, §15) | VERIFICADO (E2E PC-06) | `src/components/evidence/GeoEvidence.tsx` |
-| G9 | Corregistro imagen ↔ DEM (T5) | PARCIAL: rejilla de teselas VERIFICADA (NCC 0,95, ~8 m); mosaico fotográfico NO CONCLUYENTE | `scripts/geospatial/check-coregistration.ts`, `data/derived/coregistration.json`, `tests/terrain-mesh.test.ts` |
-| G10 | Navegador ODE/PDS de productos y huellas (§7) | VERIFICADO en lo implementado (unit 6/6, E2E 3/3, ejecución en vivo); PARCIAL respecto a §7 (ver §4) | `src/lib/geospatial/ode.ts`, `src/components/maps/OdePanel.tsx`, `tests/ode.test.ts`, `tests/fixtures/ode/` |
-| G11 | Ortoimagen NAC concreta de Connecting Ridge (§9) | PENDIENTE (no identificada) | — |
-| G12 | Nomenclatura IAU/USGS (§9) | PENDIENTE | — |
-| G13 | Relieve regional PGDA90 80/240 m en el mapa (§8) | PENDIENTE (no descargado; ~408 MB) | — |
-| G14 | Contraste Horizons/SPICE nuevo (§12) | PENDIENTE (se conserva el del paquete) | — |
-| G15 | Regret Lab conectado al mapa; clones descargados (§13) | PENDIENTE | — |
-| G16 | Escenarios nuevos calculados (§14, fase 5) | PENDIENTE (requiere servicio de cómputo; no autorizado) | — |
-| G17 | Documentación (`web/README`, `QA_REPORT`, `DECISIONS`, `docs/GEOESPACIAL.md`) | VERIFICADO a mano en PC-08 (documentos actualizados con resultados reales) | `web/README.md`, `web/QA_REPORT.md`, `web/DECISIONS.md` D20–D24, `docs/VALIDATION.md`, `docs/STATUS.md` |
-| G18 | PR a `main` | PARCIAL: rama subida (PC-07); PR y despliegue pendientes de autorización humana | — |
+| A · G15 | Regret Lab con clones reales, capas de diferencia y enlace al mapa | **HECHO (PC-13)**, verificado con Vitest + E2E + revisión visual en navegador | ver §4 |
+| B | Timeline orbital con efemérides reales | PENDIENTE (siguiente) | — |
+| C | Comparador A/B con cartografía real | PENDIENTE | — |
+| D | Engineer con 3D protagonista y alturas 0/2/10 | PENDIENTE (el 3D existe desde PC-03; falta reordenar la vista y revisar lecturas por altura) | `src/components/terrain/` |
+| E | Dashboard → Mission Control, Evidence, Historia | PENDIENTE | — |
+| F | G9 mosaico, G11 NAC, G10 mejoras ODE, G12 IAU, G13 PGDA90 | PENDIENTE (sin cambios desde PC-11) | — |
 
-## 4. Tarea activa
+Tabla G0–G18 heredada: G0–G8 VERIFICADO, G9 PARCIAL, G10 VERIFICADO en lo implementado, **G15 HECHO**, G11–G14 PENDIENTE, G16 no autorizado, G17 actualizado en PC-13 para G15, G18: rama nueva sin subir.
 
-**G15 · Regret Lab conectado al mapa con superficies reales. Estado: SIN EMPEZAR.** No hay ningún cambio parcial pendiente: el árbol queda limpio tras el commit de relevo.
+## 4. Bloque A terminado (PC-13): Regret Lab ↔ terreno real
 
-Cerrado antes del relevo (detalle en §3 y §6):
-- **G17** documentación (PC-08).
-- **G9** PARCIAL (PC-09): rejilla de teselas verificada contra el DEM (NCC 0,95; desfase X −1,7 m, Y −8,3 m ≈ 1 píxel de tesela, uniforme en 4 cuadrantes); mosaico NAC NO CONCLUYENTE. Variantes ya probadas, no repetir: sombreado sin filtrar (máximo en el borde de búsqueda); paso alto de 110 m con sombras excluidas (65 % en sombra, NCC ≈ 0). Origen del píxel de desfase sin determinar (no se probó otro zoom).
-- **G10** (PC-10/11): adaptador ODE REST y panel en Explore, probado con respuestas grabadas y una vez en vivo. Parcial respecto al megaprompt §7: caja fija de los sitios (sin región visible ni polígono), 3 tipos de producto fijos comprobados con `query=iipt` (no se descubren en vivo; esa respuesta pesa 385 kB), productos proyectados sin cargar como capa, sin GDS. En el mock E2E `GDRDEM` devuelve el error grabado para ejercitar la ruta de error; en el servicio real ese tipo existe.
+Hecho:
+1. **Registro**: 5 activos `pgda78.site01.clone_0001…0005` (`kind: "ensemble_raster"`, `variant: published_000N`) en `web/data/geospatial/registry.json`, con URL, bytes, SHA-256 y fechas del pasaporte. Disponibilidad comprobada antes de descargar (HTTP 200, `Content-Length` = pasaporte, `Last-Modified` = pasaporte), 277 GB libres.
+2. **Descarga**: `npm run geo:fetch` descargó los 5 clones (5 × ~41 MB, 4 min 45 s) y los verificó enteros (tamaño, firma TIFF, SHA-256 = pasaporte). En `web/data/raw/pgda78_site01/` (no versionado).
+3. **Recortes**: `scripts/geospatial/build-terrain.ts` (generator_version 2) recorta cada clon en la misma ventana 800×800 sin remuestrear → `web/data/derived/terrain/clones/clone_000N.f32` (5 × 2,56 MB, versionados). El manifiesto lleva `ensemble.members[]` con hash, estadísticas, `difference_vs_nominal` (mín, máx, media, media |Δ|, RMS, P99 |Δ|) y `at_sites`. **El script falla si la altura bilineal del clon en A o B no es exactamente `horizons_index.<sitio>.observer_ground_height_m.published_000N`**: coincide en los 10 casos. Las capas nominales se regeneraron byte a byte idénticas.
+   - Resultado: Δ clon − nominal entre −3,70 y +4,57 m; RMS 0,44–0,45 m en los 5 clones; media ≈ 0.
+4. **App**: `src/lib/geospatial/difference.ts` (`differenceGrid`, `differenceStats`, `horizonDelta`, `blockRms`), `terrain.ts` (`loadEnsembleMember`, verificación SHA-256), `colormap.ts` (`DIFFERENCE_STYLE` divergente azul-blanco-rojo, opacidad ∝ |Δ|), `publish-terrain.ts` copia `clones/`.
+5. **Regret Lab** (`src/components/regret/TerrainDiffLab.tsx`, insertado en `RegretLabView.tsx` tras «Resultado por superficie»):
+   - Mapa OpenLayers (misma proyección polar que Explore) con relieve sombreado del DEM nominal + capa clon − nominal, leyenda ±P99, lectura por clic, marcadores A/B y procedencia.
+   - Gráfico Δ horizonte variante − nominal (1 440 azimuts, A y B; `src/components/charts/HorizonDeltaChart.tsx`), con selección de azimut por puntero/teclado.
+   - Tabla del azimut elegido: altura de suelo del observador, horizonte, distancia y relieve (5/80/240 m) del punto que fija el horizonte en nominal y variante, y diferencia de terreno en ese punto; líneas N/V en el mapa. Texto explícito: no demuestra la causa de un cambio de ganador.
+   - Miniaturas de los 5 clones (RMS de Δ por bloques de 80 m, misma escala), seleccionables.
+   - Hipótesis propias: aviso «no reconstruible», sin terreno inventado; sí Δ horizonte.
+   - «Mapa de decisiones» con modo **mapa de calor del regret** (regret de conservar la elección nominal de cada fila, en horas; filas sin elección nominal rayadas).
+6. Hallazgo visible en la UI: en W2·0 m con `published_0001`, el mayor |Δ horizonte| de A es 2,05° a 5,25° y lo fija terreno a 7,5–30 m del observador: las variaciones del ensemble actúan sobre todo en campo cercano. Es una lectura de datos, no una causa demostrada.
 
-Siguiente acción exacta (G15), en `web/`:
-1. Añadir a `data/geospatial/registry.json` los 5 clones `Site01_final_adj_5mpp_000N_err.tif` (URL, bytes y SHA-256 están en `data/source/DERIVADOS_SITE_REGRET/datos/pasaporte.json`, ids `SITE01_CLONE_0001…0005`; carpeta remota `…/Site01/Clones/`). `fetch-originals.ts` guarda por nombre de archivo en `data/raw/pgda78_site01/`. Son 5 × 41 MB: comprobar espacio y avisar antes de descargar.
-2. Ampliar `scripts/geospatial/build-terrain.ts` para generar, por clon, el recorte de DIFERENCIA (clon − nominal) en la misma ventana, con manifiesto y hash. Comprobar con una prueba que clon(sitio A) = `core.horizons_index.A.observer_ground_height_m.published_000N` (valores ya conocidos: 1956,1689…, 1955,8801…).
-3. En el mapa (`GeoMap.tsx`), capa «diferencia clon − nominal» con leyenda divergente; en Regret Lab, enlace a esa capa para la superficie seleccionada y, usando `horizonObstacle` con el perfil de la variante, mostrar qué azimuts cambian de horizonte respecto al nominal. Solo hechos calculados: NO señalar una causa si no se ha calculado.
-4. Límite que hay que documentar, no aproximar: las 4 hipótesis propias (`bias_*`, `correlated_*`) no pueden reconstruirse en la web sin reimplementar el generador PCG64 + filtro gaussiano del motor; sus horizontes sí están en el paquete.
+## 5. Siguiente tarea exacta: bloque B · Timeline orbital
 
-Tarea terminada cuando: recortes de diferencia versionados y probados, capa visible con leyenda, vínculo desde Regret Lab, `npm run verify` en verde y resultados anotados aquí.
+En `web/`:
+1. Leer `src/components/timeline/TimelineView.tsx`, `TimePlayer.tsx` y `src/lib/data/loader.ts` (`loadEphemerisClock`, `loadEphemerisSite`). Las efemérides del paquete dan, por sitio, ventana y altura, azimut/elevación/distancia (km) de Sol y Tierra en 4 321 instantes (SPICE DE421, MOON_ME_DE421) — ver `EphemerisSiteChunk` en `src/lib/contract/schema.ts`.
+2. Construir una vista «cielo local» (proyección azimut-elevación del observador): trayectorias reales de Sol y Tierra en la ventana, horizonte del paquete del sitio/altura como silueta, instante actual sincronizado con `timeIndex`, y estado (código del escenario) del instante. Rotular: geometría real del observador.
+3. Panel aparte «geometría orbital no a escala»: Luna-Tierra-Sol a partir de las direcciones y distancias (`range_km`) del paquete en el instante (solo direcciones relativas desde el sitio; rotular «no a escala»). No inventar trayectorias: si falta un dato, no se dibuja.
+4. Mantener las curvas/franjas actuales debajo, sincronizadas con el mismo `timeIndex`.
+5. Pruebas: Vitest para cualquier transformación de coordenadas; E2E de sincronización instante ↔ cielo ↔ curvas; revisión visual.
 
-## 5. Cambios locales
+Después: bloque C (Comparador con `GeoMap` compacto o recortes A/B), D (Engineer), E (Dashboard/Evidence/Historia), F.
 
-- En el remoto hasta `2ca0a66`: `bdf6c2e`, `2751a55`, `54cda05`, `4b77455`, `b4ced8b`, `2ca0a66`.
-- Tras PC-06 se hace un commit local con archivos explícitos (`web/playwright.config.ts`, `web/docs/GEOESPACIAL.md`, `docs/continuidad/*`, `CLAUDE.md`); comprobar con `git status` y `git log -1`.
-- No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales NASA, ~205 MB), `web/node_modules`, `web/out`, `web/public/data`.
-- Cambios de otras personas: ninguno en esta rama. PR #7 y #8 de aritzgsc siguen abiertos en GitHub y no se han tocado.
+## 6. Cambios locales y archivos de PC-13
 
-## 6. Comandos (ejecutar en `web/`) y pruebas
+Archivos nuevos o modificados (todo en `web/` salvo docs):
+`data/geospatial/registry.json`, `data/derived/terrain/manifest.json`, `data/derived/terrain/clones/*.f32` (nuevo), `scripts/geospatial/build-terrain.ts`, `scripts/geospatial/publish-terrain.ts`, `src/lib/geospatial/difference.ts` (nuevo), `src/lib/geospatial/terrain.ts`, `src/lib/geospatial/colormap.ts`, `src/components/maps/GeoMap.tsx` (solo exporta `PROJECTION`, `SITE_HEX`, `rgbaToUrl`), `src/components/charts/HorizonDeltaChart.tsx` (nuevo), `src/components/regret/TerrainDiffLab.tsx` (nuevo), `src/components/regret/RegretLabView.tsx`, `tests/ensemble.test.ts` (nuevo), `e2e/regret-terrain.spec.ts` (nuevo), `docs/GEOESPACIAL.md`, `.claude/launch.json` (raíz; servidor de desarrollo para la vista previa), `docs/continuidad/*`.
 
-Entorno comprobado: Windows 11, Node v24.19.0, npm, Edge (Playwright `channel: msedge`).
+No versionado a propósito: `web/data/raw/pgda78_site01/` (6 originales + 5 clones, ~410 MB), `web/node_modules`, `web/out`, `web/public/data`.
+
+## 7. Comandos (en `web/`) y pruebas
+
+Entorno: Windows 11, Node v24, npm, Edge (Playwright `channel: msedge`).
 
 ```
 npm ci
-npm run dev          # http://localhost:3000
-npm run build && npm run serve   # estático en http://127.0.0.1:4173
-npm run geo:fetch    # descarga y verifica originales NASA a data/raw (solo si se van a regenerar derivados)
-npm run geo:build    # regenera data/derived/terrain desde data/raw
-npm run verify       # typecheck → lint → test → build → test:e2e
-E2E_LIVE_TREK=1 npx playwright test e2e/geo.spec.ts -g "en vivo"   # opcional, con red
+npm run dev                         # http://localhost:3000
+npm run build && npm run serve      # estático en http://127.0.0.1:4173
+npm run geo:fetch                   # originales + 5 clones a data/raw (≈410 MB), verificados
+npm run geo:build                   # regenera data/derived/terrain (incluye clones/ y diferencias)
+npm run verify                      # typecheck → lint → test → build → test:e2e
 ```
 
-| Prueba | Resultado | Cuándo |
-|---|---|---|
-| `tsc --noEmit` | PASS | PC-03, antes de `54cda05` (mismos fuentes) |
-| `eslint` | PASS (0 errores) | sobre `54cda05` |
-| `vitest run tests/geospatial.test.ts tests/terrain-mesh.test.ts` | PASS 26/26 | PC-03 |
-| Vitest completo (89) | NO_EJECUTADO tras los cambios geo | RESULTADO_ANTERIOR: 63/63 en `main` |
-| `next build` | PASS | PC-03 |
-| `playwright test e2e/geo.spec.ts --project=desktop` | 11 PASS, 1 FAIL, 1 omitido | antes del arreglo de `54cda05` |
-| Resto de E2E (app, a11y, i18n, story, responsive) | NO_EJECUTADO tras los cambios geo | RESULTADO_ANTERIOR: 47/47 en `main` |
-| Tesela real de Moon Trek (curl y navegador) | PASS | 2026-11-14 |
-| E2E «en vivo» con `E2E_LIVE_TREK=1` | NO_EJECUTADO | — |
-| PC-05 · `tsc`, Vitest completo, `next build` sobre `54cda05` | PASS (89/89) | 2026-11-14 ~11:05 |
-| PC-05 · `npx playwright test` completo (4 workers) | 54 PASS, 5 FAIL, 1 omitido (4,9 min) | 2026-11-14 ~11:05 |
+| Prueba (PC-13, esta sesión) | Resultado |
+|---|---|
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS (0 avisos) |
+| `npm test` (Vitest completo) | **108/108 PASS** (98 previas + 10 de `ensemble.test.ts`) |
+| `npm run geo:fetch` | PASS: 5 clones descargados y verificados; 6 originales ya verificados |
+| `npm run geo:build` | PASS: 5 capas idénticas + 5 clones; alturas A/B = paquete |
+| `npm run build` | PASS |
+| `npx playwright test` completo (2 procesos, 3,0 min) | **64 PASS, 1 FAIL, 1 omitida**. El fallo es «Comparador · las 24 combinaciones…» por TIEMPO (W2·2 m·max_joint_hours, 15 s); Comparador no se ha tocado. Re-ejecutada sola: PASS (11,3 s). Las 3 nuevas de `regret-terrain.spec.ts`: PASS |
+| Revisión visual en navegador (dev, 1440×900) | HECHO: mapa de diferencia, Δ horizonte, tabla del obstáculo, miniaturas y mapa de calor visibles y coherentes. **Pendiente revisión humana del equipo** |
 
-| PC-06 · `npx playwright test --workers=2` (completo) | **59 PASS, 0 FAIL, 1 omitido** (2,5 min) | 2026-11-14 ~11:15 |
+Resultados históricos (no re-ejecutados aquí antes de PC-13): Vitest 98/98 y Playwright 62 + 1 omitida (PC-10/11).
 
-PC-06: incluye `a11y.spec.ts` (axe WCAG A/AA en las 8 rutas) y `responsive.spec.ts` (375 px) con los componentes nuevos. No se ha vuelto a lanzar `npm run verify` de una sola vez tras fijar `workers: 2`.
+## 8. Problemas ya investigados (no repetir)
 
-| PC-10 · `npm test` (completo) | **98/98 PASS** | 2026-11-14 ~12:50 |
-| PC-10 · `npx playwright test` (2 procesos, completo) | **62 PASS, 0 FAIL, 1 omitido** (2,7 min) | 2026-11-14 ~12:50 |
-| PC-10 · `npm run geo:coregistration` (con red) | Rejilla CONCLUYENTE; mosaico NAC NO CONCLUYENTE | 2026-11-14 ~12:05 |
-| PC-11 · panel ODE contra el servicio real (script puntual de Playwright, sin mock) | PASS: 253 productos, huella dibujada, teselas reales | 2026-11-14 ~12:55; captura `web/docs/capturas/live-ode.png` |
+- **Heredocs de bash en esta máquina**: fallan con «unexpected EOF» si el texto lleva comillas o acentos. Escribir el script a un archivo (p. ej. Python) y ejecutarlo.
+- **geotiff.js v3**: `getTiePoints()` es asíncrono; usar `getOrigin()`, `getResolution()`, `getGeoKeys()`, `pixelIsArea()`.
+- **Precisión float32**: comparar alturas del motor sin pasar por double; en los centros de píxel la bilineal devuelve el valor exacto.
+- **Vista previa**: tras cargar un mapa las teselas tardan 1–3 s; las capturas del panel pueden agotar el tiempo si la ventana no está al frente: reintentar.
+- **`npm run build` con `npm run dev` abierto**: ambos usan `.next`; parar el servidor de desarrollo antes de compilar.
+- **Miniaturas de clones**: el campo Δ es casi incorrelado a escala de píxel; submuestrear da «ruido de televisión». Se usa RMS por bloques de 80 m.
+- E2E con 4 procesos agota tiempos (WebGL por software); `workers: 2` fijado. Con 2 procesos la prueba de 24 combinaciones del Comparador puede agotar tiempo de forma intermitente (PC-13); sola pasa.
 
-PC-05, fallos: `/comparador/`, `/timeline/`, `/evidencia/` (carga de ruta), «la navegación conserva la selección» y el clic de `geo.spec.ts`. Todos por TIEMPO (40–60 s; `waitForData` agota sus 15 s), en páginas que no usan mapa ni 3D. Hipótesis: saturación de CPU con 4 workers mientras las pruebas de Engineer dibujan la malla de 160 000 vértices con WebGL por software. Confirmado: con `--workers=2` pasan todas; `workers: 2` queda fijado en `web/playwright.config.ts`.
-
-Evidencia numérica clave (Vitest): el DEM muestreado en el punto que el motor señala como obstáculo reproduce su horizonte en 4 636 direcciones (máx. 1,1e-7°); lectura en A y B = valores exactos del paquete; horizonte interpolado = `sun_horizon_deg`/`earth_horizon_deg` del paquete (< 1e-9°).
-
-## 7. Problemas ya investigados (no repetir)
-
-- **Heredocs de bash en esta máquina**: fallan con «unexpected EOF» si el texto lleva comillas simples/acentos. Solución usada: escribir el script a un archivo y ejecutarlo.
-- **geotiff.js v3**: `getTiePoints()` es asíncrono y los tags son perezosos. Usar `getOrigin()`, `getResolution()`, `getGeoKeys()`, `pixelIsArea()`.
-- **Precisión float32**: el motor guarda las alturas interpoladas en float32; al comparar ángulos hay que aplicar `Math.fround` a la altura muestreada.
-- **Vista previa del navegador**: tras cargar `/explore/` las teselas tardan 1–3 s; una captura inmediata sale en negro aunque funcione.
-- **Descarga interrumpida**: un `.tif` truncado (7,7 MB de 41 MB) se detecta por tamaño y hash; `geo:fetch` lo repite.
-- La página de documentación de Moon Trek lista sus capas mediante un índice (`TrekServices/ws/index/...`). Se usó una vez para DESCUBRIR capas; la app solo usa los documentos WMTS.
-
-## 8. Datos científicos y activos
+## 9. Datos científicos y activos
 
 | Activo | Estado | Ruta |
 |---|---|---|
-| PGDA78 Site01: surf, ldec, toterr, slp, slperr (5 × 41 MB, float32, 3200², 5 m) y `Site01_ROIs.tgz` | descargado y VERIFICADO entero (SHA-256 = pasaporte) | `web/data/raw/pgda78_site01/` (no en Git) |
-| Recortes 800×800 (X −13000…−9000, Y −14000…−10000 m) de esas 5 capas + `rois.json` (7 ROI) | integrado y VERIFICADO | `web/data/derived/terrain/` (en Git, 12,8 MB) |
-| Moon Trek `LRO_NAC_Mosaic_1mpp_SP` (zoom 12, ~2,09 m/px) y `LRO_WAC_Mosaic_SPole60_100m_v02` | integrado; probado en vivo; depende de red | registro + `tests/fixtures/trek/` (respuestas reales grabadas) |
-| Clones PGDA78 0001–0005, PGDA90 80 m y 240 m, kernels NAIF | identificados (URL y hash en el pasaporte), NO descargados aquí | — |
-| Ortoimagen NAC individual, huellas ODE, nomenclatura IAU | no identificados | — |
+| PGDA78 Site01 surf, ldec, toterr, slp, slperr + ROI | VERIFICADO | `web/data/raw/pgda78_site01/` (no en Git); recortes en `web/data/derived/terrain/` |
+| **PGDA78 Site01 clones 0001–0005** | **descargados y VERIFICADOS (SHA-256 = pasaporte); recortes y diferencias integrados** | raw no versionado; `web/data/derived/terrain/clones/` |
+| Moon Trek NAC/WAC | integrado; en línea | registro |
+| PGDA90 80/240 m, kernels NAIF | identificados, NO descargados | — |
+| Ortoimagen NAC individual, nomenclatura IAU | no identificados | — |
 
-## 9. Procesos
+## 10. Procesos
 
-Servidores estáticos de vista previa lanzados por la sesión de Hugo: `127.0.0.1:4175` (sirve `NASA-2026/web/out`) y `127.0.0.1:4173` (copia antigua `site-regret/out`). No se asume que sobrevivan; se relanzan con `npm run serve`. Sin descargas ni subagentes activos.
-
-## 10. Próximas tres tareas
-
-1. **G15**: Regret Lab ↔ mapa con clones reales (ver §4).
-2. **G11/G9**: identificar con ODE una ortoimagen o producto NAC proyectado de Connecting Ridge (probar `pt=SDNDTM` y `BDRROI` en la caja de los sitios) y usarlo para el corregistro del mosaico.
-3. **G18**: con autorización de Hugo, push de la rama y PR a `main`. No desplegar a Vercel sin su permiso.
+El servidor de desarrollo de la vista previa (`.claude/launch.json` → `site-regret-dev`, puerto 3000) se paró antes de compilar. Playwright levanta su propio servidor estático en 4174 y lo cierra al terminar. Sin descargas activas.

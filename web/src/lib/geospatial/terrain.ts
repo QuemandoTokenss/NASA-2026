@@ -8,6 +8,7 @@ import manifestJson from "../../../data/derived/terrain/manifest.json";
 import registryJson from "../../../data/geospatial/registry.json";
 import { BASE_PATH } from "../data/loader";
 import { DATA_ROOT } from "../data/manifest";
+import type { DifferenceStats } from "./difference";
 import type { RasterGrid } from "./raster";
 
 export type TerrainLayerId = "elevation" | "slope" | "lola_count" | "vertical_rms" | "slope_rms";
@@ -44,8 +45,32 @@ export interface TerrainManifest {
     sphere_radius_m: number;
   };
   layers: TerrainLayerEntry[];
+  ensemble?: {
+    description: string;
+    difference_definition: string;
+    not_reconstructible: string[];
+    members: EnsembleMember[];
+  };
   rois: { file: string; bytes: number; sha256: string; count: number; registry_id: string; source: { file: string; url: string; bytes: number; sha256: string }; processing: string };
   limits: string[];
+}
+
+/** Clon publicado del ensemble PGDA78 recortado en la misma ventana (ver build-terrain.ts). */
+export interface EnsembleMember {
+  id: string;
+  variant: string;
+  registry_id: string;
+  file: string;
+  dtype: string;
+  units: string;
+  nodata: string;
+  bytes: number;
+  sha256: string;
+  stats: { min: number; max: number; finite_count: number; nodata_count: number };
+  difference_vs_nominal: DifferenceStats;
+  at_sites: Array<{ site_id: string; clone_height_m: number; nominal_height_m: number; difference_m: number; engine_observer_ground_height_m: number; matches_engine: boolean }>;
+  source: { file: string; url: string; bytes: number; sha256: string };
+  processing: string;
 }
 
 export const TERRAIN_MANIFEST = manifestJson as unknown as TerrainManifest;
@@ -132,6 +157,26 @@ export function loadTerrainLayer(id: TerrainLayerId): Promise<RasterGrid> {
     });
     p.catch(() => cache.delete(id));
     cache.set(id, p);
+  }
+  return p;
+}
+
+export const ensembleMember = (variant: string) => TERRAIN_MANIFEST.ensemble?.members.find((m) => m.variant === variant);
+
+/** Recorte de un clon publicado (cacheado); misma rejilla que las capas nominales. */
+export function loadEnsembleMember(variant: string): Promise<RasterGrid> {
+  const key = `ensemble:${variant}`;
+  let p = cache.get(key);
+  if (!p) {
+    const entry = ensembleMember(variant);
+    if (!entry) return Promise.reject(new TerrainError(`Superficie ${variant} sin recorte publicado`, "format"));
+    const g = TERRAIN_MANIFEST.georeferencing;
+    p = fetchVerified(entry.file, entry.bytes, entry.sha256).then((buf) => {
+      if (buf.byteLength !== g.width * g.height * 4) throw new TerrainError(`${entry.file}: tamaño incoherente con la rejilla`, "format");
+      return { width: g.width, height: g.height, pixelSizeM: g.pixel_size_m, xmin: g.window_bounds_xy_m[0], ymax: g.window_bounds_xy_m[3], data: new Float32Array(buf) };
+    });
+    p.catch(() => cache.delete(key));
+    cache.set(key, p);
   }
   return p;
 }

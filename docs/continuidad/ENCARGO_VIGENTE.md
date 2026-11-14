@@ -27,14 +27,25 @@
 3. **Rama**: Hugo eligió trabajar en una rama nueva `feat/geo-real-terrain` (respuesta a la tarjeta de la app).
 4. **Protocolo de relevo** (este directorio): mantener `HANDOFF.md`, `ENCARGO_VIGENTE.md`, `CONTINUAR.md`, `HISTORIAL.md`; puntos de control pequeños; **sin commits ni push automáticos por el relevo**, sin `reset --hard`, `clean`, `pull`, `merge`, `stash` ni cambio de rama; sin secretos en los documentos; al recibir `CIERRA_RELEVO`, no empezar nada nuevo y dejar el estado por escrito. Próximo relevo previsto: Asier Comba.
 
+5. **«Mission Control v2» — continuación y transformación de todas las secciones** (encargo ACTIVO desde el 14-11-2026, tras fusionar el PR #18 en `main` = `6e41690`). Resumen fiel:
+   - Problema: Explore mejoró mucho, pero Timeline, Comparador, Regret Lab, Dashboard y otras secciones se parecen demasiado a la versión anterior. No reiniciar el proyecto.
+   - Principio: MAPA REAL → TERRENO REAL → SOL/TIERRA → COMPARACIÓN → INCERTIDUMBRE → EVIDENCIA, con sitio A/B, ventana, altura, superficie y criterio sincronizados. Prohibido presentar imágenes IA, mapas o relieves inventados o valores simulados como observaciones NASA. Conservar los 120 escenarios; no recalcular métricas en la interfaz.
+   - Prioridades: **A** Regret Lab (G15: clones PGDA78 reales comprobados antes de descargar, capas de diferencia con unidades/leyendas/procedencia, enlace al mapa, sin causalidad no calculada, interfaz de laboratorio analítico); **B** Timeline orbital con efemérides reales (distinguir esquema no a escala, geometría del observador y visibilidad respecto al horizonte); **C** Comparador A/B con cartografía real y conclusión dependiente del criterio; **D** Engineer con el 3D del DEM como protagonista y alturas 0/2/10 m; **E** Dashboard como Mission Control, Evidence consultable desde otras vistas, Historia actualizada; **F** pendientes científicos (G9, G11, G10, G12, G13, validaciones). No construir cálculo de escenarios arbitrarios sin arquitectura y autorización.
+   - Método: un bloque cada vez (inspeccionar → cambio comprobable → implementar → pruebas → revisión visual → documentos de continuidad → siguiente). Un test que pasa no implica buena experiencia visual.
+   - Relevo: actualizar `HANDOFF.md` tras cada cambio significativo y `CONTINUAR.md`; no detenerse tras documentar.
+   - Rama: `feat/mission-control-v2` desde `main` limpio.
+   - Criterios de fin: Explore sigue funcionando; Regret Lab conectado a superficies reales; Timeline transformado con visualización física respaldada por datos; Comparador con cartografía real; Engineer con 3D protagonista; Dashboard, Historia y Evidence integrados; pruebas en verde; demo completa revisada por el equipo; límites declarados.
+
 ## B. Autorizaciones vigentes
 
 - Commits locales en la rama de trabajo: Hugo los pidió en la misión inicial («commit local tras cada fase»). El protocolo de relevo pide no hacerlos *automáticamente por el relevo*: seleccionar archivos explícitos y revisar antes.
-- Push y PR: **no autorizado** para esta rama todavía.
-- Despliegue a Vercel de la capa geoespacial: **no autorizado**.
+- Push y PR: **no autorizado** para `feat/mission-control-v2` todavía.
+- Merge y despliegue: **no autorizados** (el encargo vigente lo prohíbe sin autorización expresa).
+- Descarga de los 5 clones PGDA78 (≈205 MB): autorizada por el encargo vigente tras comprobar metadatos, hashes, tamaño y espacio; hecha en PC-13.
 
 ## C. Propuestas de la IA (no son instrucciones del usuario)
 
 - Tabla de tareas G0–G18 de `HANDOFF.md`.
 - Versionar los recortes derivados (12,8 MB) en `web/data/derived/terrain/` y dejar los originales fuera de Git.
+- PC-13: versionar también los 5 recortes de clones (12,8 MB más, `clones/`) para que las pruebas y la app funcionen sin los originales.
 - Interceptar Moon Trek en las pruebas E2E con respuestas reales grabadas, y una prueba opcional en vivo (`E2E_LIVE_TREK=1`).

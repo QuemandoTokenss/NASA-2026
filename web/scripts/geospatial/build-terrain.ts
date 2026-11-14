@@ -20,10 +20,12 @@ import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { fromFile } from "geotiff";
 import { RAW_DIR, rawPathOf, readRegistry, verifyOriginal } from "./fetch-originals.ts";
+import { differenceGrid, differenceStats } from "../../src/lib/geospatial/difference.ts";
+import { sampleBilinear, type RasterGrid } from "../../src/lib/geospatial/raster.ts";
 
 const ROOT = join(import.meta.dirname, "..", "..");
 const OUT = join(ROOT, "data", "derived", "terrain");
-export const GENERATOR_VERSION = 1;
+export const GENERATOR_VERSION = 2;
 
 /** Ventana de trabajo: la misma que `datos/contexto_2d.json → bounds_xy_m`. */
 const WINDOW_BOUNDS = [-13000, -14000, -9000, -10000] as const;
@@ -34,6 +36,7 @@ const sha256 = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
 interface RasterAsset {
   id: string;
   layer: string;
+  variant?: string;
   kind: string;
   url: string;
   bytes: number;
@@ -102,14 +105,51 @@ function readDbf(dbf: Buffer): Array<Record<string, string>> {
   });
 }
 
+/** Lee la ventana de trabajo de un original verificado comprobando su georreferenciación. */
+async function readWindow(a: RasterAsset): Promise<{ data: Float32Array; col0: number; row0: number; w: number; h: number; px: number }> {
+  const [xmin, ymin, xmax, ymax] = WINDOW_BOUNDS;
+  const tiff = await fromFile(rawPathOf(a as never));
+  const image = await tiff.getImage();
+  const width = image.getWidth();
+  const height = image.getHeight();
+  const origin = image.getOrigin();
+  const resolution = image.getResolution();
+  const tie = { x: origin[0], y: origin[1] };
+  const scale = [resolution[0], -resolution[1]];
+  const keys = image.getGeoKeys() as Record<string, number | string>;
+  const nodata = image.getGDALNoData();
+  const px = a.grid.pixel_size_m;
+
+  // Georreferenciación leída de las etiquetas frente al registro.
+  if (width !== a.grid.width || height !== a.grid.height) fail(`${a.id}: dimensiones ${width}×${height}`);
+  if (scale[0] !== px || scale[1] !== px) fail(`${a.id}: tamaño de píxel ${scale}`);
+  if (!image.pixelIsArea() || tie.x !== a.grid.bounds_xy_m[0] || tie.y !== a.grid.bounds_xy_m[3]) fail(`${a.id}: origen ${JSON.stringify(tie)}`);
+  if (keys.ProjScaleAtNatOriginGeoKey !== 1 || keys.ProjLinearUnitsGeoKey !== 9001) fail(`${a.id}: escala/unidades ${JSON.stringify(keys)}`);
+  if (keys.ProjNatOriginLatGeoKey !== -90 || keys.ProjStraightVertPoleLongGeoKey !== 0) fail(`${a.id}: polo/meridiano ${JSON.stringify(keys)}`);
+  if (keys.GeogSemiMajorAxisGeoKey !== SPHERE_RADIUS_M || keys.GeogSemiMinorAxisGeoKey !== SPHERE_RADIUS_M) fail(`${a.id}: esfera ${JSON.stringify(keys)}`);
+  if (keys.ProjCoordTransGeoKey !== 15) fail(`${a.id}: proyección ${keys.ProjCoordTransGeoKey} (se esperaba 15 = estereográfica polar)`);
+  if (image.getSamplesPerPixel() !== 1 || image.getBitsPerSample() !== 32 || image.getSampleFormat() !== 3) fail(`${a.id}: se esperaba 1 banda float32`);
+  if (nodata !== null && !Number.isNaN(nodata)) fail(`${a.id}: nodata ${nodata} (se esperaba NaN)`);
+
+  const col0 = (xmin - tie.x) / px;
+  const row0 = (tie.y - ymax) / px;
+  const w = (xmax - xmin) / px;
+  const h = (ymax - ymin) / px;
+  if (![col0, row0, w, h].every(Number.isInteger)) fail(`${a.id}: la ventana no cae en bordes de píxel`);
+  const data = (await image.readRasters({ window: [col0, row0, col0 + w, row0 + h], samples: [0] }))[0] as Float32Array;
+  if (!(data instanceof Float32Array) || data.length !== w * h) fail(`${a.id}: lectura inesperada`);
+  return { data, col0, row0, w, h, px };
+}
+
 /* --------------------------------- principal -------------------------------- */
 
 async function main() {
   const registry = readRegistry() as unknown as { assets: RasterAsset[] };
   const rasters = registry.assets.filter((a) => a.kind === "numeric_raster");
+  const clones = registry.assets.filter((a) => a.kind === "ensemble_raster");
   const roisAsset = registry.assets.find((a) => a.kind === "vector")!;
 
-  for (const a of [...rasters, roisAsset]) {
+  for (const a of [...rasters, ...clones, roisAsset]) {
     const problem = await verifyOriginal(a as never);
     if (problem) fail(`${a.id}: ${problem}. Ejecuta antes \`node scripts/geospatial/fetch-originals.ts\`.`);
   }
@@ -118,39 +158,10 @@ async function main() {
   const [xmin, ymin, xmax, ymax] = WINDOW_BOUNDS;
   const layers = [];
   let georef: Record<string, unknown> | null = null;
+  let nominal: RasterGrid | null = null;
 
   for (const a of rasters) {
-    const tiff = await fromFile(rawPathOf(a as never));
-    const image = await tiff.getImage();
-    const width = image.getWidth();
-    const height = image.getHeight();
-    const origin = image.getOrigin();
-    const resolution = image.getResolution();
-    const tie = { x: origin[0], y: origin[1] };
-    const scale = [resolution[0], -resolution[1]];
-    const keys = image.getGeoKeys() as Record<string, number | string>;
-    const nodata = image.getGDALNoData();
-    const px = a.grid.pixel_size_m;
-
-    // Georreferenciación leída de las etiquetas frente al registro.
-    if (width !== a.grid.width || height !== a.grid.height) fail(`${a.id}: dimensiones ${width}×${height}`);
-    if (scale[0] !== px || scale[1] !== px) fail(`${a.id}: tamaño de píxel ${scale}`);
-    if (!image.pixelIsArea() || tie.x !== a.grid.bounds_xy_m[0] || tie.y !== a.grid.bounds_xy_m[3]) fail(`${a.id}: origen ${JSON.stringify(tie)}`);
-    if (keys.ProjScaleAtNatOriginGeoKey !== 1 || keys.ProjLinearUnitsGeoKey !== 9001) fail(`${a.id}: escala/unidades ${JSON.stringify(keys)}`);
-    if (keys.ProjNatOriginLatGeoKey !== -90 || keys.ProjStraightVertPoleLongGeoKey !== 0) fail(`${a.id}: polo/meridiano ${JSON.stringify(keys)}`);
-    if (keys.GeogSemiMajorAxisGeoKey !== SPHERE_RADIUS_M || keys.GeogSemiMinorAxisGeoKey !== SPHERE_RADIUS_M) fail(`${a.id}: esfera ${JSON.stringify(keys)}`);
-    if (keys.ProjCoordTransGeoKey !== 15) fail(`${a.id}: proyección ${keys.ProjCoordTransGeoKey} (se esperaba 15 = estereográfica polar)`);
-    if (image.getSamplesPerPixel() !== 1 || image.getBitsPerSample() !== 32 || image.getSampleFormat() !== 3) fail(`${a.id}: se esperaba 1 banda float32`);
-    if (nodata !== null && !Number.isNaN(nodata)) fail(`${a.id}: nodata ${nodata} (se esperaba NaN)`);
-
-    const col0 = (xmin - tie.x) / px;
-    const row0 = (tie.y - ymax) / px;
-    const w = (xmax - xmin) / px;
-    const h = (ymax - ymin) / px;
-    if (![col0, row0, w, h].every(Number.isInteger)) fail(`${a.id}: la ventana no cae en bordes de píxel`);
-    const data = (await image.readRasters({ window: [col0, row0, col0 + w, row0 + h], samples: [0] }))[0] as Float32Array;
-    if (!(data instanceof Float32Array) || data.length !== w * h) fail(`${a.id}: lectura inesperada`);
-
+    const { data, col0, row0, w, h, px } = await readWindow(a);
     let min = Infinity;
     let max = -Infinity;
     let finite = 0;
@@ -161,6 +172,7 @@ async function main() {
         if (v > max) max = v;
       }
     }
+    if (a.layer === "elevation") nominal = { width: w, height: h, pixelSizeM: px, xmin, ymax, data };
     const bytes = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
     const file = `${a.layer}.f32`;
     writeFileSync(join(OUT, file), bytes);
@@ -192,6 +204,49 @@ async function main() {
     console.log(`✔ ${a.layer}: ${w}×${h} px, ${min} … ${max} ${a.units}, nodata ${data.length - finite}`);
   }
 
+  // Clones del ensemble PGDA78: recorte exacto en la misma ventana + diferencia con el nominal.
+  if (!nominal) fail("falta la capa nominal de elevación");
+  const pkg = JSON.parse(readFileSync(join(ROOT, "data", "source", "DERIVADOS_SITE_REGRET", "paquete_frontend.json"), "utf8")) as {
+    sites: Array<{ id: string; x_m: number; y_m: number }>;
+    horizons: Record<string, { observer_ground_height_m: Record<string, number> }>;
+  };
+  mkdirSync(join(OUT, "clones"), { recursive: true });
+  const ensemble = [];
+  for (const a of clones) {
+    const { data, w, h, px } = await readWindow(a);
+    const grid: RasterGrid = { width: w, height: h, pixelSizeM: px, xmin, ymax, data };
+    const diff = differenceStats(differenceGrid(grid, nominal).data);
+    const stats = differenceStats(data);
+    // Comprobación con el motor: la altura del clon en A y B (bilineal, como `sample`) = altura del observador del paquete.
+    const atSites = pkg.sites.map((st) => {
+      const z = sampleBilinear(grid, st.x_m, st.y_m);
+      const zNom = sampleBilinear(nominal!, st.x_m, st.y_m);
+      const engine = pkg.horizons[st.id].observer_ground_height_m[a.variant!];
+      if (Math.fround(z) !== engine) fail(`${a.id}: altura en ${st.id} = ${z}, el paquete dice ${engine}`);
+      return { site_id: st.id, clone_height_m: Math.fround(z), nominal_height_m: Math.fround(zNom), difference_m: Math.fround(z) - Math.fround(zNom), engine_observer_ground_height_m: engine, matches_engine: true };
+    });
+    const bytes = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    const file = `clones/${a.layer}.f32`;
+    writeFileSync(join(OUT, file), bytes);
+    ensemble.push({
+      id: a.layer,
+      variant: a.variant,
+      registry_id: a.id,
+      file,
+      dtype: "float32-le",
+      units: "m",
+      nodata: "NaN",
+      bytes: bytes.length,
+      sha256: sha256(bytes),
+      stats: { min: stats.min, max: stats.max, finite_count: stats.finite_count, nodata_count: stats.nodata_count },
+      difference_vs_nominal: diff,
+      at_sites: atSites,
+      source: { file: a.url.split("/").pop(), url: a.url, bytes: a.bytes, sha256: a.sha256 },
+      processing: "Subconjunto exacto de muestras del clon (sin remuestreo). La diferencia clon − nominal se calcula píxel a píxel (float32) con src/lib/geospatial/difference.ts; sus estadísticas se guardan aquí y la app la reproduce con la misma función.",
+    });
+    console.log(`✔ ${a.layer}: Δ ${diff.min.toFixed(3)} … ${diff.max.toFixed(3)} m, RMS ${diff.rms.toFixed(3)} m; A/B = paquete`);
+  }
+
   // ROI: se leen del .tgz en memoria.
   const tar = untar(gunzipSync(readFileSync(join(RAW_DIR, "Site01_ROIs.tgz"))));
   const shp = tar.get("Site01_ROIs.shp");
@@ -212,6 +267,15 @@ async function main() {
     region: "Connecting Ridge (PGDA78 Site01), ventana que contiene los sitios A (ROI 4) y B (ROI 6)",
     georeferencing: georef,
     layers,
+    ensemble: {
+      description:
+        "5 clones del ensemble PGDA78 Site01 usados por el motor como superficies published_0001…0005. Son DEM completos alternativos publicados, no incrementos ni errores; el recuento de superficies no es una probabilidad.",
+      difference_definition: "clon − nominal (m), píxel a píxel en la misma rejilla; positivo = el clon está más alto que el nominal.",
+      not_reconstructible: [
+        "bias_plus, bias_minus, correlated_plus y correlated_minus (hipótesis propias del equipo) no se reconstruyen en la web: requieren el generador PCG64 y el filtro gaussiano del motor. Sus horizontes sí están en el paquete.",
+      ],
+      members: ensemble,
+    },
     rois: {
       file: "rois.json",
       bytes: roisJson.length,
@@ -228,7 +292,7 @@ async function main() {
     ],
   };
   writeFileSync(join(OUT, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n", "utf8");
-  console.log(`✔ manifest.json (${layers.length} capas)`);
+  console.log(`✔ manifest.json (${layers.length} capas, ${ensemble.length} clones)`);
 }
 
 await main();

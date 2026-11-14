@@ -91,3 +91,22 @@ export function hillshade(g: RasterGrid, lightFromMapDeg = 315, altitudeDeg = 45
   }
   return out;
 }
+
+/**
+ * Escala DIVERGENTE para diferencias de altura (clon − nominal): azul = el clon
+ * está más bajo, blanco = igual, rojo = más alto. Se dibuja simétrica en ±límite
+ * para que el cero sea siempre el blanco. No usa naranja, cian ni violeta, que
+ * están reservados a A, B e incertidumbre.
+ */
+export const DIFFERENCE_STYLE: LayerStyle = { stops: ["#1d4f91", "#4f86c6", "#a9c8e8", "#f2f2ee", "#f0b0a0", "#d0584a", "#8e1b24"].map(hex) };
+
+export function colorizeDifference(g: RasterGrid, limit: number): Uint8ClampedArray<ArrayBuffer> {
+  const l = limit > 0 ? limit : 1;
+  const out = colorizeRaster(g, -l, l, DIFFERENCE_STYLE);
+  // La opacidad crece con |Δ|: donde ambas superficies coinciden se ve el relieve de debajo.
+  for (let i = 0; i < g.data.length; i++) {
+    const v = g.data[i];
+    if (Number.isFinite(v)) out[4 * i + 3] = Math.round(255 * Math.min(1, 0.12 + 0.88 * Math.pow(Math.abs(v) / l, 0.75)));
+  }
+  return out;
+}

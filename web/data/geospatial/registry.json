@@ -350,6 +350,311 @@
       }
     },
     {
+      "id": "pgda78.site01.clone_0001",
+      "passport_id": "SITE01_CLONE_0001",
+      "class": "published_science_product",
+      "kind": "ensemble_raster",
+      "layer": "clone_0001",
+      "variant": "published_0001",
+      "title": {
+        "es": "Clon 0001 del ensemble PGDA78 (DEM completo, altura sobre la esfera de 1 737 400 m)",
+        "en": "Clone 0001 of the PGDA78 ensemble (complete DEM, height above the 1,737,400 m sphere)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 · Clones (5 de 100 usados por el motor)",
+      "original_id": "Site01_final_adj_5mpp_0001_err.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Clones/Site01_final_adj_5mpp_0001_err.tif",
+      "bytes": 40987165,
+      "sha256": "242de9e3da624a276864cc4fa7c499e96981c95fd27583565e68e92434faf05b",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "DEM completo alternativo publicado por el proveedor; NO es un incremento sobre el nominal ni un error. El significado estadístico del ensemble depende del artículo (Barker et al. 2021) y no es una probabilidad.",
+        "en": "Complete alternative DEM published by the provider; NOT an increment over the nominal nor an error. The statistical meaning of the ensemble depends on the paper (Barker et al. 2021) and is not a probability."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Thu, 15 Oct 2020 19:59:21 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:04.307149+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa (scripts/geospatial/fetch-originals.ts) y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.clone_0002",
+      "passport_id": "SITE01_CLONE_0002",
+      "class": "published_science_product",
+      "kind": "ensemble_raster",
+      "layer": "clone_0002",
+      "variant": "published_0002",
+      "title": {
+        "es": "Clon 0002 del ensemble PGDA78 (DEM completo, altura sobre la esfera de 1 737 400 m)",
+        "en": "Clone 0002 of the PGDA78 ensemble (complete DEM, height above the 1,737,400 m sphere)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 · Clones (5 de 100 usados por el motor)",
+      "original_id": "Site01_final_adj_5mpp_0002_err.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Clones/Site01_final_adj_5mpp_0002_err.tif",
+      "bytes": 40987165,
+      "sha256": "97b2c05633e308c72eddfc5a337089836d80b5edb7469321976973f7eeb7dcad",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "DEM completo alternativo publicado por el proveedor; NO es un incremento sobre el nominal ni un error. El significado estadístico del ensemble depende del artículo (Barker et al. 2021) y no es una probabilidad.",
+        "en": "Complete alternative DEM published by the provider; NOT an increment over the nominal nor an error. The statistical meaning of the ensemble depends on the paper (Barker et al. 2021) and is not a probability."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Thu, 15 Oct 2020 19:59:40 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:12.012090+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa (scripts/geospatial/fetch-originals.ts) y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.clone_0003",
+      "passport_id": "SITE01_CLONE_0003",
+      "class": "published_science_product",
+      "kind": "ensemble_raster",
+      "layer": "clone_0003",
+      "variant": "published_0003",
+      "title": {
+        "es": "Clon 0003 del ensemble PGDA78 (DEM completo, altura sobre la esfera de 1 737 400 m)",
+        "en": "Clone 0003 of the PGDA78 ensemble (complete DEM, height above the 1,737,400 m sphere)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 · Clones (5 de 100 usados por el motor)",
+      "original_id": "Site01_final_adj_5mpp_0003_err.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Clones/Site01_final_adj_5mpp_0003_err.tif",
+      "bytes": 40987165,
+      "sha256": "2e79f90fcc6b28b06cc5524ac80601ace4ed2ea3b875e18deede92903b64f06c",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "DEM completo alternativo publicado por el proveedor; NO es un incremento sobre el nominal ni un error. El significado estadístico del ensemble depende del artículo (Barker et al. 2021) y no es una probabilidad.",
+        "en": "Complete alternative DEM published by the provider; NOT an increment over the nominal nor an error. The statistical meaning of the ensemble depends on the paper (Barker et al. 2021) and is not a probability."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Thu, 15 Oct 2020 19:59:59 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:19.336839+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa (scripts/geospatial/fetch-originals.ts) y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.clone_0004",
+      "passport_id": "SITE01_CLONE_0004",
+      "class": "published_science_product",
+      "kind": "ensemble_raster",
+      "layer": "clone_0004",
+      "variant": "published_0004",
+      "title": {
+        "es": "Clon 0004 del ensemble PGDA78 (DEM completo, altura sobre la esfera de 1 737 400 m)",
+        "en": "Clone 0004 of the PGDA78 ensemble (complete DEM, height above the 1,737,400 m sphere)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 · Clones (5 de 100 usados por el motor)",
+      "original_id": "Site01_final_adj_5mpp_0004_err.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Clones/Site01_final_adj_5mpp_0004_err.tif",
+      "bytes": 40987161,
+      "sha256": "447667f3ab461e246196698c882fe154ecc4388621bf07f7b04b93150f68aaa0",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "DEM completo alternativo publicado por el proveedor; NO es un incremento sobre el nominal ni un error. El significado estadístico del ensemble depende del artículo (Barker et al. 2021) y no es una probabilidad.",
+        "en": "Complete alternative DEM published by the provider; NOT an increment over the nominal nor an error. The statistical meaning of the ensemble depends on the paper (Barker et al. 2021) and is not a probability."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Thu, 15 Oct 2020 20:00:22 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:50.926933+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa (scripts/geospatial/fetch-originals.ts) y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
+      "id": "pgda78.site01.clone_0005",
+      "passport_id": "SITE01_CLONE_0005",
+      "class": "published_science_product",
+      "kind": "ensemble_raster",
+      "layer": "clone_0005",
+      "variant": "published_0005",
+      "title": {
+        "es": "Clon 0005 del ensemble PGDA78 (DEM completo, altura sobre la esfera de 1 737 400 m)",
+        "en": "Clone 0005 of the PGDA78 ensemble (complete DEM, height above the 1,737,400 m sphere)"
+      },
+      "provider": "NASA GSFC Planetary Geodesy Data Archive (PGDA)",
+      "mission": "Lunar Reconnaissance Orbiter",
+      "instrument": "Lunar Orbiter Laser Altimeter (LOLA)",
+      "product": "PGDA 78 · LOLA 5 m/pixel south pole sites · Site01 · Clones (5 de 100 usados por el motor)",
+      "original_id": "Site01_final_adj_5mpp_0005_err.tif",
+      "product_page": "https://pgda.gsfc.nasa.gov/products/78",
+      "url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site01/Clones/Site01_final_adj_5mpp_0005_err.tif",
+      "bytes": 40987163,
+      "sha256": "252306940146d35a362978aab45f81d2351ef5d097c791a291b68a970d9af51b",
+      "signature": "tiff",
+      "crs": "Lunar south polar stereographic, sphere R = 1737400 m, lon0 = 0, lat0 = -90, k0 = 1; frame MOON_ME_DE421 per provider",
+      "vertical_reference": "Height above the 1737400 m reference sphere",
+      "units": "m",
+      "nodata": "NaN",
+      "scale": 1,
+      "offset": 0,
+      "grid": {
+        "width": 3200,
+        "height": 3200,
+        "pixel_size_m": 5,
+        "bounds_xy_m": [
+          -19000,
+          -20000,
+          -3000,
+          -4000
+        ]
+      },
+      "resolution_note": {
+        "es": "DEM completo alternativo publicado por el proveedor; NO es un incremento sobre el nominal ni un error. El significado estadístico del ensemble depende del artículo (Barker et al. 2021) y no es una probabilidad.",
+        "en": "Complete alternative DEM published by the provider; NOT an increment over the nominal nor an error. The statistical meaning of the ensemble depends on the paper (Barker et al. 2021) and is not a probability."
+      },
+      "dates": {
+        "acquisition": null,
+        "acquisition_note": {
+          "es": "Producto construido con muchas órbitas LOLA; el proveedor no publica una fecha única de observación.",
+          "en": "Product built from many LOLA orbits; the provider publishes no single observation date."
+        },
+        "server_last_modified": "Thu, 15 Oct 2020 20:00:42 GMT",
+        "first_downloaded_utc": "2026-11-13T23:06:56.887318+00:00"
+      },
+      "credit": "NASA/GSFC/LOLA · Barker, M. K. et al. (2021), Planetary and Space Science, doi:10.1016/j.pss.2020.105119",
+      "terms": {
+        "es": "Citar Barker et al. 2021; la ficha del producto no declara una licencia explícita.",
+        "en": "Cite Barker et al. 2021; the product page states no explicit licence."
+      },
+      "verification": {
+        "status": "full_file_sha256_verified",
+        "method": "Descarga completa (scripts/geospatial/fetch-originals.ts) y SHA-256 comparado con el pasaporte del paquete site-regret/0.1"
+      }
+    },
+    {
       "id": "trek.sp.LRO_NAC_Mosaic_1mpp_SP",
       "class": "published_science_product",
       "kind": "wmts_tiles",

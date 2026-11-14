@@ -15,3 +15,4 @@
 | PC-10 | 2026-11-14 12:40 | Hugo · Claude Code | G10: adaptador ODE REST + panel de productos y huellas en Explore. Batería completa pendiente de re-ejecutar | sin confirmar al escribir esto |
 | PC-11 | 2026-11-14 13:00 | Hugo · Claude Code | Batería completa PASS (98 + 62). Panel ODE probado en vivo. LISTO_PARA_RELEVO a Asier; siguiente: G15 | commit de relevo (local, sin subir) |
 | PC-12 | 2026-11-14 ~13:10 | Hugo · Claude Code | Commits de PC-08 a PC-11 subidos a GitHub a peticion de Hugo. Sin PR ni despliegue | `ae18165` + este apunte |
+| PC-13 | 2026-11-14 | Hugo · Claude Code (Mission Control v2) | `main` = `6e41690` (PR #18). Rama `feat/mission-control-v2`. Bloque A/G15: 5 clones PGDA78 descargados y verificados, recortes + diferencias, Regret Lab con mapa de diferencia, Δ horizonte, obstáculo N/V, miniaturas y mapa de calor del regret. Vitest 108/108 | commit local de PC-13 |

@@ -30,6 +30,7 @@ import { Badge, Callout, NatureBadge, SiteDot, StatTile, WinnerTag } from "../ui
 import { Icon } from "../ui/Icon";
 import { Button, InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { TerrainDiffLab } from "./TerrainDiffLab";
 import { L, R } from "@/lib/i18n";
 
 const OUTCOME_STYLE: Record<Outcome, string> = {
@@ -233,13 +234,32 @@ function SurfaceDetail({ core, result, keep }: { core: Core; result: CriterionRe
 function DecisionMap({ core }: { core: Core }) {
   const { selection, dispatch } = useSelection();
   const criterion = selection.criterion!;
+  const [mode, setMode] = useState<"winner" | "regret">("winner");
   const cellTone = (w: Winner) =>
     w === "A" ? "bg-site-a/85 text-[#1a0d00]" : w === "B" ? "bg-site-b/85 text-[#00161a]" : w === "TIE" ? "bg-surface-3 text-ink-muted" : "pattern-hatch text-ink";
+  // Regret de conservar la elección nominal de cada fila (null si la fila no tiene elección nominal A/B o el caso es desconocido).
+  const regretCell = (w: (typeof WINDOW_IDS)[number], h: (typeof HEIGHTS_M)[number], v: Variant) => {
+    const r = getCriterionResult(core, w, h, criterion)!;
+    const keepRow = r.nominal_winner === "A" || r.nominal_winner === "B" ? r.nominal_winner : null;
+    return keepRow ? regretOfKeeping(r.cases[v], keepRow) : null;
+  };
+  const maxRegret = Math.max(0, ...WINDOW_IDS.flatMap((w) => HEIGHTS_M.flatMap((h) => VARIANTS.map((v) => regretCell(w, h, v) ?? 0))));
   return (
     <Panel
-      title={`${L("Mapa de decisiones", "Decision map")} · ${CRITERION_META[criterion].short}`}
+      title={`${mode === "winner" ? L("Mapa de decisiones", "Decision map") : L("Mapa de calor del regret", "Regret heat map")} · ${CRITERION_META[criterion].short}`}
       icon="grid"
-      actions={<InfoTip>{L("Ganador de cada superficie (columnas) en las 6 combinaciones ventana × altura (filas). El anillo violeta marca superficies que invierten la elección nominal de su fila. Pulsa una celda para seleccionarla.", "Winner for each surface (columns) in the 6 window × height combinations (rows). The violet ring marks surfaces that flip the nominal choice of their row. Click a cell to select it.")}</InfoTip>}
+      actions={<>
+        <Segmented
+          label={L("Color de las celdas", "Cell colour")}
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: "winner", label: L("Ganador", "Winner") },
+            { value: "regret", label: L("Regret", "Regret") },
+          ]}
+        />
+        <InfoTip>{L("Ganador de cada superficie (columnas) en las 6 combinaciones ventana × altura (filas). El anillo violeta marca superficies que invierten la elección nominal de su fila. Pulsa una celda para seleccionarla.", "Winner for each surface (columns) in the 6 window × height combinations (rows). The violet ring marks surfaces that flip the nominal choice of their row. Click a cell to select it.")} {L("En modo «Regret», la intensidad violeta es el regret (horas) de conservar la elección nominal de la fila; filas sin elección nominal quedan rayadas.", "In “Regret” mode, the violet intensity is the regret (hours) of keeping the row's nominal choice; rows without a nominal choice are hatched.")}</InfoTip>
+      </>}
     >
       <div className="overflow-x-auto">
         <table className="w-full min-w-[620px] border-separate border-spacing-1 text-center text-xs">
@@ -274,22 +294,24 @@ function DecisionMap({ core }: { core: Core }) {
                       const win = r.cases[v].winner;
                       const inv = outcomeOf(r.nominal_winner, win) === "inverted";
                       const active = rowActive && v === selection.variant;
+                      const reg = mode === "regret" ? regretCell(w, h, v) : null;
                       return (
                         <td key={v} className="p-0">
                           <button
                             type="button"
-                            aria-label={`${w}, ${h} m, ${VARIANT_LABEL[v]}: ${WINNER_LABEL[win]}${inv ? L(", invierte la elección nominal", ", flips the nominal choice") : ""}`}
+                            aria-label={`${w}, ${h} m, ${VARIANT_LABEL[v]}: ${WINNER_LABEL[win]}${inv ? L(", invierte la elección nominal", ", flips the nominal choice") : ""}${mode === "regret" ? ` · regret ${reg === null ? "—" : formatHoursMinutes(reg)}` : ""}`}
+                            style={mode === "regret" && reg !== null ? { background: `rgba(167, 139, 250, ${(0.08 + 0.85 * (maxRegret > 0 ? reg / maxRegret : 0)).toFixed(3)})` } : undefined}
                             aria-pressed={active}
                             onClick={() => {
                               dispatch({ type: "setWindow", value: w });
                               dispatch({ type: "setHeight", value: h });
                               dispatch({ type: "setVariant", value: v });
                             }}
-                            className={`h-8 w-full min-w-8 rounded-md font-bold transition-transform hover:scale-110 ${cellTone(win)} ${
+                            className={`h-8 w-full min-w-8 rounded-md font-bold transition-transform hover:scale-110 ${mode === "regret" ? (reg === null ? "pattern-hatch text-ink-faint" : "tabular text-[11px] text-ink") : cellTone(win)} ${
                               inv ? "ring-2 ring-uncertainty ring-offset-1 ring-offset-surface" : ""
                             } ${active ? "outline-2 outline-offset-2 outline-white" : ""} ${v === "nominal" ? "shadow-[inset_0_0_0_2px_#ffffff30]" : ""}`}
                           >
-                            {win === "TIE" ? "=" : win === "UNKNOWN" ? "?" : win}
+                            {mode === "regret" ? (reg === null ? "?" : v === "nominal" ? "N" : formatNumber(reg, 1)) : win === "TIE" ? "=" : win === "UNKNOWN" ? "?" : win}
                           </button>
                         </td>
                       );
@@ -301,12 +323,21 @@ function DecisionMap({ core }: { core: Core }) {
           </tbody>
         </table>
       </div>
+      {mode === "regret" ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-ink-faint">
+          <span className="h-2.5 w-32 rounded-full" style={{ background: "linear-gradient(90deg, rgba(167,139,250,0.08), rgba(167,139,250,0.93))" }} />
+          <span>0 → {formatHoursMinutes(maxRegret)} {L("(máximo de la matriz) · cifras en horas", "(matrix maximum) · figures in hours")}</span>
+          <span className="flex items-center gap-1.5"><span className="pattern-hatch inline-block size-3 rounded-sm" />{L("Sin elección nominal (empate o desconocido)", "No nominal choice (tie or unknown)")}</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block size-3 rounded-sm ring-2 ring-uncertainty" />{L("Invierte la elección nominal", "Flips the nominal choice")}</span>
+        </div>
+      ) : (
       <div className="mt-3 flex flex-wrap gap-4 text-[11px] text-ink-faint">
         <span className="flex items-center gap-1.5"><span className="inline-block size-3 rounded-sm bg-site-a" />{L("Gana A", "A wins")}</span>
         <span className="flex items-center gap-1.5"><span className="inline-block size-3 rounded-sm bg-site-b" />{L("Gana B", "B wins")}</span>
         <span className="flex items-center gap-1.5"><span className="inline-block size-3 rounded-sm bg-surface-3" />{L("= Empate (≤ 10 min)", "= Tie (≤ 10 min)")}</span>
         <span className="flex items-center gap-1.5"><span className="inline-block size-3 rounded-sm ring-2 ring-uncertainty" />{L("Invierte la elección nominal", "Flips the nominal choice")}</span>
       </div>
+      )}
     </Panel>
   );
 }
@@ -754,6 +785,8 @@ function RegretBody({ core }: { core: Core }) {
         </Panel>
         <SurfaceDetail core={core} result={result} keep={keep} />
       </div>
+
+      <TerrainDiffLab core={core} />
 
       <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <DecisionMap core={core} />
