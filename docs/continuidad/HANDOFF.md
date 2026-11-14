@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/geo-real-terrain` — **solo local, sin push** |
-| HEAD | `54cda05` (3 commits sobre `main` = `987899d`) |
+| HEAD | `4b77455` o un commit posterior solo de documentos (código: `54cda05`; base `main` = `987899d`). Comprobar con `git log -1` |
 | Worktree | único (no hay worktrees separados) |
 | Otra copia que NO es la activa | `…\NASA-SpaceApps-2026\site-regret\` (copia antigua previa al repo del equipo; no editar) |
 
