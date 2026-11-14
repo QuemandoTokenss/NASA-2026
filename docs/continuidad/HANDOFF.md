@@ -1,7 +1,14 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** #20 fusionada (§0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-quinquies. Fusión de la PR #21 (rediseño PC-24 + PC-25) — estado actual (leer primero)
+
+- **PR #21 fusionada en `main`** con commit de merge `31f38f1`, a petición de Hugo. Antes: checks de Vercel en verde, sin conflictos, base `main`.
+- **Producción**: estado Vercel = success para `31f38f1`. https://site-regret.vercel.app/ responde 200 y sirve la nueva interfaz (pregunta «¿Dónde alunizarías?», foto de Connecting Ridge). `/timeline/` responde 200.
+- **Rollback** si hiciera falta: promover en Vercel el despliegue anterior `8cZv4dTRkZh7BnFkF7CCDfeCtH6o` (merge de la #20, `9d0f09b`) o revertir el merge `31f38f1` en Git.
+- **Pendiente humano**: revisión visual de la producción (portada con globo, Timeline, Presentar, Regret Lab, Engineer) y confirmación del equipo de los puntos de «Pendiente» de §0-bis y §0-ter (lector de pantalla, Safari/Firefox, móvil físico, mapa de Presentar sin conexión real).
 
 ## 0-quater. Fusión de la PR #20 (2026-11-14, a petición de Hugo) — leer primero
 
