@@ -43,3 +43,9 @@
 
 - Implementado: `src/components/engineer/` — selector discreto 0/2/10 m (radiogroup), escena 2D rotulada «ILUSTRACIÓN · no a escala · sin cálculo de sombras», métricas a la altura seleccionada con Δ frente a 0 m, horizontes 0/2/10 m superpuestos, gráfico de impacto (3 puntos por sitio, sin líneas de unión), franjas de Sol/Tierra por altura, tabla de sensibilidad, ganador de cada criterio por altura (desde comparisons).
 - Comprobado en navegador: W2, A nominal — racha sin Sol 38 h 40 min a 0 m y 0 h a 2/10 m; criterios de Sol: B a 0 m → empate a 2/10 m; Tierra: A en las tres alturas.
+
+## F7 — Evidencia científica (2026-11-14)
+
+- Implementado: `EvidenceView` reescrita + `src/lib/science/evidence.ts`: KPIs reales, inventario de 18 fuentes agrupado con enlaces y hashes, metodología en 7 pasos con etiquetas de naturaleza, 414 comprobaciones clasificadas en 6 categorías (8/4/2/40/120/240), tabla de contraste con Horizons (Δ en segundos de arco), convergencia espacial y temporal y efecto del refinamiento, parámetros e hipótesis, explicación de qué representa y qué no el RMS, naturaleza de los datos, referencias con DOI, límites del pasaporte, integridad y descargas (21 originales + manifest). Se publican además 4 JSON de validación originales.
+- Pruebas: `tests/evidence.test.ts` (414 = categorías; máximo del contraste = pasaporte). 63 tests.
+- Comprobado en navegador: sin errores; convergencia espacial máx. 0,0549° (B · 0 m), temporal 5 min, refinamiento 50 min y 6/6 ganadores sin cambios.

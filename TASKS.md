@@ -11,7 +11,7 @@ Prioridad: P0 debe funcionar · P1 muy importante · P2 mejora. Estado: ✅ hech
 | 5 | F4 Timeline | Estados cada 10 min, curvas nominales, reproductor sobre instantes reales, eventos acotados | P0 | ✅ |
 | 6 | F5 Explore | Zoom/desplazamiento sobre la figura real, capas con procedencia, acceso al comparador | P1 | ✅ |
 | 7 | F6 Engineer | Comparación 0/2/10 m: horizontes, métricas, estados, ganadores por altura; escena 2D ilustrativa | P1 | ✅ |
-| 8 | F7 Evidencia | Fuentes, referencias, método, parámetros, 414 comprobaciones, Horizons, convergencia, límites, descargas | P0 | ⬜ |
+| 8 | F7 Evidencia | Fuentes, referencias, método, parámetros, 414 comprobaciones, Horizons, convergencia, límites, descargas | P0 | ✅ |
 | 9 | F8 Dashboard | Centro de control con cifras reales y acceso al caso demostrativo | P0 | ⬜ |
 | 10 | F9 Integración | Flujo completo, URL validada, exportación JSON/CSV | P1 | ⬜ |
 | 11 | F10 Pulido | Fidelidad a mockups, 1920/1440/móvil, microinteracciones | P1 | ⬜ |
