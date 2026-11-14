@@ -39,7 +39,7 @@
 ## B. Autorizaciones vigentes
 
 - Commits locales en la rama de trabajo: Hugo los pidió en la misión inicial («commit local tras cada fase»). El protocolo de relevo pide no hacerlos *automáticamente por el relevo*: seleccionar archivos explícitos y revisar antes.
-- Push y PR: **no autorizado** para `feat/mission-control-v2` todavía.
+- Push y PR de `feat/mission-control-v2`: **autorizados por Hugo** el 14-11-2026 (PR #19). Merge: lo decide el integrador del equipo.
 - Merge y despliegue: **no autorizados** (el encargo vigente lo prohíbe sin autorización expresa).
 - Descarga de los 5 clones PGDA78 (≈205 MB): autorizada por el encargo vigente tras comprobar metadatos, hashes, tamaño y espacio; hecha en PC-13.
 

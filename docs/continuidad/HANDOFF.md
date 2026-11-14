@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/mission-control-v2`, creada desde `main` = `6e41690` («Merge #18: integrate real lunar terrain and geospatial layers») |
-| HEAD | ver `git log -4`: `ca684bf` (A), `0785e45` (B), `8c2d682` (C + D) y el commit de PC-16 (E). **Sin push, sin PR, sin despliegue** |
+| HEAD | `6dee90d` (E) sobre `8c2d682` (C + D), `0785e45` (B), `ca684bf` (A). **Subida a GitHub a petición de Hugo (2026-11-14); PR #19 abierto contra `main`** (https://github.com/QuemandoTokenss/NASA-2026/pull/19). Merge: lo decide el integrador. Sin despliegue |
 | Otra copia | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` (rama `feat/geo-real-terrain`, `47844ba`, ya fusionada en `main` por el PR #18). No se ha tocado; sus originales NASA de `web/data/raw/` se COPIARON a esta carpeta |
 
 **Reconciliación de documentos antiguos:** el HANDOFF anterior (PC-11/12) decía que `feat/geo-real-terrain` no estaba fusionada. Ya lo está: `main` contiene el PR #18 (`6e41690`). En `main` SÍ está la capa geoespacial (G0–G10). `01_REANUDAR_IMPLEMENTACION.md` es histórico (relevo Hugo → Asier) y sus referencias de rama/HEAD están superadas.
@@ -90,7 +90,7 @@ Hecho:
 
 1. **Revisión humana** (bloqueo NO técnico): el equipo debe recorrer Dashboard → Explore → Timeline → Comparador → Engineer → Regret Lab → Evidencia → Historia con `npm run build && npm run serve` y anotar problemas visuales. Ninguna IA puede dar por buena la experiencia visual sola.
 2. **Bloque F** (por orden de valor): G11/G9 producto NAC proyectado concreto de Connecting Ridge (ODE `pt=SDNDTM`/`BDRROI` en la caja de los sitios) y corregistro del mosaico; G12 nomenclatura IAU/USGS (Gazetteer of Planetary Nomenclature, solo con fuente verificada); G13 PGDA90 regional solo si aporta (≈408 MB: comprobar espacio y avisar); mejoras ODE (región visible / polígono).
-3. **G18**: push de `feat/mission-control-v2` y PR a `main` cuando Hugo lo autorice.
+3. **G18**: PR #19 abierto (push autorizado por Hugo). Pendiente: revisión del equipo, CI y merge por el integrador. No desplegar sin autorización.
 
 ### Antiguo §5 (bloque E) — HECHO en PC-16
 

@@ -17,7 +17,7 @@ Comprobaciones iniciales (solo lectura):
   git branch --show-current        → feat/mission-control-v2
   git rev-parse HEAD ; git status --short --branch ; git log --oneline -5
 La rama sale de main = 6e41690 (PR #18 fusionado: la capa geoespacial YA está en main).
-Si la rama no existe en tu copia es porque no se ha subido: pide a Hugo que la suba (push no autorizado aún).
+La rama está en GitHub (PR #19 contra main): si no la tienes, `git fetch origin && git switch feat/mission-control-v2`.
 Si el código o Git contradicen al HANDOFF, mandan el código y Git; reconcilia sin descartar trabajo.
 
 Preparación, dentro de web/:
