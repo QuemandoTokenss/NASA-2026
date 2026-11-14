@@ -14,6 +14,9 @@ import { useSelection } from "@/lib/state/SelectionProvider";
 import { DataGate } from "../data/DataGate";
 import { SiteTerrainThumb } from "../comparador/PairTerrain";
 import { GeoMap } from "../maps/GeoMap";
+import heroImg from "@/assets/scene/hero-moon-svs5187.webp";
+import heroSmall from "@/assets/scene/hero-moon-svs5187-1200.webp";
+import { siteReading } from "@/lib/science/landingDemo";
 import { Badge, NatureBadge, SiteDot, WinnerTag } from "../ui/Display";
 import { Icon, type IconName } from "../ui/Icon";
 import { LinkButton } from "../ui/Interactive";
@@ -118,6 +121,14 @@ function Body({ core }: { core: Core }) {
   const pub = familyCounts(demo, "published");
   const demoHref = `/regret-lab/?w=${DEMO_CASE.windowId}&h=${DEMO_CASE.heightM}&v=nominal&c=${DEMO_CASE.criterion}${DEMO_HASH}`;
 
+  // Caso de la portada: W2 · 0 m, referencia → hipótesis del equipo (correlated_plus), leído del paquete.
+  const why = {
+    a0: siteReading(core, "A", 0).hours ?? 0,
+    b0: siteReading(core, "B", 0).hours ?? 0,
+    a1: siteReading(core, "A", 1).hours ?? 0,
+    b1: siteReading(core, "B", 1).hours ?? 0,
+  };
+  const hm = formatHoursMinutes;
   const facts = [
     { v: core.sites.length, l: L("sitios calculados", "computed sites") },
     { v: cfg.windows.length, l: L("ventanas de 30 días", "30-day windows") },
@@ -128,54 +139,98 @@ function Body({ core }: { core: Core }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-[#0b1730] via-surface to-[#120c2a] p-6 sm:p-10">
-        <div aria-hidden className="pointer-events-none absolute -top-40 -right-40 size-[520px] rounded-full bg-[radial-gradient(circle,#3a6ff033,transparent_60%)]" />
-        <div className="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-          <div className="animate-rise">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">NASA Space Apps 2026 · Lunar Landing Site Navigator</p>
-            <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">
-              {R("¿Hasta qué punto podemos confiar en que un sitio lunar es {better}?", "How far can we trust that one lunar site is {better}?", {
-                better: <span className="bg-gradient-to-r from-site-a to-site-b bg-clip-text text-transparent">{L("mejor que otro", "better than another")}</span>,
-              })}
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-              {R(
-                "En el polo sur lunar, unos metros de relieve deciden si un punto ve el Sol o la Tierra. SITE REGRET compara dos emplazamientos reales y comprueba si la elección {strong}.",
-                "At the lunar south pole, a few metres of relief decide whether a point sees the Sun or the Earth. SITE REGRET compares two real sites and checks whether the choice {strong}.",
-                { strong: <strong className="text-ink">{L("sigue siendo la mejor cuando el terreno cambia", "is still the best when the terrain changes")}</strong> },
-              )}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <LinkButton href={demoHref} variant="regret" icon="sparkles">
-                {L("Iniciar caso demostrativo", "Start the demo case")}
-              </LinkButton>
-              <LinkButton href={`/explore/?${query}`} variant="secondary" icon="map">
-                {L("Explorar los sitios", "Explore the sites")}
-              </LinkButton>
-              <LinkButton href="/historia/" variant="ghost" icon="play">
-                {L("Ver la historia en 7 escenas", "Watch the story in 7 scenes")}
-              </LinkButton>
-            </div>
-            <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
-              {facts.map((f) => (
-                <li key={f.l} className="flex items-baseline gap-2">
-                  <span className="tabular text-2xl font-bold text-ink">{f.v}</span>
-                  <span className="text-xs text-ink-muted">{f.l}</span>
-                </li>
-              ))}
-            </ul>
+      <section className="relative isolate overflow-hidden rounded-3xl border border-line bg-black" data-testid="home-hero">
+        {/* Luna real (NASA SVS 5187, LOLA + LROC WAC), imagen local optimizada: no depende de Moon Trek */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- export estático: imagen local ya optimizada */}
+        <img
+          src={heroImg.src}
+          srcSet={`${heroSmall.src} 1200w, ${heroImg.src} 2400w`}
+          sizes="(max-width: 768px) 100vw, 1400px"
+          alt={L("La Luna en cuarto creciente, con relieve y luz cenicienta (render NASA a partir de datos de LRO)", "The Moon at first quarter, with relief and earthshine (NASA render from LRO data)")}
+          className="absolute inset-0 -z-10 h-full w-full object-cover object-[72%_50%] sm:object-[62%_50%]"
+          fetchPriority="high"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-black via-black/75 to-black/0 sm:via-black/55" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-transparent to-transparent sm:hidden" />
+        <div className="flex min-h-[min(74vh,640px)] flex-col justify-center gap-5 px-6 py-10 sm:px-12 sm:py-14">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">{L("Polo sur lunar · NASA Space Apps 2026", "Lunar south pole · NASA Space Apps 2026")}</p>
+          <h1 className="max-w-[17ch] text-4xl leading-[1.05] font-bold tracking-tight text-ink sm:text-6xl">
+            {L("¿Dónde alunizarías si solo pudieras aguantar 24 horas sin Sol?", "Where would you land if you could only last 24 hours without sunlight?")}
+          </h1>
+          <p className="max-w-xl text-base leading-relaxed text-ink-muted sm:text-lg">
+            {L(
+              "Dos sitios reales del polo sur. Unos metros de relieve deciden si un punto ve el Sol. Las 24 h son el límite ilustrativo del reto interactivo.",
+              "Two real south-pole sites. A few metres of relief decide whether a point sees the Sun. The 24 h is the illustrative limit of the interactive challenge.",
+            )}
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/historia/" className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-3.5 text-base font-bold text-bg shadow-[0_10px_40px_-10px_#8fb4ff] transition-transform hover:-translate-y-0.5" data-testid="hero-cta">
+              <Icon name="play" className="size-5" /> {L("Probar la misión", "Try the mission")}
+            </Link>
+            <Link href={`/explore/?${query}`} className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-black/30 px-5 py-3.5 text-base font-semibold text-ink backdrop-blur-sm hover:bg-white/10">
+              <Icon name="map" className="size-5" /> {L("Explorar el polo sur", "Explore the south pole")}
+            </Link>
+            <Link href="/historia/#pregunta" className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline">
+              {L("Presentación en 7 escenas", "7-scene presentation")}
+            </Link>
           </div>
-          <figure className="flex min-w-0 flex-col gap-2" data-testid="hero-map">
-            <GeoMap sites={core.sites} focusSite="A" compact overlay={{ line: [{ x: core.sites[0].x_m, y: core.sites[0].y_m }, { x: core.sites[1].x_m, y: core.sites[1].y_m }] }} />
-            <figcaption className="text-[11px] text-ink-faint">
-              {L(
-                "Connecting Ridge (polo sur lunar): imágenes orbitales reales LRO NAC servidas por NASA Moon Trek, con los sitios A (ROI 4) y B (ROI 6). Sin red no se muestra ninguna imagen de sustitución.",
-                "Connecting Ridge (lunar south pole): real LRO NAC orbital images served by NASA Moon Trek, with sites A (ROI 4) and B (ROI 6). Offline, no substitute image is shown.",
-              )}
-            </figcaption>
-          </figure>
         </div>
+        <p className="px-6 pb-3 text-[10px] text-white/75 sm:absolute sm:right-3 sm:bottom-2 sm:max-w-[60%] sm:p-0 sm:text-right">
+          {L("Luna: NASA SVS, render con LRO LOLA + LROC WAC (18 ene 2024). Vista de la Luna entera, no de Connecting Ridge.", "Moon: NASA SVS, rendered from LRO LOLA + LROC WAC (18 Jan 2024). Whole-Moon view, not Connecting Ridge.")}
+        </p>
       </section>
+
+      <section className="grid gap-5 rounded-3xl border border-line bg-surface/85 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]" data-testid="home-why" aria-labelledby="home-why-title">
+        <div className="flex flex-col justify-center gap-4">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-uncertainty">{L("Por qué existe SITE REGRET", "Why SITE REGRET exists")}</p>
+          <h2 id="home-why-title" className="text-2xl leading-tight font-bold text-ink sm:text-3xl">
+            {L("La mejor elección puede cambiar si el terreno es un poco distinto", "The best choice can change if the terrain is slightly different")}
+          </h2>
+          <div className="flex flex-wrap items-end gap-3" data-testid="home-why-b">
+            <div>
+              <p className="text-xs text-ink-faint">{L("Sitio B · relieve de referencia", "Site B · reference terrain")}</p>
+              <p className="tabular text-4xl font-bold text-site-b sm:text-5xl">{hm(why.b0)}</p>
+            </div>
+            <Icon name="arrowRight" className="mb-3 size-7 text-ink-faint" />
+            <div>
+              <p className="text-xs text-ink-faint">{L("Sitio B · otro modelo del terreno", "Site B · another terrain model")}</p>
+              <p className="tabular text-4xl font-bold text-uncertainty sm:text-5xl">{hm(why.b1)}</p>
+            </div>
+          </div>
+          <p className="max-w-xl text-sm leading-relaxed text-ink-muted sm:text-base">
+            {L(
+              `Mayor racha seguida sin Sol en la ventana W2 (14 dic 2026 – 13 ene 2027), con el observador a ras del suelo. Con el relieve de referencia, B (${hm(why.b0)}) gana a A (${hm(why.a0)}). Con una hipótesis del equipo sobre el terreno, B pasa a ${hm(why.b1)} y A queda por delante (${hm(why.a1)}). Ese cambio de decisión es lo que mide SITE REGRET.`,
+              `Longest continuous stretch without sunlight in window W2 (14 Dec 2026 – 13 Jan 2027), observer at ground level. With the reference terrain, B (${hm(why.b0)}) beats A (${hm(why.a0)}). With a team hypothesis about the terrain, B goes to ${hm(why.b1)} and A takes the lead (${hm(why.a1)}). That change of decision is what SITE REGRET measures.`,
+            )}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/historia/" className="inline-flex items-center gap-2 rounded-xl bg-uncertainty px-5 py-2.5 text-sm font-bold text-[#14092e] hover:brightness-110">
+              <Icon name="play" className="size-4" /> {L("Compruébalo en la misión", "See it in the mission")}
+            </Link>
+            <Link href={`/comparador/?w=W2&h=0&v=nominal&c=min_longest_dark_hours`} className="inline-flex items-center gap-2 rounded-xl border border-line-strong px-4 py-2.5 text-sm font-semibold text-ink hover:bg-surface-2">
+              {L("Ver la comparación", "See the comparison")}
+            </Link>
+          </div>
+        </div>
+        <figure className="flex min-w-0 flex-col gap-2" data-testid="hero-map">
+          <GeoMap sites={core.sites} focusSite="A" compact compactHeightClass="h-[300px] sm:h-[360px]" showCredit reliefFallback overlay={{ line: [{ x: core.sites[0].x_m, y: core.sites[0].y_m }, { x: core.sites[1].x_m, y: core.sites[1].y_m }] }} />
+          <figcaption className="text-[11px] text-ink-faint">
+            {L(
+              "Los dos sitios reales en Connecting Ridge: A (ROI 4) y B (ROI 6), a 648 m, sobre imágenes orbitales LRO NAC (NASA Moon Trek). Sin conexión se muestra el relieve calculado del DEM, rotulado.",
+              "The two real sites on Connecting Ridge: A (ROI 4) and B (ROI 6), 648 m apart, over LRO NAC orbital images (NASA Moon Trek). Offline, the computed DEM relief is shown, labelled.",
+            )}
+          </figcaption>
+        </figure>
+      </section>
+
+      <ul className="flex flex-wrap gap-x-6 gap-y-2 px-1" aria-label={L("El paquete científico en cifras", "The scientific package in numbers")}>
+        {facts.map((f) => (
+          <li key={f.l} className="flex items-baseline gap-2">
+            <span className="tabular text-xl font-bold text-ink">{f.v}</span>
+            <span className="text-xs text-ink-muted">{f.l}</span>
+          </li>
+        ))}
+      </ul>
 
       <MissionControl core={core} />
 

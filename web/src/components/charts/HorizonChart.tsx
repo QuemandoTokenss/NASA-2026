@@ -15,10 +15,8 @@ export interface HorizonSeries {
 }
 
 const W = 900;
-const H = 300;
-const M = { top: 16, right: 16, bottom: 34, left: 48 };
-const PW = W - M.left - M.right;
-const PH = H - M.top - M.bottom;
+const M0 = { top: 16, right: 16, bottom: 34, left: 48 };
+const PW = W - M0.left - M0.right;
 const CARDINALS = [
   { az: 0, label: "N" },
   { az: 90, label: "E" },
@@ -40,9 +38,15 @@ export interface SkyTrack {
   azimuthDeg: number[];
   elevationDeg: number[];
   cursor?: number;
+  /** Opcional: imagen del cuerpo (centrada en el punto real) en lugar del punto genérico. */
+  iconHref?: string;
 }
 
-export function HorizonChart({ series, title, tracks = [] }: { series: HorizonSeries[]; title: string; tracks?: SkyTrack[] }) {
+export function HorizonChart({ series, title, tracks = [], height = 300 }: { series: HorizonSeries[]; title: string; tracks?: SkyTrack[]; height?: number }) {
+  const H = height;
+  // Con iconos de cuerpos se deja aire arriba para que el disco no quede cortado en el borde.
+  const M = { ...M0, top: tracks.some((t) => t.iconHref) ? 34 : M0.top };
+  const PH = H - M.top - M.bottom;
   const descId = useId();
   const [cursor, setCursor] = useState<number | null>(null); // índice de azimut
 
@@ -187,7 +191,28 @@ export function HorizonChart({ series, title, tracks = [] }: { series: HorizonSe
         {tracks.map((t, k) => (
           <g key={t.key} pointerEvents="none">
             <path d={trackPaths[k]} fill="none" stroke={t.color} strokeWidth={1.4} strokeOpacity={0.7} />
-            {t.cursor !== undefined ? (
+            {t.cursor !== undefined && t.iconHref ? (
+              (() => {
+                const cx = x(t.azimuthDeg[t.cursor]);
+                const cy = y(t.elevationDeg[t.cursor]);
+                const r = 20;
+                // Etiquetas separadas si dos cuerpos coinciden: la segunda baja con una guía.
+                const other = tracks.find((o, j) => j !== k && o.cursor !== undefined && o.iconHref && Math.abs(x(o.azimuthDeg[o.cursor!]) - cx) < 70 && Math.abs(y(o.elevationDeg[o.cursor!]) - cy) < 40);
+                const dy = other && k > 0 ? 40 : -29;
+                const ly = Math.min(M.top + PH - 4, Math.max(M.top + 10, cy + dy));
+                return (
+                  <g data-testid={`sky-body-${t.key}`}>
+                    <circle cx={cx} cy={cy} r={r + 3} fill="var(--color-bg)" opacity={0.65} />
+                    <image href={t.iconHref} x={cx - r} y={cy - r} width={r * 2} height={r * 2} />
+                    <circle cx={cx} cy={cy} r={r + 1.5} fill="none" stroke={t.color} strokeWidth={1.5} />
+                    {Math.abs(ly - cy) > 26 ? <line x1={cx} y1={cy + (ly > cy ? r + 2 : -r - 2)} x2={cx} y2={ly + (ly > cy ? -10 : 2)} stroke={t.color} strokeOpacity={0.6} /> : null}
+                    <text x={cx} y={ly} textAnchor="middle" className="text-[12px] font-semibold" fill="var(--color-ink)" stroke="var(--color-bg)" strokeWidth={3} paintOrder="stroke">
+                      {t.label}
+                    </text>
+                  </g>
+                );
+              })()
+            ) : t.cursor !== undefined ? (
               <circle cx={x(t.azimuthDeg[t.cursor])} cy={y(t.elevationDeg[t.cursor])} r={6} fill={t.color} stroke="var(--color-bg)" strokeWidth={2} style={{ filter: `drop-shadow(0 0 6px ${t.color})` }} />
             ) : null}
           </g>

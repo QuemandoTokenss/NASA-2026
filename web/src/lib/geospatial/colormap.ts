@@ -110,3 +110,21 @@ export function colorizeDifference(g: RasterGrid, limit: number): Uint8ClampedAr
   }
   return out;
 }
+
+/**
+ * Relieve «mineral» para fondos de mapa: sombreado con exageración vertical SOLO
+ * visual (×3 por defecto) y una curva de contraste que deja ver crestas y laderas
+ * en grises. Misma luz sintética que `hillshade`; no representa al Sol real.
+ */
+export function mineralHillshade(g: RasterGrid, exaggeration = 3): Uint8ClampedArray<ArrayBuffer> {
+  const out = hillshade({ ...g, data: g.data.map((v) => v * exaggeration) });
+  for (let i = 0; i < out.length; i += 4) {
+    if (!out[i + 3]) continue;
+    const t = Math.min(1, Math.max(0, (out[i] - 30) / 225));
+    const v = Math.pow(t, 1.35);
+    out[i] = 16 + 214 * v;
+    out[i + 1] = 17 + 211 * v;
+    out[i + 2] = 20 + 202 * v;
+  }
+  return out;
+}

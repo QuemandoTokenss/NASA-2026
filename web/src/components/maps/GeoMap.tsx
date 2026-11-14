@@ -21,7 +21,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SiteId } from "@/lib/contract/constants";
 import type { Site } from "@/lib/contract/schema";
 import { formatNumber } from "@/lib/format";
-import { LAYER_STYLE, colorizeRaster, hillshade, rampCss, rgbCss } from "@/lib/geospatial/colormap";
+import { LAYER_STYLE, colorizeRaster, mineralHillshade, rampCss, rgbCss } from "@/lib/geospatial/colormap";
 import { arcDistanceM, azimuthBetween, chordDistanceM, stereographicScale, xyToLonLat, type XY } from "@/lib/geospatial/lunar";
 import { profileAlong, sampleBilinear, sampleNearest, type RasterGrid } from "@/lib/geospatial/raster";
 import { GEO_REGISTRY, TERRAIN_BOUNDS, TERRAIN_MANIFEST, loadRois, loadTerrainLayer, registryAsset, type RegistryAsset, type TerrainLayerId } from "@/lib/geospatial/terrain";
@@ -263,7 +263,7 @@ export function GeoMap({
       if (!elevation) return;
       const layer = new ImageLayer({
         zIndex: 0,
-        source: new ImageStatic({ url: rgbaToUrl(hillshade(elevation), elevation.width, elevation.height), imageExtent: [...TERRAIN_BOUNDS], projection: PROJECTION, interpolate: true }),
+        source: new ImageStatic({ url: rgbaToUrl(mineralHillshade(elevation), elevation.width, elevation.height), imageExtent: [...TERRAIN_BOUNDS], projection: PROJECTION, interpolate: true }),
       });
       layersRef.current.base = layer;
       map.addLayer(layer);
@@ -326,6 +326,18 @@ export function GeoMap({
     };
   }, [basemap, elevation]);
 
+  // «Vista regional» (WAC, 100 m/px como máximo detalle): por debajo de ese detalle el servicio no
+  // entrega teselas y el mapa queda negro, así que se encuadra a ~160 m/px sobre el par.
+  const prevBase = useRef<BasemapId>(initialBasemap);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || compact) return;
+    const mid = [(sites[0].x_m + sites[1].x_m) / 2, (sites[0].y_m + sites[1].y_m) / 2];
+    if (basemap === "wac" && prevBase.current !== "wac") map.getView().animate({ center: mid, resolution: 160, duration: 300 });
+    if (basemap !== "wac" && prevBase.current === "wac" && (map.getView().getResolution() ?? 0) > 20) map.getView().animate({ center: mid, resolution: 2.5, duration: 300 });
+    prevBase.current = basemap;
+  }, [basemap, compact, sites]);
+
   /* ----------------------------- capa analítica ----------------------------- */
   const analyticGrid = analytic === "none" ? undefined : grids[analytic];
   useEffect(() => {
@@ -387,7 +399,7 @@ export function GeoMap({
             new Style({
               stroke: new Stroke({ color: site ? color : "#e8eef8aa", width: site ? 2 : 1.2, lineDash: site ? undefined : [5, 4] }),
               fill: new Fill({ color: site ? `${color}14` : "#e8eef808" }),
-              text: new Text({ text: `ROI ${r.roi}`, font: "600 11px Inter, sans-serif", fill: new Fill({ color: "#e8eef8" }), stroke: new Stroke({ color: "#050912", width: 3 }), overflow: false }),
+              text: new Text({ text: `ROI ${r.roi}`, font: "600 11px Inter, sans-serif", offsetY: site ? 26 : 0, fill: new Fill({ color: "#e8eef8" }), stroke: new Stroke({ color: "#050912", width: 3 }), overflow: false }),
             }),
           );
           src.addFeature(f);
@@ -474,13 +486,13 @@ export function GeoMap({
   const tileFailed = (basemap === "nac" || basemap === "wac") && tiles.key === basemap && (tiles.status === "unavailable" || tiles.status === "invalid");
   const [fellBack, setFellBack] = useState(false);
   useEffect(() => {
-    if (!compact || !reliefFallback || !tileFailed) return;
+    if (!reliefFallback || !tileFailed) return;
     const t = setTimeout(() => {
       setFellBack(true);
       setBasemap("relief");
     }, 0);
     return () => clearTimeout(t);
-  }, [compact, reliefFallback, tileFailed]);
+  }, [reliefFallback, tileFailed]);
 
   /* ------------------------------- acciones ------------------------------- */
   const zoomBy = (f: number) => {
@@ -615,7 +627,7 @@ export function GeoMap({
     <div
       data-testid="geomap"
       data-basemap={basemap}
-      data-basemap-status={tileState ?? (basemap === "relief" ? (elevation ? "available" : "loading") : "none")}
+      data-basemap-status={fellBack ? "relief-fallback" : tileState ?? (basemap === "relief" ? (elevation ? "available" : "loading") : "none")}
       data-analytic={analytic}
       data-analytic-ready={analytic !== "none" && analyticGrid ? "true" : "false"}
       data-tiles-loaded={tiles.key === basemap ? tiles.loaded : 0}
@@ -627,20 +639,32 @@ export function GeoMap({
           <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint">{L("Imagen de fondo", "Background image")}</legend>
           {(
             [
-              ["nac", assetTitle(registryAsset(BASEMAP_ASSET.nac)), L("Imágenes orbitales reales · NASA Moon Trek · en línea", "Real orbital images · NASA Moon Trek · online")],
-              ["wac", assetTitle(registryAsset(BASEMAP_ASSET.wac)), L("Imágenes orbitales reales · 100 m · en línea", "Real orbital images · 100 m · online")],
-              ["relief", L("Relieve sombreado del DEM", "Shaded relief from the DEM"), L("Derivado calculado por SITE REGRET · luz sintética · sin red", "Derived by SITE REGRET · synthetic light · offline")],
-              ["none", L("Sin fondo", "No background"), ""],
+              ["nac", L("Imagen lunar", "Lunar image"), L("Fotografías orbitales reales · LRO/LROC NAC · NASA Moon Trek", "Real orbital photos · LRO/LROC NAC · NASA Moon Trek")],
+              ["relief", L("Relieve del terreno", "Terrain relief"), L("Calculado del DEM PGDA78 · luz sintética · sin conexión", "Computed from the PGDA78 DEM · synthetic light · offline")],
+              ["wac", L("Vista regional", "Regional view"), L("Mosaico LROC WAC (100 m) · se aleja para ver el entorno", "LROC WAC mosaic (100 m) · zooms out to show the surroundings")],
             ] as const
           ).map(([id, title, sub]) => (
             <label key={id} className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-2.5 text-sm transition-colors ${basemap === id ? "border-accent/60 bg-accent-surface/40" : "border-line bg-bg-2/70 hover:border-line-strong"}`}>
               <input type="radio" name="geomap-basemap" value={id} checked={basemap === id} onChange={() => setBasemap(id)} className="mt-1 accent-[#8fb4ff]" />
               <span className="min-w-0">
                 <span className="block text-ink">{title}</span>
-                {sub ? <span className="block text-[11px] text-ink-faint">{sub}</span> : null}
+                <span className="block text-[11px] text-ink-faint">{sub}</span>
               </span>
             </label>
           ))}
+          {fellBack ? (
+            <p className="rounded-lg border border-warn/50 bg-warn/10 px-2.5 py-1.5 text-xs font-semibold text-warn" data-testid="geomap-fallback">
+              {L("Imagen orbital no disponible · mostrando relieve calculado", "Orbital image unavailable · showing computed relief")}
+              <span className="block font-normal text-ink-faint">{tiles.status === "invalid" ? L("El servicio de NASA Moon Trek devolvió una respuesta no válida.", "NASA Moon Trek returned an invalid response.") : L("No se pudo contactar con NASA Moon Trek.", "NASA Moon Trek could not be reached.")}</span>
+            </p>
+          ) : null}
+          <details className="text-[11px] text-ink-faint">
+            <summary className="cursor-pointer">{L("Opciones avanzadas", "Advanced options")}</summary>
+            <label className="mt-1.5 flex items-center gap-2">
+              <input type="checkbox" checked={basemap === "none"} onChange={(e) => setBasemap(e.target.checked ? "none" : "nac")} className="accent-[#8fb4ff]" />
+              {L("Sin imagen de fondo (solo capas numéricas)", "No background image (numeric layers only)")}
+            </label>
+          </details>
           {tileState && tileAsset ? (
             <div className="flex flex-col gap-1.5 text-[11px] text-ink-faint" aria-live="polite">
               <span>{statusBadge(tileState)}</span>
@@ -669,7 +693,7 @@ export function GeoMap({
             </div>
           ) : basemap === "relief" ? (
             <p className="text-[11px] text-ink-faint">
-              {L("Sombreado calculado con el DEM PGDA78 (5 m). La luz no representa al Sol real.", "Shading computed from the PGDA78 DEM (5 m). The light does not represent the real Sun.")}{" "}
+              {L("Sombreado calculado con el DEM PGDA78 (5 m), relieve exagerado ×3 solo en el dibujo. La luz no representa al Sol real.", "Shading computed from the PGDA78 DEM (5 m), relief exaggerated ×3 in the drawing only. The light does not represent the real Sun.")}{" "}
               <Link href={evidenceHref("pgda78.site01.elevation")} className="text-accent underline-offset-2 hover:underline">
                 {L("Procedencia", "Provenance")}
               </Link>

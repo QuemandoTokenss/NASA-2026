@@ -73,7 +73,7 @@ test.describe("Engineer · torre, brújula y visual", () => {
     await page.goto("/engineer/?s=A&w=W2&h=2&v=nominal&t=3200");
     await waitForData(page);
     await page.getByTestId("terrain-panel").getByRole("radio", { name: "Azimut", exact: true }).click();
-    await page.getByTestId("terrain-panel").locator('input[type="range"]').fill("60");
+    await page.getByTestId("terrain-panel").getByRole("slider", { name: "Azimut" }).fill("60");
     await expect(page.getByTestId("terrain-compass")).toContainText("θ = 60,0°");
     const explain = page.getByTestId("terrain-explain");
     await expect(explain).toContainText("mirando al azimut 60,0°");

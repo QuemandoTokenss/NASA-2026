@@ -38,8 +38,9 @@ const UNAVAILABLE_LAYERS = () => [
 function SiteSheet({ site, query }: { site: Site; query: string }) {
   const id = site.id as SiteId;
   const v = site.values;
+  const slopeWord = v.slp < 2 ? L("casi llano", "almost flat") : v.slp < 6 ? L("con poca pendiente", "gently sloping") : L("inclinado", "sloping");
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" data-testid="site-sheet">
       <div className="flex items-start gap-3">
         <span className={`mt-1 grid size-10 shrink-0 place-items-center rounded-full border-2 ${SITE_META[id].borderClass} ${SITE_META[id].textClass} shadow-[0_0_18px_-4px_currentColor]`}>
           <Icon name="pin" className="size-5" />
@@ -48,51 +49,74 @@ function SiteSheet({ site, query }: { site: Site; query: string }) {
           <p className={`text-xl font-bold ${SITE_META[id].textClass}`}>{SITE_META[id].label}</p>
           <p className="text-sm text-ink">{site.name}</p>
           <p className="tabular text-sm text-ink-muted">
-            {formatLatitude(site.latitude_deg)}, {formatLongitudeEast(site.longitude_east_deg)}
+            {formatLatitude(site.latitude_deg, 3)}, {formatLongitudeEast(site.longitude_east_deg, 2)}
           </p>
         </div>
       </div>
 
+      <p className="text-[15px] leading-relaxed text-ink" data-testid="site-reading">
+        {L(
+          `Terreno ${slopeWord} (pendiente ${formatNumber(v.slp, 1)}°) a ${formatNumber(site.nominal_height_m, 0)} m sobre la esfera lunar de referencia, en una cresta del polo sur a 648 m del otro sitio.`,
+          `${slopeWord.charAt(0).toUpperCase() + slopeWord.slice(1)} terrain (slope ${formatNumber(v.slp, 1)}°) at ${formatNumber(site.nominal_height_m, 0)} m above the reference lunar sphere, on a south-pole ridge 648 m from the other site.`,
+        )}
+        {v.ldec === 0 ? (
+          <span className="mt-1 block text-sm text-ink-muted">
+            {L("La altura de este punto se estimó a partir de las medidas cercanas", "The height of this point was estimated from nearby measurements")}{" "}
+            <a href="#datos-fuentes" className="text-accent underline-offset-2 hover:underline">
+              ({L("detalle", "details")})
+            </a>
+            .
+          </span>
+        ) : null}
+      </p>
+
       <div className="flex flex-wrap gap-2">
-        <LinkButton href={`/comparador/?${query}`} size="sm" variant="primary" icon="compare">
-          {L("Comparar A vs B", "Compare A vs B")}
+        <LinkButton href={`/timeline/?${query}`} size="sm" variant="primary" icon="sun">
+          {L("Ver luz y Tierra", "See light and Earth")}
         </LinkButton>
-        <LinkButton href={`/timeline/?${query}`} size="sm" icon="timeline">
-          {L("Timeline de", "Timeline of")} {id}
+        <LinkButton href={`/comparador/?${query}`} size="sm" icon="compare">
+          {L("Comparar sitios", "Compare sites")}
         </LinkButton>
       </div>
 
-      <PanelSection title={L("Terreno en el punto", "Terrain at the point")}>
-        <MetricRow
-          icon="mountain"
-          label={L("Altura del suelo", "Ground height")}
-          hint={L(`Sobre la esfera de ${formatNumber(1737400, 0)} m (no es la altura del mástil)`, `Above the ${formatNumber(1737400, 0)} m sphere (not the mast height)`)}
-          value={`${formatNumber(site.nominal_height_m, 2)} m`}
-        />
-        {(Object.keys(SITE_VALUE_META) as Array<keyof typeof SITE_VALUE_META>).map((k) => (
-          <MetricRow key={k} label={SITE_VALUE_META[k].label} hint={`${L("Capa", "Layer")} ${k} · PGDA78`} value={`${formatNumber(v[k], SITE_VALUE_META[k].digits)}${SITE_VALUE_META[k].unit}`} />
-        ))}
-      </PanelSection>
-
-      {v.ldec === 0 ? (
-        <Callout tone="neutral" icon="info">
-          {L("LDEC = 0: el píxel de 5 m de este punto no contiene retornos LOLA; su altura procede de la interpolación del DEM publicado.", "LDEC = 0: the 5 m pixel at this point has no LOLA returns; its height comes from the interpolation of the published DEM.")}
-        </Callout>
-      ) : null}
-
-      <PanelSection title={L("Posición", "Position")}>
-        <KeyValueList
-          items={[
-            { k: "ROI (Barker et al. 2021)", v: site.roi },
-            { k: L("Latitud", "Latitude"), v: `${formatNumber(site.latitude_deg, 6)}°` },
-            { k: L("Longitud este", "East longitude"), v: `${formatNumber(site.longitude_east_deg, 6)}°` },
-            { k: L("X / Y estereográficos", "Stereographic X / Y"), v: `${formatNumber(site.x_m, 1)} / ${formatNumber(site.y_m, 1)} m` },
-            { k: L("Dentro del ROI", "Inside the ROI"), v: site.point_in_roi ? L("Sí (verificado)", "Yes (verified)") : "No" },
-            { k: "Marco", v: site.reference_frame, mono: true },
-          ]}
-        />
-      </PanelSection>
-      <p className="text-[11px] text-ink-faint">{L("Fuente de la coordenada:", "Coordinate source:")} {site.coordinate_source}</p>
+      <details id="datos-fuentes" className="group rounded-xl border border-line bg-bg-2/60 open:bg-bg-2/80">
+        <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm font-semibold text-ink">
+          <Icon name="database" className="size-4 text-ink-muted" />
+          {L("Datos y fuentes", "Data and sources")}
+          <Icon name="chevronDown" className="ml-auto size-4 text-ink-muted transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="flex flex-col gap-4 border-t border-line px-3 py-3">
+          <PanelSection title={L("Terreno en el punto", "Terrain at the point")}>
+            <MetricRow
+              icon="mountain"
+              label={L("Altura del suelo", "Ground height")}
+              hint={L(`Sobre la esfera de ${formatNumber(1737400, 0)} m (no es la altura del mástil)`, `Above the ${formatNumber(1737400, 0)} m sphere (not the mast height)`)}
+              value={`${formatNumber(site.nominal_height_m, 2)} m`}
+            />
+            {(Object.keys(SITE_VALUE_META) as Array<keyof typeof SITE_VALUE_META>).map((k) => (
+              <MetricRow key={k} label={SITE_VALUE_META[k].label} hint={`${L("Capa", "Layer")} ${k} · PGDA78`} value={`${formatNumber(v[k], SITE_VALUE_META[k].digits)}${SITE_VALUE_META[k].unit}`} />
+            ))}
+          </PanelSection>
+          {v.ldec === 0 ? (
+            <Callout tone="neutral" icon="info">
+              {L("LDEC = 0: el píxel de 5 m de este punto no contiene retornos LOLA; su altura procede de la interpolación del DEM publicado (PGDA78 Site01).", "LDEC = 0: the 5 m pixel at this point has no LOLA returns; its height comes from the interpolation of the published DEM (PGDA78 Site01).")}
+            </Callout>
+          ) : null}
+          <PanelSection title={L("Posición", "Position")}>
+            <KeyValueList
+              items={[
+                { k: "ROI (Barker et al. 2021)", v: site.roi },
+                { k: L("Latitud", "Latitude"), v: `${formatNumber(site.latitude_deg, 6)}°` },
+                { k: L("Longitud este", "East longitude"), v: `${formatNumber(site.longitude_east_deg, 6)}°` },
+                { k: L("X / Y estereográficos", "Stereographic X / Y"), v: `${formatNumber(site.x_m, 1)} / ${formatNumber(site.y_m, 1)} m` },
+                { k: L("Dentro del ROI", "Inside the ROI"), v: site.point_in_roi ? L("Sí (verificado)", "Yes (verified)") : "No" },
+                { k: "Marco", v: site.reference_frame, mono: true },
+              ]}
+            />
+          </PanelSection>
+          <p className="text-[11px] text-ink-faint">{L("Fuente de la coordenada:", "Coordinate source:")} {site.coordinate_source}</p>
+        </div>
+      </details>
     </div>
   );
 }
@@ -168,7 +192,7 @@ export function ExploreView() {
           const focused = getSite(core, focusSite);
           return (
             <>
-              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_400px]">
+              <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
                 <Panel
                   title={L("Connecting Ridge · mapa georreferenciado", "Connecting Ridge · georeferenced map")}
                   icon="map"
@@ -179,10 +203,17 @@ export function ExploreView() {
                     </>
                   }
                 >
-                  <GeoMap sites={core.sites} focusSite={focusSite} footprint={footprint} onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
-                  <div className="mt-5 border-t border-line pt-5">
-                    <OdePanel sites={core.sites} selected={footprint?.label ?? null} onSelect={setFootprint} />
-                  </div>
+                  <GeoMap sites={core.sites} focusSite={focusSite} footprint={footprint} reliefFallback onSelectSite={(s) => dispatch({ type: "setFocusSite", value: s })} />
+                  <details className="group mt-5 border-t border-line pt-4" data-testid="ode-advanced">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink">
+                      <Icon name="database" className="size-4" />
+                      {L("Archivo PDS/ODE: productos y huellas (avanzado)", "PDS/ODE archive: products and footprints (advanced)")}
+                      <Icon name="chevronDown" className="ml-auto size-4 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="mt-4">
+                      <OdePanel sites={core.sites} selected={footprint?.label ?? null} onSelect={setFootprint} />
+                    </div>
+                  </details>
                 </Panel>
 
                 <Panel title={L("Ficha del sitio", "Site sheet")} icon="pin" actions={<NatureBadge nature="DERIVED" />}>

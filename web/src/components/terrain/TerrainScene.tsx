@@ -15,7 +15,10 @@ import type { Vec3 } from "@/lib/geospatial/lunar";
 import type { TerrainMesh } from "@/lib/geospatial/mesh";
 import { L } from "@/lib/i18n";
 import { Callout } from "../ui/Display";
-import { azimuthDir, groundCompass, latticeTower, strut, textSprite } from "./sceneParts";
+import earthImg from "@/assets/celestial/earth-bluemarble-as17.webp";
+import sunImg from "@/assets/celestial/sun-sdo-aia171.webp";
+import starsImg from "@/assets/scene/stars-svs4851-3k.jpg";
+import { azimuthDir, latticeTower, strut, textSprite } from "./sceneParts";
 
 export interface SceneDirection {
   /** [este, norte, arriba] unitario. */
@@ -23,6 +26,8 @@ export interface SceneDirection {
   color: string;
   /** Etiqueta corta («Sol», «Tierra»). */
   label?: string;
+  /** Cuerpo, para dibujar su disco en el cielo en esa dirección (tamaño no a escala). */
+  body?: "sun" | "earth";
 }
 
 export interface SceneSightLine {
@@ -94,9 +99,10 @@ export function TerrainScene({
     for (let i = 0; i < mesh.heights.length; i++) {
       // Gris mineral: la altura solo matiza el tono; la forma la da la luz rasante.
       const c = rampColor(MINERAL, (mesh.heights[i] - mesh.minHeight) / span);
-      out[3 * i] = c[0] / 255;
-      out[3 * i + 1] = c[1] / 255;
-      out[3 * i + 2] = c[2] / 255;
+      // Colores en sRGB → lineal (la salida del renderizador es sRGB).
+      out[3 * i] = Math.pow(c[0] / 255, 2.2);
+      out[3 * i + 1] = Math.pow(c[1] / 255, 2.2);
+      out[3 * i + 2] = Math.pow(c[2] / 255, 2.2);
     }
     return out;
   }, [mesh]);
@@ -113,6 +119,9 @@ export function TerrainScene({
       return () => clearTimeout(t);
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     host.appendChild(renderer.domElement);
     renderer.domElement.style.display = "block";
     const scene = new THREE.Scene();
@@ -121,19 +130,32 @@ export function TerrainScene({
     const dynamic = new THREE.Group();
     world.add(dynamic);
     scene.add(world);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.16));
-    scene.add(new THREE.HemisphereLight(0x9fb3d6, 0x15171b, 0.35));
-    scene.fog = new THREE.Fog(0x03060d, 2200, 9000);
-    const light = new THREE.DirectionalLight(0xfff4e0, 3.1);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+    scene.add(new THREE.HemisphereLight(0x8ea4c8, 0x101216, 0.45));
+    scene.fog = new THREE.Fog(0x05070c, 1800, 8500);
+    // Cielo: mapa estelar NASA SVS (Gaia DR2), solo fondo ilustrativo.
+    const sky = new THREE.TextureLoader().load(starsImg.src, () => render());
+    sky.mapping = THREE.EquirectangularReflectionMapping;
+    sky.colorSpace = THREE.SRGBColorSpace;
+    scene.background = sky;
+    scene.backgroundIntensity = 0.75;
+    const light = new THREE.DirectionalLight(0xfff1dc, 3.0);
+    light.castShadow = true;
+    light.shadow.mapSize.set(2048, 2048);
+    light.shadow.bias = -0.0004;
+    light.shadow.normalBias = 0.02;
     scene.add(light);
+    scene.add(light.target);
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(mesh.positions, 3));
     geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     geometry.setIndex(new THREE.BufferAttribute(mesh.indices, 1));
     geometry.computeVertexNormals();
-    const terrain = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
+    // Material mate: la luz rasante y las sombras dibujan las formas sin saturar las zonas iluminadas.
+    const terrain = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0, side: THREE.DoubleSide }));
     terrain.frustumCulled = false;
+    terrain.receiveShadow = true;
     world.add(terrain);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -162,6 +184,7 @@ export function TerrainScene({
       controls.dispose();
       geometry.dispose();
       (terrain.material as THREE.Material).dispose();
+      sky.dispose();
       renderer.dispose();
       renderer.domElement.remove();
       three.current = null;
@@ -183,80 +206,108 @@ export function TerrainScene({
     }
     const eye = new THREE.Vector3(0, observerHeightM, 0);
     const wide = preset.view === "overview";
-    // Escala de los elementos gráficos según el encuadre (cerca de la torre o vista amplia).
     const near = Math.max(6, observerHeightM * 1.6 + 4);
-    // Marcador del sitio (anillo plano, no es una estructura real).
-    const ringR = wide ? 15 : Math.max(1.2, near * 0.18);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(ringR * 0.82, ringR, 48), new THREE.MeshBasicMaterial({ color: siteColor, side: THREE.DoubleSide, transparent: true, opacity: 0.9 }));
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.12;
-    g.add(ring);
-    // Torre ilustrativa en celosía: el remate está a la altura REAL del observador.
-    g.add(latticeTower(observerHeightM, 0xdfe7f3));
-    const headR = wide ? 3 : Math.max(0.22, observerHeightM * 0.045);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(headR, 20, 12), new THREE.MeshBasicMaterial({ color: siteColor }));
-    head.position.copy(eye);
+    // Torre ilustrativa: el remate está a la altura del observador (o de la vista previa).
+    const tower = latticeTower(observerHeightM, 0xaeb7c2);
+    tower.traverse((o) => {
+      if ((o as THREE.Mesh).isMesh) {
+        o.castShadow = true;
+        o.receiveShadow = true;
+      }
+    });
+    g.add(tower);
+    // Observador: punto en el remate (o a ras del suelo a 0 m).
+    const headR = wide ? 3 : Math.max(0.16, observerHeightM * 0.03 + 0.12);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(headR, 24, 14), new THREE.MeshBasicMaterial({ color: siteColor }));
+    head.position.copy(eye).add(new THREE.Vector3(0, observerHeightM > 0 ? headR * 0.6 : headR, 0));
     g.add(head);
     if (observerHeightM <= 0) {
-      // A 0 m: observador a ras del suelo (pin vertical corto, sin estructura).
-      const pin = strut(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, near * 0.22, 0), 0.04, 0.04, new THREE.MeshBasicMaterial({ color: siteColor }));
-      g.add(pin);
+      const pad = new THREE.Mesh(new THREE.CircleGeometry(Math.max(0.5, near * 0.06), 32), new THREE.MeshBasicMaterial({ color: siteColor, transparent: true, opacity: 0.35 }));
+      pad.rotation.x = -Math.PI / 2;
+      pad.position.y = 0.05;
+      g.add(pad);
     }
-    if (labels) {
-      const obs = textSprite(labels.observer, siteColor);
-      obs.position.copy(eye).add(new THREE.Vector3(0, wide ? 30 : Math.max(0.6, near * 0.12), 0));
+    if (labels && labels.observer) {
+      const obs = textSprite(labels.observer, siteColor, 22);
+      obs.position.copy(head.position).add(new THREE.Vector3(0, wide ? 30 : Math.max(0.5, near * 0.1), 0));
       g.add(obs);
     }
-    // Brújula en el suelo con la cuña hasta el azimut consultado.
-    g.add(groundCompass(wide ? 160 : near * 1.35, azimuthDeg, 0.25));
+    // Cuerpos en el cielo en su dirección real (si el paquete la trae); tamaño NO a escala.
     for (const d of directions) {
-      const len = wide ? 420 : near * 2.6;
       const dir = toScene(d.enu).normalize();
-      const arrow = new THREE.ArrowHelper(dir, eye, len, new THREE.Color(d.color), len * 0.09, len * 0.035);
-      g.add(arrow);
+      const far = 5200;
+      if (d.body) {
+        const tex = new THREE.TextureLoader().load(d.body === "earth" ? earthImg.src : sunImg.src, () => t.render());
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const disc = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, sizeAttenuation: false, depthWrite: false, fog: false, transparent: true }));
+        const sz = d.body === "earth" ? 0.07 : 0.06;
+        disc.scale.set(sz, sz, 1);
+        disc.position.copy(eye).add(dir.clone().multiplyScalar(far));
+        disc.renderOrder = 2;
+        g.add(disc);
+      }
+      const ray = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([eye, eye.clone().add(dir.clone().multiplyScalar(wide ? 900 : near * 4))]),
+        new THREE.LineDashedMaterial({ color: new THREE.Color(d.color), dashSize: wide ? 30 : near * 0.12, gapSize: wide ? 20 : near * 0.08, transparent: true, opacity: 0.7 }),
+      );
+      ray.computeLineDistances();
+      g.add(ray);
       if (d.label) {
-        const tag = textSprite(d.label, d.color, 22);
-        tag.position.copy(eye).add(dir.clone().multiplyScalar(len * 1.04));
+        const tag = textSprite(d.label, d.color, 20);
+        tag.position.copy(eye).add(dir.clone().multiplyScalar(far)).add(new THREE.Vector3(0, 160, 0));
         g.add(tag);
       }
     }
     if (sightLine) {
       const end = toScene(sightLine.end);
       const len = eye.distanceTo(end);
-      const violet = new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.95 });
-      const r0 = wide ? 1.2 : Math.max(0.05, observerHeightM * 0.012 + 0.04);
-      const r1 = Math.max(r0, len * 0.0028);
+      const violet = new THREE.MeshBasicMaterial({ color: 0xb79bff, transparent: true, opacity: 0.95 });
+      const r0 = wide ? 0.9 : Math.max(0.03, observerHeightM * 0.005 + 0.03);
+      const r1 = Math.max(r0, len * 0.0016);
       if (sightLine.reachesObstacle) g.add(strut(eye, end, r0, r1, violet));
       else {
-        // Discontinua: solo indica la dirección hasta el borde del recorte 3D.
-        const segs = 16;
+        const segs = 18;
         for (let k = 0; k < segs; k++) {
-          const a = eye.clone().lerp(end, k / segs);
-          const b = eye.clone().lerp(end, (k + 0.55) / segs);
-          g.add(strut(a, b, r0 + (r1 - r0) * (k / segs), r0 + (r1 - r0) * ((k + 0.55) / segs), violet));
+          const a0 = eye.clone().lerp(end, k / segs);
+          const b0 = eye.clone().lerp(end, (k + 0.55) / segs);
+          g.add(strut(a0, b0, r0 + (r1 - r0) * (k / segs), r0 + (r1 - r0) * ((k + 0.55) / segs), violet));
         }
       }
-      const markR = wide ? Math.max(3, len * 0.012) : Math.max(0.12, Math.min(len * 0.01, near * 0.1));
-      const mark = new THREE.Mesh(new THREE.SphereGeometry(markR, 20, 12), new THREE.MeshBasicMaterial({ color: sightLine.reachesObstacle ? 0xa78bfa : 0xe8eef8 }));
+      const markR = wide ? Math.max(3, len * 0.012) : Math.max(0.12, Math.min(len * 0.008, near * 0.08));
+      const mark = new THREE.Mesh(new THREE.SphereGeometry(markR, 20, 12), new THREE.MeshBasicMaterial({ color: sightLine.reachesObstacle ? 0xb79bff : 0xe8eef8 }));
       mark.position.copy(end);
       g.add(mark);
       if (labels) {
-        const along = eye.clone().lerp(end, Math.min(0.5, (wide ? 0.3 : (near * 2.2) / Math.max(1, len))));
-        const sight = textSprite(labels.sight, "#a78bfa", 22);
-        sight.position.copy(along).add(new THREE.Vector3(0, wide ? 20 : near * 0.08, 0));
+        const along = eye.clone().lerp(end, Math.min(0.45, wide ? 0.3 : (near * 2.4) / Math.max(1, len)));
+        const sight = textSprite(labels.sight, "#b79bff", 19);
+        sight.center.set(0.5, 1);
+        sight.position.copy(along).add(new THREE.Vector3(0, -(wide ? 12 : near * 0.05), 0));
         g.add(sight);
       }
       if (sightLine.endLabel) {
-        const endTag = textSprite(sightLine.endLabel, sightLine.reachesObstacle ? "#a78bfa" : "#e8eef8");
+        const endTag = textSprite(sightLine.endLabel, sightLine.reachesObstacle ? "#b79bff" : "#e8eef8", 22);
+        // El extremo suele quedar a la derecha del encuadre: la etiqueta crece hacia la izquierda.
+        endTag.center.set(0.92, 0);
         endTag.position.copy(end).add(new THREE.Vector3(0, wide ? Math.max(6, len * 0.02) : markR * 1.6, 0));
         g.add(endTag);
       }
     }
+    // Luz direccional y caja de sombras centradas en la torre.
+    const span = wide ? 400 : Math.max(18, observerHeightM * 2.2 + 12);
+    const lc = t.light.shadow.camera;
+    lc.left = -span;
+    lc.right = span;
+    lc.top = span;
+    lc.bottom = -span;
+    lc.near = 1;
+    lc.far = 4000;
+    lc.updateProjectionMatrix();
     t.world.scale.set(1, exaggeration, 1);
     const l = lightEnu ?? [-0.5, 0.5, 0.7];
-    t.light.position.copy(toScene(l as Vec3).normalize().multiplyScalar(1000));
+    t.light.position.copy(toScene(l as Vec3).normalize().multiplyScalar(1500));
+    t.light.target.position.set(0, 0, 0);
     t.render();
-  }, [mesh, colors, observerHeightM, siteColor, directions, sightLine, exaggeration, lightEnu, azimuthDeg, labels, preset.view]);
+  }, [mesh, colors, observerHeightM, siteColor, directions, sightLine, exaggeration, lightEnu, labels, preset.view]);
 
   /* --------------------------------- cámara --------------------------------- */
   useEffect(() => {
@@ -269,7 +320,7 @@ export function TerrainScene({
       // se ven la estructura, su remate y el arranque del rayo.
       const h = observerHeightM * exaggeration;
       // En pantallas estrechas (móvil) la cámara se aleja para que quepan torre y visual.
-      const d = Math.max(8, observerHeightM * 2.3 + 7) * (t.camera.aspect < 0.9 ? 1.6 : 1);
+      const d = Math.max(8, observerHeightM * 2.2 + 8) * (t.camera.aspect < 0.9 ? 1.6 : 1);
       const look = sightLine ? toScene(sightLine.end).setY(0).normalize() : azimuthDeg !== null ? azimuthDir(azimuthDeg) : new THREE.Vector3(0, 0, -1);
       const side = new THREE.Vector3(-look.z, 0, look.x);
       pos = look.clone().multiplyScalar(-d * 0.8).add(side.multiplyScalar(d * 0.62)).setY(h * 0.62 + d * 0.26 + 1.2);

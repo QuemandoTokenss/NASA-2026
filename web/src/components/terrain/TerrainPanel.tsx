@@ -36,7 +36,7 @@ const MESH_STEP = 2;
 type Mode = "sun" | "earth" | "manual";
 
 const toolBtn = (active: boolean, disabled = false) =>
-  `rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${active ? "bg-ink text-bg" : disabled ? "cursor-not-allowed text-ink-faint/50" : "text-ink-muted hover:bg-surface-3 hover:text-ink"}`;
+  `whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${active ? "bg-ink text-bg" : disabled ? "cursor-not-allowed text-ink-faint/50" : "text-ink-muted hover:bg-surface-3 hover:text-ink"}`;
 function Tool<T extends string | number>({ label, value, options, onChange }: { label: string; value: T; options: Array<{ v: T; text: string; disabled?: boolean }>; onChange: (v: T) => void }) {
   return (
   <div role="radiogroup" aria-label={label} className="flex items-center gap-0.5 rounded-lg border border-line-strong bg-bg/80 p-0.5">
@@ -50,7 +50,10 @@ function Tool<T extends string | number>({ label, value, options, onChange }: { 
 }
 
 
-export function TerrainPanel({ core }: { core: Core }) {
+const COMPUTED_HEIGHTS = [0, 2, 10] as const;
+const NO_DIRECTIONS: SceneDirection[] = [];
+
+export function TerrainPanel({ core, onPreviewChange }: { core: Core; onPreviewChange?: (h: number | null) => void }) {
   const { selection, dispatch, query, restored } = useSelection();
   const { focusSite, windowId, heightM, variant, timeIndex } = selection;
   const isNominal = variant === "nominal";
@@ -60,11 +63,27 @@ export function TerrainPanel({ core }: { core: Core }) {
   const [manualAz, setManualAz] = useState(0);
   const [exaggeration, setExaggeration] = useState(1);
   const [preset, setPreset] = useState<{ view: ViewPreset; nonce: number }>({ view: "tower", nonce: 0 });
+  // Altura de la torre en VISTA PREVIA (estado local, fuera del contrato): null = altura calculada de la selección.
+  const [previewH, setPreviewHState] = useState<number | null>(null);
+  const setPreviewH = (h: number | null) => {
+    setPreviewHState(h);
+    onPreviewChange?.(h);
+  };
+  const isPreview = previewH !== null;
+  const visualH = previewH ?? heightM;
+  const onSlider = (raw: number) => {
+    const v = Math.round(raw * 2) / 2;
+    const computed = COMPUTED_HEIGHTS.find((h) => h === v);
+    if (computed !== undefined) {
+      setPreviewH(null);
+      if (computed !== heightM) dispatch({ type: "setHeight", value: computed });
+    } else setPreviewH(v);
+  };
   // Al cambiar de altura o de sitio se reencuadra la vista actual (la torre cambia de tamaño).
   useEffect(() => {
     const t = setTimeout(() => setPreset((p) => ({ view: p.view, nonce: p.nonce + 1 })), 0);
     return () => clearTimeout(t);
-  }, [heightM, focusSite]);
+  }, [heightM, focusSite, visualH]);
 
   // Malla: DEM nominal, o el recorte del clon publicado si esa es la superficie elegida
   // (las hipótesis propias no se reconstruyen en la web: se dibuja el nominal y se avisa).
@@ -149,8 +168,8 @@ export function TerrainPanel({ core }: { core: Core }) {
     const near = (az: number) => azimuth !== null && Math.abs(((az - azimuth + 540) % 360) - 180) < 12;
     const s = ephData.series.bodies;
     return [
-      { enu: directionENU(s.SUN.azimuth_deg[timeIndex], s.SUN.elevation_deg[timeIndex]), color: SUN_HEX, label: near(s.SUN.azimuth_deg[timeIndex]) ? undefined : L("Sol", "Sun") },
-      { enu: directionENU(s.EARTH.azimuth_deg[timeIndex], s.EARTH.elevation_deg[timeIndex]), color: EARTH_HEX, label: near(s.EARTH.azimuth_deg[timeIndex]) ? undefined : L("Tierra", "Earth") },
+      { enu: directionENU(s.SUN.azimuth_deg[timeIndex], s.SUN.elevation_deg[timeIndex]), color: SUN_HEX, body: "sun", label: near(s.SUN.azimuth_deg[timeIndex]) ? undefined : L("Sol", "Sun") },
+      { enu: directionENU(s.EARTH.azimuth_deg[timeIndex], s.EARTH.elevation_deg[timeIndex]), color: EARTH_HEX, body: "earth", label: near(s.EARTH.azimuth_deg[timeIndex]) ? undefined : L("Tierra", "Earth") },
     ];
   }, [ephData, timeIndex, azimuth]);
   // Luz de la escena: desde el azimut real del Sol pero a 25° de altura fija, para que el relieve se lea.
@@ -231,7 +250,31 @@ export function TerrainPanel({ core }: { core: Core }) {
         {/* Barra compacta: lo que cambia la escena, junto a la escena */}
         <div className="flex flex-wrap items-center gap-2 border-b border-line bg-surface/80 px-3 py-2">
           <Tool label={L("Sitio", "Site")} value={focusSite} onChange={(v) => dispatch({ type: "setFocusSite", value: v as SiteId })} options={(["A", "B"] as const).map((s) => ({ v: s, text: SITE_META[s].label }))} />
-          <Tool label={L("Altura del observador", "Observer height")} value={heightM} onChange={(v) => dispatch({ type: "setHeight", value: v as 0 | 2 | 10 })} options={([0, 2, 10] as const).map((h) => ({ v: h, text: `${h} m` }))} />
+          <div className="flex max-w-full min-w-0 items-center gap-1.5 rounded-lg border border-line-strong bg-bg/80 py-0.5 pr-2 pl-0.5 sm:gap-2" data-testid="tower-height-control" data-preview={isPreview ? "true" : "false"}>
+            <Tool label={L("Altura del observador", "Observer height")} value={isPreview ? -1 : heightM} onChange={(v) => onSlider(v as number)} options={COMPUTED_HEIGHTS.map((h) => ({ v: h, text: `${h} m` }))} />
+            <label className="flex min-w-0 flex-1 items-center gap-2 text-xs text-ink-muted sm:flex-none">
+              <span className="sr-only">{L("Altura de la torre (0 a 30 m)", "Tower height (0 to 30 m)")}</span>
+              <input
+                type="range"
+                min={0}
+                max={30}
+                step={0.5}
+                value={visualH}
+                onChange={(e) => onSlider(Number(e.target.value))}
+                list="tower-computed-heights"
+                className="w-full min-w-14 accent-[#a78bfa] sm:w-40"
+                aria-label={L("Altura de la torre (0 a 30 m)", "Tower height (0 to 30 m)")}
+                aria-valuetext={`${formatNumber(visualH, 1)} m${isPreview ? L(" · vista previa", " · preview") : L(" · calculada", " · computed")}`}
+                data-testid="tower-height-slider"
+              />
+              <datalist id="tower-computed-heights">
+                {COMPUTED_HEIGHTS.map((h) => (
+                  <option key={h} value={h} />
+                ))}
+              </datalist>
+              <span className={`tabular w-12 shrink-0 text-right font-semibold sm:w-14 ${isPreview ? "text-warn" : "text-ink"}`}>{formatNumber(visualH, visualH % 1 ? 1 : 0)} m</span>
+            </label>
+          </div>
           <Tool
             label={L("Dirección", "Direction")}
             value={effectiveMode}
@@ -285,24 +328,37 @@ export function TerrainPanel({ core }: { core: Core }) {
             {gridError} {L("No se dibuja un terreno de sustitución.", "No substitute terrain is drawn.")}
           </Callout>
         ) : mesh ? (
+          <div className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <div className="relative">
             <TerrainScene
               mesh={mesh}
-              observerHeightM={heightM}
+              observerHeightM={visualH}
               siteColor={SITE_HEX[focusSite]}
-              directions={directions}
-              sightLine={sightLine}
+              directions={isPreview ? NO_DIRECTIONS : directions}
+              sightLine={isPreview ? null : sightLine}
               exaggeration={exaggeration}
               preset={preset}
               lightEnu={lightEnu}
-              azimuthDeg={azimuth}
-              labels={sceneLabels}
+              azimuthDeg={isPreview ? null : azimuth}
+              labels={isPreview ? { observer: "", sight: "" } : sceneLabels}
               label={L(
                 `Terreno 3D real de Connecting Ridge alrededor de ${SITE_META[focusSite].label}, con el observador a ${heightM} m y la línea de visión hacia el obstáculo del horizonte.`,
                 `Real 3D terrain of Connecting Ridge around ${SITE_META[focusSite].label}, with the observer at ${heightM} m and the line of sight to the horizon obstacle.`,
               )}
             />
-            {conclusion ? (
+            {isPreview ? (
+              <div className="absolute top-3 left-3 max-w-[min(24rem,80%)] rounded-xl border border-warn/60 bg-[#14100ae6] px-3 py-2" data-testid="tower-preview-banner" role="status">
+                <p className="text-sm font-bold text-warn sm:text-base">{L("Vista previa de la torre · sin cálculo de visibilidad a esta altura", "Tower preview · no visibility computed at this height")}</p>
+                <p className="mt-0.5 text-xs text-ink-muted">{L("Solo hay resultados calculados a 0, 2 y 10 m.", "Computed results exist only at 0, 2 and 10 m.")}</p>
+                <div className="mt-1.5 flex gap-1.5">
+                  {COMPUTED_HEIGHTS.map((h) => (
+                    <button key={h} type="button" onClick={() => onSlider(h)} className="rounded-md border border-line-strong px-2 py-0.5 text-xs font-semibold text-ink hover:bg-surface-3">
+                      {L(`Ir a ${h} m`, `Go to ${h} m`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : conclusion ? (
               <div className="pointer-events-none absolute top-3 left-3 max-w-[min(22rem,70%)] rounded-xl border border-line-strong bg-[#050912d9] px-3 py-2 backdrop-blur-sm" data-testid="terrain-conclusion" aria-live="polite">
                 <p className={`text-base font-bold sm:text-lg ${conclusion.tone === "ok" ? "text-ok" : conclusion.tone === "hidden" ? "text-warn" : "text-ink"}`}>{conclusion.title}</p>
                 <p className="tabular text-xs text-ink-muted sm:text-sm">{conclusion.line}</p>
@@ -314,7 +370,24 @@ export function TerrainPanel({ core }: { core: Core }) {
                 ) : null}
               </div>
             ) : null}
-            <CompassBadge azimuthDeg={azimuth} sunAz={ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null} earthAz={ephData ? ephData.series.bodies.EARTH.azimuth_deg[timeIndex] : null} />
+            <CompassBadge azimuthDeg={isPreview ? null : azimuth} sunAz={!isPreview && ephData ? ephData.series.bodies.SUN.azimuth_deg[timeIndex] : null} earthAz={!isPreview && ephData ? ephData.series.bodies.EARTH.azimuth_deg[timeIndex] : null} />
+          </div>
+          {/* Mapa orbital real en planta: posición del observador y dirección hasta el relieve */}
+          <figure className="flex min-w-0 flex-col gap-1.5 border-t border-line p-2 lg:border-t-0 lg:border-l" data-testid="terrain-map">
+            {!isPreview && overlay && !obstacle?.unknown ? (
+              <GeoMap key={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} compact compactHeightClass="h-[300px] lg:h-[clamp(320px,calc(100dvh-320px),560px)]" sites={core.sites} focusSite={focusSite} overlay={overlay} initialBasemap={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} />
+            ) : (
+              <GeoMap key="nac-site" compact compactHeightClass="h-[300px] lg:h-[clamp(320px,calc(100dvh-320px),560px)]" sites={core.sites} focusSite={focusSite} followFocus showCredit />
+            )}
+            <figcaption className="px-1 text-[11px] leading-snug text-ink-faint">
+              {isPreview
+                ? L("Vista en planta del sitio (NASA Moon Trek). Sin dirección dibujada: esta altura no tiene cálculo.", "Plan view of the site (NASA Moon Trek). No direction drawn: this height has no computation.")
+                : L("En planta (NASA Moon Trek): del sitio al relieve que fija el horizonte, también fuera del recorte 3D.", "Plan view (NASA Moon Trek): from the site to the terrain that sets the horizon, also outside the 3D crop.")}{" "}
+              <Link href={`/explore/?${query}`} className="text-accent underline underline-offset-2">
+                {L("Abrir en Explore", "Open in Explore")}
+              </Link>
+            </figcaption>
+          </figure>
           </div>
         ) : (
           <div className="h-[clamp(360px,calc(100dvh-250px),600px)] animate-pulse bg-bg-2" aria-busy="true" />
@@ -341,7 +414,7 @@ export function TerrainPanel({ core }: { core: Core }) {
         </div>
       </div>
 
-      {explain ? (
+      {explain && !isPreview ? (
         <p className="text-sm leading-relaxed text-ink-muted" data-testid="terrain-explain">
           {explain}
         </p>
@@ -356,22 +429,13 @@ export function TerrainPanel({ core }: { core: Core }) {
         </Callout>
       ) : null}
 
-      {/* 1º mapa orbital real con la dirección hasta el relieve; 2º el bloque completo de lecturas */}
-      <figure className="flex flex-col gap-2" data-testid="terrain-map">
-        {overlay && !obstacle?.unknown ? (
-          <GeoMap key={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} compact compactHeightClass="h-[320px] sm:h-[380px]" sites={core.sites} focusSite={focusSite} overlay={overlay} initialBasemap={obstacle && obstacle.distanceM > 30000 ? "wac" : "nac"} />
-        ) : (
-          <div className="grid h-40 place-items-center rounded-xl border border-line text-sm text-ink-faint">{L("Sin obstáculo que situar en el mapa.", "No obstacle to place on the map.")}</div>
-        )}
-        <figcaption className="text-[11px] text-ink-faint">
-          {L("Imágenes orbitales reales (NASA Moon Trek). La línea sigue la dirección de mirada desde el sitio hasta el relieve que fija el horizonte, también cuando está fuera del recorte 3D.", "Real orbital images (NASA Moon Trek). The line follows the viewing direction from the site to the terrain that sets the horizon, also when it lies outside the 3D crop.")}{" "}
-          <Link href={`/explore/?${query}`} className="text-accent underline-offset-2 hover:underline">
-            {L("Abrir en Explore", "Open in Explore")}
-          </Link>
-        </figcaption>
-      </figure>
 
-      <div className="rounded-xl border border-uncertainty/40 bg-uncertainty-soft p-4" data-testid="obstacle-readout" aria-live="polite">
+      {isPreview ? (
+        <p className="rounded-lg border border-line bg-bg-2/70 px-3 py-2 text-xs text-ink-muted" data-testid="last-computed">
+          {L(`Debajo: último análisis CALCULADO, a ${heightM} m. No corresponde a la torre de ${formatNumber(visualH, 1)} m de la vista previa.`, `Below: last COMPUTED analysis, at ${heightM} m. It does not correspond to the ${formatNumber(visualH, 1)} m preview tower.`)}
+        </p>
+      ) : null}
+      <div className={`rounded-xl border border-uncertainty/40 bg-uncertainty-soft p-4 ${isPreview ? "opacity-55" : ""}`} data-testid="obstacle-readout" aria-live="polite">
         <p className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-uncertainty">
           <Icon name="eye" className="size-4" />
           {effectiveMode === "manual" ? L("Horizonte en el azimut elegido", "Horizon at the chosen azimuth") : L(`Qué limita la visión de ${bodyName}`, `What limits the view of the ${bodyName}`)}

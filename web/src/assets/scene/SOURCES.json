@@ -1,0 +1,31 @@
+{
+  "description": "Imágenes de PRESENTACIÓN (portada y cielo de Engineer). No intervienen en ningún cálculo.",
+  "generator": "web/scripts/imagery/make_scene_images.py",
+  "assets": [
+    {
+      "file": "hero-moon-svs5187.webp",
+      "also": "hero-moon-svs5187-1200.webp",
+      "sha256": "37db1c4f01dfb4a229f779a31444f29c592b6b82b5e6e3dfdb7ab5b570032354",
+      "source": {
+        "title": "Moon Phase and Libration, 2024 · frame 413 (plain 3840×2160)",
+        "page": "https://svs.gsfc.nasa.gov/5187/",
+        "url": "https://svs.gsfc.nasa.gov/vis/a000000/a005100/a005187/frames/3840x2160_16x9_30p/plain/moon.0413.tif",
+        "sha256": "725b03a3c16d84d6026fd02138e43f485410dda3f899f129d311939882cc8020"
+      },
+      "credit": "NASA's Scientific Visualization Studio (E. Wright, N. Petro) · datos LRO LOLA, LROC WAC (ASU), JPL DE421",
+      "processing": "Desplazamiento a la derecha sobre negro (17 % del ancho) y reescalado a 2400 y 1200 px, WebP. Muestra la Luna entera vista desde la Tierra (cuarto creciente), no Connecting Ridge."
+    },
+    {
+      "file": "stars-svs4851-3k.jpg",
+      "sha256": "486c55e20a7caa8cfa1fe2195a8f3f4c1ffcc44a7d835427c5a3f4fc9425adb6",
+      "source": {
+        "title": "Deep Star Maps 2020 · starmap_2020_4k.exr (coordenadas celestes)",
+        "page": "https://svs.gsfc.nasa.gov/4851/",
+        "url": "https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/starmap_2020_4k.exr",
+        "sha256": "69b841cd048c2ef35543eb1c5819b322530e78aa4b0cab97ec1de3ef56a4ddcd"
+      },
+      "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Gaia DR2: ESA/Gaia/DPAC.",
+      "processing": "Tono 8 bit (normalizado al percentil 99,9, punto negro en 1,15 × percentil 55 para un cielo oscuro, gamma 2,2, ×0,85), JPEG 3072×1536 equirectangular. Fondo ilustrativo: no orientado al cielo real del sitio."
+    }
+  ]
+}

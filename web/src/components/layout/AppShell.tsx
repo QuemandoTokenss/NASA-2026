@@ -40,7 +40,7 @@ function NavLinks({ onNavigate, vertical = false }: { onNavigate?: () => void; v
               href={`${item.href}?${query}`}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`group relative flex items-center gap-2 rounded-lg px-3 text-sm font-medium transition-all duration-200 ${
+              className={`group relative flex items-center gap-2 rounded-lg px-2 text-sm font-medium transition-all duration-200 2xl:px-3 ${
                 vertical ? "w-full py-2.5" : "py-2"
               } ${
                 active
@@ -146,7 +146,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Logo />
             <span className="flex flex-col leading-none">
               <span className="text-lg font-bold tracking-[0.08em] text-ink">SITE REGRET</span>
-              <span className="mt-1 hidden text-[10px] font-medium tracking-[0.22em] text-ink-faint sm:block">
+              <span className="mt-1 hidden text-[10px] font-medium tracking-[0.22em] text-ink-faint sm:block xl:hidden 2xl:block">
                 LUNAR LANDING SITE NAVIGATOR
               </span>
             </span>
@@ -162,7 +162,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Icon name="play" className="size-3.5 text-uncertainty" /> {L("Presentar", "Present")}
             </Link>
             <LanguageToggle className="hidden sm:flex" />
-            <DataStatusPill />
+            <span className="contents xl:hidden 2xl:contents">
+              <DataStatusPill />
+            </span>
             <button
               type="button"
               className="rounded-lg border border-line p-2 text-ink-muted hover:text-ink xl:hidden"

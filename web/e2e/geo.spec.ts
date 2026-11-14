@@ -136,6 +136,7 @@ test.describe("Explore · productos del archivo PDS (ODE)", () => {
     page.on("request", (r) => r.url().includes("oderest.rsl.wustl.edu") && queries.push(new URL(r.url())));
     await page.goto("/explore/?s=A");
     await waitForData(page);
+    await page.getByTestId("ode-advanced").locator("summary").click();
     const ode = page.getByTestId("ode-panel");
     await expect(ode.getByText("Aún no se ha consultado el archivo")).toBeVisible();
     await ode.getByRole("button", { name: "Buscar productos" }).click();
@@ -157,6 +158,7 @@ test.describe("Explore · productos del archivo PDS (ODE)", () => {
   test("un tipo de producto que ODE rechaza se muestra como error del servicio", async ({ page }) => {
     await page.goto("/explore/?s=A");
     await waitForData(page);
+    await page.getByTestId("ode-advanced").locator("summary").click();
     const ode = page.getByTestId("ode-panel");
     await ode.getByRole("combobox", { name: "Tipo de producto" }).selectOption("GDRDEM");
     await ode.getByRole("button", { name: "Buscar productos" }).click();
@@ -169,7 +171,8 @@ test.describe("Explore · productos del archivo PDS (ODE)", () => {
     test("ODE no disponible no bloquea el mapa ni inventa productos", async ({ page }) => {
       await page.goto("/explore/?s=A");
       await waitForData(page);
-      const ode = page.getByTestId("ode-panel");
+      await page.getByTestId("ode-advanced").locator("summary").click();
+    const ode = page.getByTestId("ode-panel");
       await ode.getByRole("button", { name: "Buscar productos" }).click();
       await expect(ode.getByText("ODE no disponible")).toBeVisible();
       await expect(ode.getByRole("listitem")).toHaveCount(0);
@@ -182,15 +185,14 @@ test.describe("Explore · productos del archivo PDS (ODE)", () => {
 test.describe("Explore · fallos del servicio de mapas", () => {
   test.describe("sin red", () => {
     test.use({ trek: "offline" });
-    test("no hay imagen de sustitución; el DEM local sigue funcionando", async ({ page }) => {
+    test("sin imagen orbital pasa al relieve calculado, lo dice y el DEM local sigue funcionando", async ({ page }) => {
       await page.goto("/explore/?s=A");
       await waitForData(page);
       const map = page.getByTestId("geomap");
-      await expect(map).toHaveAttribute("data-basemap-status", "unavailable");
-      await expect(page.getByText("Servidor no disponible")).toBeVisible();
-      await expect(page.getByText(/No se muestra ninguna imagen de sustitución/)).toBeVisible();
-      await page.getByRole("radio", { name: /Relieve sombreado del DEM/ }).check();
-      await expect(map).toHaveAttribute("data-basemap-status", "available");
+      // PC-21: Explore cae automáticamente al relieve del DEM y lo rotula (nunca un rectángulo negro sin explicación).
+      await expect(map).toHaveAttribute("data-basemap-status", "relief-fallback");
+      await expect(map).toHaveAttribute("data-basemap", "relief");
+      await expect(page.getByTestId("geomap-fallback")).toContainText("Imagen orbital no disponible · mostrando relieve calculado");
       await page.getByRole("button", { name: "Ir y leer en Sitio A" }).click();
       await expect(page.getByTestId("geomap-inspector").locator("[data-layer=elevation] dd")).toHaveText(`${es(A.nominal_height_m, 3)} m`);
     });
@@ -200,8 +202,8 @@ test.describe("Explore · fallos del servicio de mapas", () => {
     test("una respuesta que no es WMTS se rechaza", async ({ page }) => {
       await page.goto("/explore/?s=A");
       await waitForData(page);
-      await expect(page.getByTestId("geomap")).toHaveAttribute("data-basemap-status", "invalid");
-      await expect(page.getByText("Respuesta no válida")).toBeVisible();
+      await expect(page.getByTestId("geomap")).toHaveAttribute("data-basemap-status", "relief-fallback");
+      await expect(page.getByTestId("geomap-fallback")).toContainText("respuesta no válida");
     });
   });
 });

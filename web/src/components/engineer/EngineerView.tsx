@@ -248,6 +248,7 @@ function HeightStrips({ chunks, clock }: { chunks: ChunkState<ScenarioChunk>[]; 
 
 function EngineerBody({ core }: { core: Core }) {
   const { selection, restored } = useSelection();
+  const [previewH, setPreviewH] = useState<number | null>(null);
   const { windowId, focusSite, heightM, variant } = selection;
   const s0 = useChunk(restored ? () => loadScenarioChunk(core, windowId, 0) : null, [windowId, 0]);
   const s2 = useChunk(restored ? () => loadScenarioChunk(core, windowId, 2) : null, [windowId, 2]);
@@ -261,17 +262,21 @@ function EngineerBody({ core }: { core: Core }) {
 
   return (
     <>
-      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_340px]" data-testid="engineer-hero">
-        <TerrainPanel core={core} />
-        <div className="flex flex-col gap-5">
-          <MetricsAtHeight core={core} />
-        </div>
+      <div data-testid="engineer-hero">
+        <TerrainPanel core={core} onPreviewChange={setPreviewH} />
       </div>
 
       <ControlBar aside={<Badge tone="neutral">{L("Alturas calculadas: 0 · 2 · 10 m", "Computed heights: 0 · 2 · 10 m")}</Badge>}>
         <WindowControl core={core} />
         <VariantControl />
       </ControlBar>
+
+      <div className={previewH !== null ? "opacity-55" : undefined} data-testid="engineer-metrics" data-preview={previewH !== null ? "true" : "false"}>
+        {previewH !== null ? (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-warn">{L(`Último análisis calculado · ${selection.heightM} m (la torre en pantalla es una vista previa)`, `Last computed analysis · ${selection.heightM} m (the tower on screen is a preview)`)}</p>
+        ) : null}
+        <MetricsAtHeight core={core} />
+      </div>
 
       <details className="group rounded-2xl border border-line bg-surface/85">
         <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-sm font-semibold text-ink">

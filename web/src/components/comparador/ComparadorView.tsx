@@ -27,6 +27,10 @@ import { InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
 import { L, R } from "@/lib/i18n";
 
+/** «Sol visible durante toda la ventana» solo si las horas de Sol = duración y no hay horas desconocidas. */
+const fullSun = (sm: ScenarioSummary) => sm.metrics.unknown_hours === 0 && sm.metrics.sun_hours === sm.metrics.duration_hours;
+const daysOf = (h: number) => formatNumber(h / 24, 0);
+
 function MetricTable({ a, b, criterionMetric }: { a: ScenarioSummary; b: ScenarioSummary; criterionMetric: string | null }) {
   const scale = a.metrics.duration_hours;
   return (
@@ -66,6 +70,11 @@ function MetricTable({ a, b, criterionMetric }: { a: ScenarioSummary; b: Scenari
                       {METRIC_META[k].label}
                       {active ? <Badge tone="accent">{L("Criterio", "Criterion")}</Badge> : null}
                     </span>
+                    {k === "sun_hours" && fullSun(a) && fullSun(b) ? (
+                      <span className="mt-0.5 block pl-7 text-xs text-ok" data-testid="full-sun-row">
+                        {L(`Sol visible durante toda la ventana en A y B · ${daysOf(a.metrics.sun_hours)} de ${daysOf(a.metrics.duration_hours)} días`, `Sun visible for the whole window at A and B · ${daysOf(a.metrics.sun_hours)} of ${daysOf(a.metrics.duration_hours)} days`)}
+                      </span>
+                    ) : null}
                   </th>
                   <td className="tabular px-3 py-3 text-right font-semibold text-site-a">{formatHoursMinutes(a.metrics[k])}</td>
                   <td className="tabular px-3 py-3 text-right font-semibold text-site-b">{formatHoursMinutes(b.metrics[k])}</td>
@@ -157,10 +166,13 @@ function Conclusion({ result, query }: { result: CriterionResult | undefined; qu
         </div>
 
         {isNominal ? (
-          <blockquote className="border-l-2 border-accent pl-3 text-sm leading-relaxed text-ink-muted">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{L("Frase del motor (determinista, sin IA)", "Engine sentence (deterministic, no AI · original Spanish)")}</p>
-            <span lang="es">{result.summary_es}</span>
-          </blockquote>
+          <details className="group rounded-lg border border-line bg-bg-2/60 px-3 py-2" data-testid="engine-sentence">
+            <summary className="cursor-pointer text-xs font-semibold text-ink-muted">{L("Cómo se obtuvo", "How it was obtained")}</summary>
+            <blockquote className="mt-2 border-l-2 border-accent pl-3 text-sm leading-relaxed text-ink-muted">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{L("Frase del motor (determinista, sin IA)", "Engine sentence (deterministic, no AI · original Spanish)")}</p>
+              <span lang="es">{result.summary_es}</span>
+            </blockquote>
+          </details>
         ) : (
           <Callout tone="uncertainty" icon="shuffle" title={`${L("Superficie", "Surface")}: ${VARIANT_LABEL[variant]}`}>
             {FAMILY_META[variantFamily(variant)].description}{" "}
@@ -330,10 +342,12 @@ export function ComparadorView() {
                   sites={core.sites}
                   reading={{
                     label: metric ? METRIC_META[metric].label : METRIC_META.sun_hours.label,
-                    a: formatHoursMinutes(a.metrics[metric ?? "sun_hours"]),
-                    b: formatHoursMinutes(b.metrics[metric ?? "sun_hours"]),
+                    a: (metric ?? "sun_hours") === "sun_hours" && fullSun(a) ? L(`${daysOf(a.metrics.sun_hours)} de ${daysOf(a.metrics.duration_hours)} días`, `${daysOf(a.metrics.sun_hours)} of ${daysOf(a.metrics.duration_hours)} days`) : formatHoursMinutes(a.metrics[metric ?? "sun_hours"]),
+                    b: (metric ?? "sun_hours") === "sun_hours" && fullSun(b) ? L(`${daysOf(b.metrics.sun_hours)} de ${daysOf(b.metrics.duration_hours)} días`, `${daysOf(b.metrics.sun_hours)} of ${daysOf(b.metrics.duration_hours)} days`) : formatHoursMinutes(b.metrics[metric ?? "sun_hours"]),
                     note:
-                      a.metrics.unknown_hours > 0 || b.metrics.unknown_hours > 0
+                      (metric ?? "sun_hours") === "sun_hours" && fullSun(a) && fullSun(b)
+                        ? L(`Sol visible durante toda la ventana en A y B · ${daysOf(a.metrics.sun_hours)} de ${daysOf(a.metrics.duration_hours)} días (${formatNumber(a.metrics.sun_hours, 0)} h). Visibilidad geométrica del centro del Sol según el modelo.`, `Sun visible for the whole window at A and B · ${daysOf(a.metrics.sun_hours)} of ${daysOf(a.metrics.duration_hours)} days (${formatNumber(a.metrics.sun_hours, 0)} h). Geometric visibility of the Sun's centre according to the model.`)
+                        : a.metrics.unknown_hours > 0 || b.metrics.unknown_hours > 0
                         ? L(`Horas desconocidas: A ${formatHoursMinutes(a.metrics.unknown_hours)}, B ${formatHoursMinutes(b.metrics.unknown_hours)} (no cuentan como sombra).`, `Unknown hours: A ${formatHoursMinutes(a.metrics.unknown_hours)}, B ${formatHoursMinutes(b.metrics.unknown_hours)} (not counted as shadow).`)
                         : undefined,
                   }}

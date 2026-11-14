@@ -96,7 +96,7 @@ test.describe("Regret Lab", () => {
   test("caso demostrativo completo desde el Dashboard", async ({ page }) => {
     await page.goto("/");
     await waitForData(page);
-    await page.getByRole("link", { name: "Iniciar caso demostrativo" }).click();
+    await page.getByRole("link", { name: "Ver la inversión paso a paso" }).click();
     const guide = page.getByRole("region", { name: "Caso demostrativo guiado" });
     const text = guide.locator("p[aria-live]");
     await expect(text).toContainText("38 h 40 min");

@@ -30,18 +30,25 @@ export function strut(a: THREE.Vector3, b: THREE.Vector3, rA: number, rB: number
 export function latticeTower(heightM: number, color: number): THREE.Group {
   const g = new THREE.Group();
   if (heightM <= 0) return g;
-  const big = heightM >= 5;
-  const base = big ? 1.5 : 0.75;
+  // Proporciones continuas con la altura (el deslizador va de 0 a 30 m).
+  const base = Math.min(3.2, 0.55 + heightM * 0.11);
   const top = base * 0.42;
-  const r = big ? 0.055 : 0.03;
-  // Metal claro que recibe la luz de la escena (sombreado por cara) con un mínimo emisivo para no perderse en sombra.
-  const steel = new THREE.MeshLambertMaterial({ color, emissive: 0x58627a });
-  const levels = big ? 5 : 2;
-  const deckY = heightM - (big ? 0.35 : 0.18);
+  const r = Math.min(0.12, 0.022 + heightM * 0.0045);
+  // Metal mate que recibe la luz: las caras se dibujan con el sombreado de la escena.
+  const steel = new THREE.MeshStandardMaterial({ color, metalness: 0.55, roughness: 0.5, emissive: 0x1c222c });
+  const concrete = new THREE.MeshStandardMaterial({ color: 0x8a8a86, roughness: 0.95, metalness: 0 });
+  const levels = Math.max(2, Math.round(heightM / 2.2));
+  const deckY = heightM - Math.min(0.4, 0.12 + heightM * 0.02);
   const half = (y: number) => base + (top - base) * (y / deckY);
   const corner = (y: number, sx: number, sz: number) => new THREE.Vector3(sx * half(y), y, sz * half(y));
   const signs: Array<[number, number]> = [[1, 1], [1, -1], [-1, -1], [-1, 1]];
-  for (const [sx, sz] of signs) g.add(strut(corner(0, sx, sz), corner(deckY, sx, sz), r * 1.8, r * 1.4, steel));
+  for (const [sx, sz] of signs) {
+    // Pata que entra en el terreno y zapata de apoyo.
+    g.add(strut(corner(-0.25, sx, sz), corner(deckY, sx, sz), r * 1.9, r * 1.4, steel));
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(r * 9, Math.max(0.12, r * 3), r * 9), concrete);
+    foot.position.copy(corner(0, sx, sz)).setY(Math.max(0.06, r * 1.5) - 0.05);
+    g.add(foot);
+  }
   for (let k = 0; k <= levels; k++) {
     const y0 = (deckY * k) / levels;
     for (let i = 0; i < 4; i++) {
@@ -56,11 +63,11 @@ export function latticeTower(heightM: number, color: number): THREE.Group {
     }
   }
   // Plataforma y barandilla.
-  const deckHalf = top + (big ? 0.35 : 0.18);
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(deckHalf * 2, big ? 0.08 : 0.05, deckHalf * 2), steel);
+  const deckHalf = top + Math.min(0.45, 0.15 + heightM * 0.02);
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(deckHalf * 2, Math.max(0.05, r * 1.2), deckHalf * 2), steel);
   deck.position.y = deckY;
   g.add(deck);
-  const railY = deckY + (big ? 0.3 : 0.15);
+  const railY = deckY + Math.min(0.9, 0.18 + heightM * 0.03);
   const rc = (sx: number, sz: number, y: number) => new THREE.Vector3(sx * deckHalf, y, sz * deckHalf);
   for (let i = 0; i < 4; i++) {
     const [ax, az] = signs[i];

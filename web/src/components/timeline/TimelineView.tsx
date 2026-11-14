@@ -22,6 +22,8 @@ import { Badge, Callout, Legend, NatureBadge, SiteDot, StateLegend } from "../ui
 import { Icon } from "../ui/Icon";
 import { Button, InfoTip } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import earthImg from "@/assets/celestial/earth-bluemarble-as17.webp";
+import sunImg from "@/assets/celestial/sun-sdo-aia171.webp";
 import { OrbitalView } from "./OrbitalView";
 import { TimePlayer } from "./TimePlayer";
 import { L } from "@/lib/i18n";
@@ -293,7 +295,9 @@ function TimelineBody({ core }: { core: Core }) {
         >
           <ChunkGate state={horizon} label={L("horizonte", "horizon")}>
             {(h: HorizonChunk) => (
+              <>
               <HorizonChart
+                height={470}
                 title={L(`Horizonte de ${SITE_META[focusSite].label} con trayectorias de Sol y Tierra`, `${SITE_META[focusSite].label} horizon with Sun and Earth paths`)}
                 series={[
                   {
@@ -309,12 +313,19 @@ function TimelineBody({ core }: { core: Core }) {
                 tracks={
                   ephData
                     ? [
-                        { key: "sun", label: L("Sol", "Sun"), color: "#f5c518", azimuthDeg: ephData.series.bodies.SUN.azimuth_deg, elevationDeg: ephData.series.bodies.SUN.elevation_deg, cursor: selection.timeIndex },
-                        { key: "earth", label: L("Tierra", "Earth"), color: "#4f7cff", azimuthDeg: ephData.series.bodies.EARTH.azimuth_deg, elevationDeg: ephData.series.bodies.EARTH.elevation_deg, cursor: selection.timeIndex },
+                        { key: "sun", label: L("Sol", "Sun"), color: "#f5c518", azimuthDeg: ephData.series.bodies.SUN.azimuth_deg, elevationDeg: ephData.series.bodies.SUN.elevation_deg, cursor: selection.timeIndex, iconHref: sunImg.src },
+                        { key: "earth", label: L("Tierra", "Earth"), color: "#4f7cff", azimuthDeg: ephData.series.bodies.EARTH.azimuth_deg, elevationDeg: ephData.series.bodies.EARTH.elevation_deg, cursor: selection.timeIndex, iconHref: earthImg.src },
                       ]
                     : []
                 }
               />
+              <ul className="mt-3 grid gap-1.5 text-xs text-ink-muted sm:grid-cols-2" data-testid="local-sky-legend">
+                <li className="flex items-center gap-2"><span className="inline-block h-0.5 w-5" style={{ background: SITE_META[focusSite].colorVar }} />{L("Horizonte real del relieve desde el sitio", "Real terrain horizon from the site")}</li>
+                <li className="flex items-center gap-2"><span className="inline-block h-0 w-5 border-t border-dashed border-ink-faint" />{L("0°: horizonte ideal sin relieve", "0°: ideal horizon without relief")}</li>
+                <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#f5c518]" />{ephData ? L("Sol en el instante (traza: toda la ventana)", "Sun at the instant (trace: whole window)") : L("Sin trayectorias para esta superficie", "No paths for this surface")}</li>
+                <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#4f7cff]" />{ephData ? L("Tierra en el instante (visibilidad geométrica)", "Earth at the instant (geometric visibility)") : L("Solo el horizonte de la superficie", "Only the surface horizon")}</li>
+              </ul>
+              </>
             )}
           </ChunkGate>
         </Panel>
