@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { formatDeg, formatNumber } from "@/lib/format";
 import { L } from "@/lib/i18n";
 
@@ -14,9 +14,8 @@ export interface HorizonSeries {
   emphasis?: boolean;
 }
 
-const W = 900;
+const DEFAULT_W = 900;
 const M0 = { top: 16, right: 16, bottom: 34, left: 48 };
-const PW = W - M0.left - M0.right;
 const CARDINALS = [
   { az: 0, label: "N" },
   { az: 90, label: "E" },
@@ -42,10 +41,42 @@ export interface SkyTrack {
   iconHref?: string;
 }
 
-export function HorizonChart({ series, title, tracks = [], height = 300 }: { series: HorizonSeries[]; title: string; tracks?: SkyTrack[]; height?: number }) {
-  const H = height;
+export function HorizonChart({
+  series,
+  title,
+  tracks = [],
+  height = 300,
+  fill = false,
+}: {
+  series: HorizonSeries[];
+  title: string;
+  tracks?: SkyTrack[];
+  height?: number;
+  /**
+   * Ocupa todo el alto y el ancho de su contenedor (que debe tener altura propia, p. ej. una tarjeta
+   * estirada por la rejilla). El dibujo se hace en píxeles reales: crecer da más resolución angular,
+   * no letra más grande.
+   */
+  fill?: boolean;
+}) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ w: number; h: number } | null>(null);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!fill || !el) return;
+    const ro = new ResizeObserver(([e]) => {
+      const w = Math.round(e.contentRect.width);
+      const h = Math.round(e.contentRect.height);
+      setBox((b) => (b && b.w === w && b.h === h ? b : w > 0 && h > 0 ? { w, h } : b));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fill]);
+  const W = fill && box ? box.w : DEFAULT_W;
+  const H = fill && box ? box.h : height;
   // Con iconos de cuerpos se deja aire arriba para que el disco no quede cortado en el borde.
   const M = { ...M0, top: tracks.some((t) => t.iconHref) ? 34 : M0.top };
+  const PW = W - M.left - M.right;
   const PH = H - M.top - M.bottom;
   const descId = useId();
   const [cursor, setCursor] = useState<number | null>(null); // índice de azimut
@@ -88,7 +119,7 @@ export function HorizonChart({ series, title, tracks = [], height = 300 }: { ser
         return d;
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tracks, yMin, yMax],
+    [tracks, yMin, yMax, W, H],
   );
 
   const paths = useMemo(
@@ -110,7 +141,7 @@ export function HorizonChart({ series, title, tracks = [], height = 300 }: { ser
         return d;
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [series, yMin, yMax],
+    [series, yMin, yMax, W, H],
   );
 
   const yTicks = useMemo(() => {
@@ -144,13 +175,14 @@ export function HorizonChart({ series, title, tracks = [], height = 300 }: { ser
     .join(". ");
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2 ${fill ? "h-full min-h-0" : ""}`} data-chart-size={`${W}x${H}`}>
       <p id={descId} className="sr-only">
         {title}. {summary}. {L("Use las flechas izquierda y derecha para recorrer el azimut.", "Use the left and right arrows to move along the azimuth.")}
       </p>
+      <div ref={boxRef} className={fill ? "relative min-h-[260px] flex-1" : "contents"}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="h-auto w-full touch-none select-none"
+        className={`${fill ? "absolute inset-0 h-full" : "h-auto"} w-full touch-none select-none`}
         role="img"
         aria-label={title}
         aria-describedby={descId}
@@ -228,6 +260,7 @@ export function HorizonChart({ series, title, tracks = [], height = 300 }: { ser
           </g>
         ) : null}
       </svg>
+      </div>
       <div aria-live="polite" className="tabular flex min-h-5 flex-wrap gap-x-5 gap-y-1 text-xs text-ink-muted">
         {cursor !== null ? (
           <>

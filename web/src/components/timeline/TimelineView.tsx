@@ -256,94 +256,106 @@ function TimelineBody({ core }: { core: Core }) {
       </ChunkGate>
 
       {/*
-        Zona principal: primero la geometría (Sol–Tierra–Luna y cielo local, juntos en escritorio) y debajo
-        «Elevación sobre el horizonte» con sus franjas. A la derecha, la columna de lectura
-        (sitio → instante → métricas → eventos). Sin `order-*`: el orden visual, de lectura y de teclado es
-        el del código; en móvil se apila Geometría → Cielo local → Elevación → lectura.
+        Dos filas (escritorio, xl):
+          Geometría │ Cielo local (la columna más ancha) │ Métricas
+          Elevación (gráfico, franjas, leyenda) │ Sitio A/B │ Salidas y puestas + Instante
+        La fila superior se estira a la misma altura y el cielo local llena su tarjeta. Una sola instancia de
+        cada panel y sin `order-*`: el orden del código es el visual, el de lectura y el de teclado. En móvil se
+        apila Geometría → Cielo local → Métricas → Elevación → Sitio → Salidas y puestas → Instante.
       */}
-      <div className="flex flex-col gap-5 xl:grid xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_380px] min-[1700px]:grid-cols-[minmax(0,1fr)_740px]!" data-testid="timeline-layout">
-      <div className="flex min-w-0 flex-col gap-5" data-testid="timeline-main">
-
-      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-2" data-testid="timeline-physical">
-        <Panel
-          title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
-          icon="orbit"
-          bodyClassName="p-3 sm:p-4"
-          footer={L(
-            "Direcciones reales del paquete (SPICE DE421, MOON_ME_DE421, observador nominal) convertidas al marco lunar; distancias del dibujo simbólicas, las reales se rotulan. El color de las trayectorias es el estado calculado por el motor, no una decisión de esta vista.",
-            "Real directions from the package (SPICE DE421, MOON_ME_DE421, nominal observer) converted to the lunar frame; drawing distances are symbolic, real ones are labelled. Path colour is the state computed by the engine, not a decision of this view.",
-          )}
-        >
-          <ChunkGate state={eph} label={L("efemérides", "ephemerides")} minHeight="min-h-80">
-            {(e: EphemerisSiteChunk) => (
-              <ChunkGate state={clock} label={L("reloj", "clock")}>
-                {(c: EphemerisClockChunk) => (
-                  <ChunkGate state={scen} label={L("estados", "states")}>
-                    {(sc: ScenarioChunk) => (
-                      <OrbitalView
-                        site={getSite(core, focusSite)!}
-                        eph={e}
-                        codes={getScenarioSeries(sc.rows, focusSite, variant)?.state_codes ?? null}
-                        times={c.times_utc}
-                        index={selection.timeIndex}
-                        surfaceLabel={VARIANT_LABEL[variant]}
-                      />
-                    )}
-                  </ChunkGate>
-                )}
-              </ChunkGate>
+      <div
+        className="grid gap-5 lg:grid-cols-2 lg:[grid-template-areas:'geo_sky'_'met_met'_'ele_ele'_'site_side'] xl:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)_minmax(300px,0.95fr)_minmax(300px,0.9fr)] xl:[grid-template-areas:'geo_sky_sky_met'_'ele_ele_site_side']"
+        data-testid="timeline-layout"
+      >
+        <div className="min-w-0 lg:[grid-area:geo]" data-testid="timeline-geometry">
+          <Panel
+            className="h-full"
+            title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
+            icon="orbit"
+            bodyClassName="p-3 sm:p-4"
+            footer={L(
+              "Direcciones reales del paquete (SPICE DE421, MOON_ME_DE421, observador nominal) convertidas al marco lunar; distancias del dibujo simbólicas, las reales se rotulan. El color de las trayectorias es el estado calculado por el motor, no una decisión de esta vista.",
+              "Real directions from the package (SPICE DE421, MOON_ME_DE421, nominal observer) converted to the lunar frame; drawing distances are symbolic, real ones are labelled. Path colour is the state computed by the engine, not a decision of this view.",
             )}
+          >
+            <ChunkGate state={eph} label={L("efemérides", "ephemerides")} minHeight="min-h-80">
+              {(e: EphemerisSiteChunk) => (
+                <ChunkGate state={clock} label={L("reloj", "clock")}>
+                  {(c: EphemerisClockChunk) => (
+                    <ChunkGate state={scen} label={L("estados", "states")}>
+                      {(sc: ScenarioChunk) => (
+                        <OrbitalView
+                          site={getSite(core, focusSite)!}
+                          eph={e}
+                          codes={getScenarioSeries(sc.rows, focusSite, variant)?.state_codes ?? null}
+                          times={c.times_utc}
+                          index={selection.timeIndex}
+                          surfaceLabel={VARIANT_LABEL[variant]}
+                        />
+                      )}
+                    </ChunkGate>
+                  )}
+                </ChunkGate>
+              )}
+            </ChunkGate>
+          </Panel>
+        </div>
+        <div className="min-w-0 lg:[grid-area:sky]" data-testid="timeline-sky">
+          <Panel
+            className="h-full"
+            bodyClassName="flex flex-col"
+            title={`${L("Cielo local del observador", "Observer local sky")} · ${SITE_META[focusSite].label} · ${heightM} m`}
+            icon="eye"
+            actions={<NatureBadge nature={isNominal ? "DERIVED" : "MODELED"} />}
+            footer={
+              isNominal
+                ? L("Trayectorias nominales de Sol y Tierra (azimut, elevación) de toda la ventana; el punto grande marca el instante seleccionado.", "Nominal Sun and Earth paths (azimuth, elevation) for the whole window; the large dot marks the selected instant.")
+                : L("Con superficies alternativas solo se dibuja su horizonte: el paquete no incluye trayectorias para ellas y no se combinan con el cielo nominal.", "With alternative surfaces only their horizon is drawn: the package has no paths for them and they are not mixed with the nominal sky.")
+            }
+          >
+            <ChunkGate state={horizon} label={L("horizonte", "horizon")}>
+              {(h: HorizonChunk) => (
+                <div className="flex min-h-0 flex-1 flex-col">
+                <HorizonChart
+                  fill
+                  title={L(`Horizonte de ${SITE_META[focusSite].label} con trayectorias de Sol y Tierra`, `${SITE_META[focusSite].label} horizon with Sun and Earth paths`)}
+                  series={[
+                    {
+                      key: focusSite,
+                      label: `${L("Horizonte", "Horizon")} ${focusSite}`,
+                      color: SITE_META[focusSite].colorVar,
+                      azimuthDeg: h.azimuth_deg,
+                      elevationDeg: h.variants[variant].elevation_deg,
+                      unknown: h.variants[variant].unknown,
+                      emphasis: true,
+                    },
+                  ]}
+                  tracks={
+                    ephData
+                      ? [
+                          { key: "sun", label: L("Sol", "Sun"), color: "#f5c518", azimuthDeg: ephData.series.bodies.SUN.azimuth_deg, elevationDeg: ephData.series.bodies.SUN.elevation_deg, cursor: selection.timeIndex, iconHref: sunImg.src },
+                          { key: "earth", label: L("Tierra", "Earth"), color: "#4f7cff", azimuthDeg: ephData.series.bodies.EARTH.azimuth_deg, elevationDeg: ephData.series.bodies.EARTH.elevation_deg, cursor: selection.timeIndex, iconHref: earthImg.src },
+                        ]
+                      : []
+                  }
+                />
+                <ul className="mt-3 grid gap-1.5 text-xs text-ink-muted sm:grid-cols-2" data-testid="local-sky-legend">
+                  <li className="flex items-center gap-2"><span className="inline-block h-0.5 w-5" style={{ background: SITE_META[focusSite].colorVar }} />{L("Horizonte real del relieve desde el sitio", "Real terrain horizon from the site")}</li>
+                  <li className="flex items-center gap-2"><span className="inline-block h-0 w-5 border-t border-dashed border-ink-faint" />{L("0°: horizonte ideal sin relieve", "0°: ideal horizon without relief")}</li>
+                  <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#f5c518]" />{ephData ? L("Sol en el instante (traza: toda la ventana)", "Sun at the instant (trace: whole window)") : L("Sin trayectorias para esta superficie", "No paths for this surface")}</li>
+                  <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#4f7cff]" />{ephData ? L("Tierra en el instante (visibilidad geométrica)", "Earth at the instant (geometric visibility)") : L("Solo el horizonte de la superficie", "Only the surface horizon")}</li>
+                </ul>
+                </div>
+              )}
+            </ChunkGate>
+          </Panel>
+        </div>
+        <div className="min-w-0 lg:[grid-area:met] [&>section]:h-full" data-testid="timeline-metrics">
+          <ChunkGate state={scen} label={L("métricas", "metrics")}>
+            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
           </ChunkGate>
-        </Panel>
-        <Panel
-          title={`${L("Cielo local del observador", "Observer local sky")} · ${SITE_META[focusSite].label} · ${heightM} m`}
-          icon="eye"
-          actions={<NatureBadge nature={isNominal ? "DERIVED" : "MODELED"} />}
-          footer={
-            isNominal
-              ? L("Trayectorias nominales de Sol y Tierra (azimut, elevación) de toda la ventana; el punto grande marca el instante seleccionado.", "Nominal Sun and Earth paths (azimuth, elevation) for the whole window; the large dot marks the selected instant.")
-              : L("Con superficies alternativas solo se dibuja su horizonte: el paquete no incluye trayectorias para ellas y no se combinan con el cielo nominal.", "With alternative surfaces only their horizon is drawn: the package has no paths for them and they are not mixed with the nominal sky.")
-          }
-        >
-          <ChunkGate state={horizon} label={L("horizonte", "horizon")}>
-            {(h: HorizonChunk) => (
-              <>
-              <HorizonChart
-                height={470}
-                title={L(`Horizonte de ${SITE_META[focusSite].label} con trayectorias de Sol y Tierra`, `${SITE_META[focusSite].label} horizon with Sun and Earth paths`)}
-                series={[
-                  {
-                    key: focusSite,
-                    label: `${L("Horizonte", "Horizon")} ${focusSite}`,
-                    color: SITE_META[focusSite].colorVar,
-                    azimuthDeg: h.azimuth_deg,
-                    elevationDeg: h.variants[variant].elevation_deg,
-                    unknown: h.variants[variant].unknown,
-                    emphasis: true,
-                  },
-                ]}
-                tracks={
-                  ephData
-                    ? [
-                        { key: "sun", label: L("Sol", "Sun"), color: "#f5c518", azimuthDeg: ephData.series.bodies.SUN.azimuth_deg, elevationDeg: ephData.series.bodies.SUN.elevation_deg, cursor: selection.timeIndex, iconHref: sunImg.src },
-                        { key: "earth", label: L("Tierra", "Earth"), color: "#4f7cff", azimuthDeg: ephData.series.bodies.EARTH.azimuth_deg, elevationDeg: ephData.series.bodies.EARTH.elevation_deg, cursor: selection.timeIndex, iconHref: earthImg.src },
-                      ]
-                    : []
-                }
-              />
-              <ul className="mt-3 grid gap-1.5 text-xs text-ink-muted sm:grid-cols-2" data-testid="local-sky-legend">
-                <li className="flex items-center gap-2"><span className="inline-block h-0.5 w-5" style={{ background: SITE_META[focusSite].colorVar }} />{L("Horizonte real del relieve desde el sitio", "Real terrain horizon from the site")}</li>
-                <li className="flex items-center gap-2"><span className="inline-block h-0 w-5 border-t border-dashed border-ink-faint" />{L("0°: horizonte ideal sin relieve", "0°: ideal horizon without relief")}</li>
-                <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#f5c518]" />{ephData ? L("Sol en el instante (traza: toda la ventana)", "Sun at the instant (trace: whole window)") : L("Sin trayectorias para esta superficie", "No paths for this surface")}</li>
-                <li className="flex items-center gap-2"><span className="inline-block size-3 rounded-full bg-[#4f7cff]" />{ephData ? L("Tierra en el instante (visibilidad geométrica)", "Earth at the instant (geometric visibility)") : L("Solo el horizonte de la superficie", "Only the surface horizon")}</li>
-              </ul>
-              </>
-            )}
-          </ChunkGate>
-        </Panel>
-      </div>
-
-        <div className="min-w-0" data-testid="timeline-chart">
+        </div>
+        <div className="min-w-0 lg:[grid-area:ele]" data-testid="timeline-chart">
           <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
             {(c: EphemerisClockChunk) => (
               <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
@@ -352,48 +364,37 @@ function TimelineBody({ core }: { core: Core }) {
             )}
           </ChunkGate>
         </div>
-      </div>
-
-      <div className="flex min-w-0 flex-col gap-5 min-[1700px]:grid! min-[1700px]:grid-cols-2 min-[1700px]:items-start" data-testid="timeline-reading">
-        <div className="flex min-w-0 flex-col gap-5">
-        <div className="min-w-0" data-testid="timeline-site">
+        <div className="min-w-0 self-start lg:[grid-area:site]" data-testid="timeline-site">
           <SiteSidebar core={core} horizon={horizonData} />
         </div>
-        <div className="min-w-0" data-testid="timeline-instant">
-          <ChunkGate state={clock} label={L("reloj", "clock")}>
-            {(c: EphemerisClockChunk) => (
-              <ChunkGate state={scen} label={L("estados", "states")}>
-                {(s: ScenarioChunk) => <Readout core={core} scen={s} eph={ephData} times={c.times_utc} />}
+        <div className="flex min-w-0 flex-col gap-5 self-start lg:[grid-area:side]" data-testid="timeline-side">
+          <div className="min-w-0" data-testid="timeline-events">
+            {isNominal ? (
+              <ChunkGate state={events} label={L("eventos acotados", "bounded events")}>
+                {(e: BoundedEvent[]) => <Events core={core} events={e} />}
               </ChunkGate>
+            ) : (
+              <Callout tone="uncertainty" icon="shuffle" title={L("Eventos y curvas solo nominales", "Events and curves are nominal only")}>
+                {L(
+                  `Para «${VARIANT_LABEL[variant]}» se muestran los estados y métricas precalculados por el motor con su propia superficie.`,
+                  `For “${VARIANT_LABEL[variant]}” the states and metrics precomputed by the engine with its own surface are shown.`,
+                )}{" "}
+                <button type="button" className="text-accent underline-offset-2 hover:underline" onClick={() => dispatch({ type: "setVariant", value: "nominal" })}>
+                  {L("Volver a la superficie nominal", "Back to the nominal surface")}
+                </button>
+              </Callout>
             )}
-          </ChunkGate>
-        </div>
-        </div>
-        <div className="flex min-w-0 flex-col gap-5">
-        <div className="min-w-0" data-testid="timeline-metrics">
-          <ChunkGate state={scen} label={L("métricas", "metrics")}>
-            {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
-          </ChunkGate>
-        </div>
-        <div className="min-w-0" data-testid="timeline-events">
-          {isNominal ? (
-            <ChunkGate state={events} label={L("eventos acotados", "bounded events")}>
-              {(e: BoundedEvent[]) => <Events core={core} events={e} />}
+          </div>
+          <div className="min-w-0" data-testid="timeline-instant">
+            <ChunkGate state={clock} label={L("reloj", "clock")}>
+              {(c: EphemerisClockChunk) => (
+                <ChunkGate state={scen} label={L("estados", "states")}>
+                  {(s: ScenarioChunk) => <Readout core={core} scen={s} eph={ephData} times={c.times_utc} />}
+                </ChunkGate>
+              )}
             </ChunkGate>
-          ) : (
-            <Callout tone="uncertainty" icon="shuffle" title={L("Eventos y curvas solo nominales", "Events and curves are nominal only")}>
-              {L(
-                `Para «${VARIANT_LABEL[variant]}» se muestran los estados y métricas precalculados por el motor con su propia superficie.`,
-                `For “${VARIANT_LABEL[variant]}” the states and metrics precomputed by the engine with its own surface are shown.`,
-              )}{" "}
-              <button type="button" className="text-accent underline-offset-2 hover:underline" onClick={() => dispatch({ type: "setVariant", value: "nominal" })}>
-                {L("Volver a la superficie nominal", "Back to the nominal surface")}
-              </button>
-            </Callout>
-          )}
+          </div>
         </div>
-        </div>
-      </div>
       </div>
     </>
   );

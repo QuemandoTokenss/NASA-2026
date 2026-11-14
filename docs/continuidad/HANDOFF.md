@@ -1,7 +1,18 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-26 en rama (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-sexies. PC-26 · Timeline en dos filas con el Cielo local ampliado — EN RAMA, sin fusionar (leer primero)
+
+**2026-11-14.** Rama `feat/timeline-cielo-local` desde `main` = `31f38f1` (incluye el apunte `4156e30` de la fusión de la #21, que estaba solo en la rama de la #21: traído aquí como `f7e0b98`). Commit local; **sin push ni PR**. Solo cambia Timeline.
+
+- `web/src/components/timeline/TimelineView.tsx`: rejilla CSS con áreas. Escritorio (`xl`): fila 1 Geometría │ Cielo local (2 columnas, la más ancha) │ Métricas, misma altura; fila 2 Elevación (gráfico, franjas, leyenda) │ Sitio A/B │ Salidas y puestas (o el aviso de superficie alternativa) con Instante seleccionado justo debajo. `lg`: Geometría │ Cielo local, y el resto apilado con Sitio │ Salidas+Instante al final. Móvil: Geometría → Cielo local → Métricas → Elevación → Sitio → Salidas y puestas → Instante. Una sola instancia por panel y sin `order-*`: orden del código = visual = lectura = teclado.
+- `web/src/components/charts/HorizonChart.tsx`: modo `fill` opcional (solo lo usa el Cielo local). Mide su caja y dibuja en píxeles reales, así que crecer da más resolución, no letra más grande; ejes, escala angular, leyenda y marcadores de Sol y Tierra intactos. Sin `fill` (Engineer, Explore, Comparador, Historia) no cambia nada. Medido: 617×460 px a 1440×900 y 533×462 a 1280×720; la tarjeta mide lo mismo que Geometría (684/686 px).
+- `web/e2e/timeline-pc24.spec.ts`: orden y alineación a 1440×900 y 1280×720 (fila superior a la misma altura, cielo ≥ 1,4 × las otras dos columnas, gráfico ≥ 55 % de su tarjeta, Sitio junto a Elevación, Instante bajo Salidas y puestas, orden del DOM), móvil 390 px, e instante bajo el aviso con superficie alternativa. A → B, reproductor y sincronía: pruebas existentes, en verde.
+- **Verificación:** `npm run verify`: tipos y lint limpios · Vitest 156/156 · build PASS · Playwright 112 PASS, **2 FAIL**, 1 omitida (7,7 min). Los dos fallos son de Engineer (`engineer-heights` «19,5 m, 16 m y 30 m…» y `timeline-engineer-visual` «la torre cambia…»), por espera agotada; Engineer no se ha tocado. Esas dos specs repetidas ×2 con 2 procesos: **20/20 PASS**. Timeline (`timeline-pc24`, `timeline-orbital`, `timeline-engineer-visual`): 13/13.
+- **Capturas** (compilación servida en 4190): `web/docs/capturas/pc26/timeline-{1440x900,1280x720,390x844}[-page].png` y `log.json` con las cajas medidas. URL: http://127.0.0.1:4190/timeline/?s=A&w=W2&h=0&v=nominal&t=3200
+- **Siguiente paso:** revisión humana; si se aprueba, `git push -u origin feat/timeline-cielo-local` y PR contra `main` (fusionar publica en producción).
 
 ## 0-quinquies. Fusión de la PR #21 (rediseño PC-24 + PC-25) — estado actual (leer primero)
 

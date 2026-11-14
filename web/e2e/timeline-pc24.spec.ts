@@ -11,7 +11,7 @@ test.describe("PC-24 · Timeline: orden de lectura del escenario", () => {
     [1440, 900],
     [1280, 720],
   ] as const)
-    test(`escritorio ${w}×${h}: reproductor → geometría y cielo local juntos → gráfico; columna Sitio → Instante → Métricas → Eventos`, async ({ page }) => {
+    test(`escritorio ${w}×${h}: Geometría │ Cielo local │ Métricas, y Elevación │ Sitio │ Salidas y puestas + Instante`, async ({ page }) => {
       const errors = trackErrors(page);
       await page.setViewportSize({ width: w, height: h });
       await page.goto(URL_NOMINAL);
@@ -23,68 +23,77 @@ test.describe("PC-24 · Timeline: orden de lectura del escenario", () => {
         await expect(page.getByRole("heading", { name: t })).toHaveCount(1);
       await expect(page.getByTestId("timeline-site-map")).toHaveCount(1);
       const player = (await page.getByRole("button", { name: "Reproducir" }).boundingBox())!;
-      const geometry = (await page.getByRole("heading", { name: /^Geometría Sol–Tierra–Luna/ }).boundingBox())!;
-      const sky = (await page.getByRole("heading", { name: /^Cielo local del observador/ }).boundingBox())!;
-      const physical = await box(page, "timeline-physical");
-      const chart = await box(page, "timeline-chart");
-      const site = await box(page, "timeline-site");
-      const instant = await box(page, "timeline-instant");
-      const metrics = await box(page, "timeline-metrics");
-      const events = await box(page, "timeline-events");
-      // Los dos paneles físicos, uno al lado del otro, son el primer bloque bajo el reproductor.
-      expect(player.y).toBeLessThan(physical.y);
-      expect(Math.abs(geometry.y - sky.y)).toBeLessThanOrEqual(1);
-      expect(geometry.x).toBeLessThan(sky.x);
-      expect(physical.y + physical.height).toBeLessThanOrEqual(chart.y);
-      expect(chart.x + chart.width).toBeLessThanOrEqual(site.x);
-      // Columna de lectura alineada con el primer bloque y en el orden pedido.
-      expect(Math.abs(site.y - physical.y)).toBeLessThanOrEqual(1);
-      for (const x of [instant, metrics, events]) expect(Math.abs(x.x - site.x)).toBeLessThanOrEqual(1);
-      expect(site.y).toBeLessThan(instant.y);
-      expect(instant.y).toBeLessThan(metrics.y);
-      expect(metrics.y).toBeLessThan(events.y);
-      // El orden del código (lectura y teclado) es el visual: físicos antes que el gráfico.
+      const [geo, sky, met, ele, site, events, instant] = await Promise.all(
+        ["timeline-geometry", "timeline-sky", "timeline-metrics", "timeline-chart", "timeline-site", "timeline-events", "timeline-instant"].map((id) => box(page, id)),
+      );
+      // Fila superior bajo el reproductor: Geometría · Cielo local · Métricas, alineadas por arriba y de la misma altura.
+      expect(player.y).toBeLessThan(geo.y);
+      for (const b of [sky, met]) {
+        expect(Math.abs(b.y - geo.y)).toBeLessThanOrEqual(1);
+        expect(Math.abs(b.height - geo.height)).toBeLessThanOrEqual(1);
+      }
+      expect(geo.x + geo.width).toBeLessThanOrEqual(sky.x);
+      expect(sky.x + sky.width).toBeLessThanOrEqual(met.x);
+      // El cielo local es claramente la columna más ancha y su gráfico ocupa la tarjeta (no queda espacio vacío).
+      expect(sky.width).toBeGreaterThan(geo.width * 1.4);
+      expect(sky.width).toBeGreaterThan(met.width * 1.4);
+      const skySvg = (await page.getByRole("img", { name: /^Horizonte de Sitio A con trayectorias de Sol y Tierra/ }).boundingBox())!;
+      expect(skySvg.height).toBeGreaterThan(sky.height * 0.55);
+      // Fila inferior: Elevación · Sitio · (Salidas y puestas sobre Instante).
+      for (const b of [ele, site, events]) expect(b.y).toBeGreaterThanOrEqual(geo.y + geo.height);
+      expect(Math.abs(site.y - ele.y)).toBeLessThanOrEqual(1);
+      expect(Math.abs(events.y - ele.y)).toBeLessThanOrEqual(1);
+      expect(ele.x + ele.width).toBeLessThanOrEqual(site.x);
+      expect(site.x + site.width).toBeLessThanOrEqual(events.x);
+      expect(Math.abs(events.x - met.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(instant.x - events.x)).toBeLessThanOrEqual(1);
+      expect(instant.y).toBeGreaterThanOrEqual(events.y + events.height);
+      // El orden del código (lectura y teclado) es el visual.
       const domOrder = await page.evaluate(() =>
-        ["timeline-physical", "timeline-chart", "timeline-site", "timeline-instant", "timeline-metrics", "timeline-events"].map((id) => {
+        ["timeline-geometry", "timeline-sky", "timeline-metrics", "timeline-chart", "timeline-site", "timeline-events", "timeline-instant"].map((id) => {
           const all = [...document.querySelectorAll("[data-testid]")];
           return all.indexOf(document.querySelector(`[data-testid=${id}]`)!);
         }),
       );
       expect(domOrder).toEqual([...domOrder].sort((x, y) => x - y));
-      // La leyenda va dentro del panel del gráfico, no en un panel aparte.
+      // La leyenda va dentro del panel del gráfico de elevación.
       await expect(page.getByRole("heading", { name: "Leyenda" })).toHaveCount(0);
       const chartPanel = page.getByTestId("timeline-chart");
       await expect(chartPanel.getByText("Elevación del Sol", { exact: true })).toBeVisible();
       await expect(chartPanel.getByTestId("timeline-legend")).toContainText("Sol y Tierra");
       await expect(chartPanel.getByTestId("timeline-legend")).toContainText("Desconocido");
+      await expect(page.getByTestId("local-sky-legend")).toContainText("Horizonte real del relieve");
       await noHorizontalOverflow(page);
       expect(errors).toEqual([]);
     });
 
-  test("móvil 390 px: Geometría → Cielo local → Elevación, sin paneles duplicados", async ({ page }) => {
+  test("móvil 390 px: Geometría → Cielo local → Métricas → Elevación → Sitio → Salidas y puestas → Instante", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(URL_NOMINAL);
     await waitForData(page);
     await ready(page);
     await expect(page.getByTestId("timeline-events").getByRole("heading")).toBeVisible();
     let prev = (await page.getByRole("button", { name: "Reproducir" }).boundingBox())!.y;
-    const order = [
-      ["geometría", page.getByRole("heading", { name: /^Geometría Sol–Tierra–Luna/ })],
-      ["cielo local", page.getByRole("heading", { name: /^Cielo local del observador/ })],
-      ["gráfico", page.getByTestId("timeline-chart")],
-      ["sitio", page.getByTestId("timeline-site")],
-      ["instante", page.getByTestId("timeline-instant")],
-      ["métricas", page.getByTestId("timeline-metrics")],
-      ["eventos", page.getByTestId("timeline-events")],
-    ] as const;
-    for (const [name, loc] of order) {
-      const y = (await loc.boundingBox())!.y;
-      expect(y, name).toBeGreaterThan(prev);
+    for (const id of ["timeline-geometry", "timeline-sky", "timeline-metrics", "timeline-chart", "timeline-site", "timeline-events", "timeline-instant"]) {
+      const y = (await box(page, id)).y;
+      expect(y, id).toBeGreaterThan(prev);
       prev = y;
     }
     await expect(page.getByRole("heading", { name: "Instante seleccionado" })).toHaveCount(1);
     await expect(page.getByTestId("timeline-site-map")).toHaveCount(1);
     await noHorizontalOverflow(page);
+  });
+
+  test("superficie alternativa: el instante va justo debajo del aviso que sustituye a los eventos", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/timeline/?s=B&w=W1&h=2&v=published_0003&t=300");
+    await waitForData(page);
+    await ready(page);
+    await expect(page.getByTestId("timeline-events")).toContainText("Eventos y curvas solo nominales");
+    const events = await box(page, "timeline-events");
+    const instant = await box(page, "timeline-instant");
+    expect(Math.abs(instant.x - events.x)).toBeLessThanOrEqual(1);
+    expect(instant.y - (events.y + events.height)).toBeLessThanOrEqual(24);
   });
 
   test("mover el tiempo actualiza a la vez la geometría y el cielo local", async ({ page }) => {
