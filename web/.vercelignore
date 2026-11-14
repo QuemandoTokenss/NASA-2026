@@ -1,0 +1,9 @@
+# No se sube al despliegue: resultados locales, pruebas y un archivo de QA con rutas de equipo
+node_modules
+.next
+out
+test-results
+playwright-report
+e2e
+.claude
+data/source/DERIVADOS_SITE_REGRET/validacion/qa_entradas.json
