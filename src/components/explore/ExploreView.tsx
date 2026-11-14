@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SITE_IDS, variantFamily, type SiteId } from "@/lib/contract/constants";
-import type { Core, Site } from "@/lib/contract/schema";
+import type { Site } from "@/lib/contract/schema";
 import { useChunk } from "@/lib/data/DataProvider";
 import { loadHorizonChunk } from "@/lib/data/loader";
 import { getSite } from "@/lib/data/selectors";
@@ -106,7 +106,7 @@ function SiteSheet({ site, query }: { site: Site; query: string }) {
   );
 }
 
-function HorizonSummary({ core }: { core: Core }) {
+function HorizonSummary() {
   const { selection, restored } = useSelection();
   const { variant, focusSite } = selection;
   const h0 = useChunk(restored ? () => loadHorizonChunk(focusSite, 0) : null, [focusSite, 0]);
@@ -129,7 +129,6 @@ function HorizonSummary({ core }: { core: Core }) {
     });
     return { h, ready: true, lo, hi, mean: sum / n };
   });
-  void core;
   return (
     <Panel title={`Horizonte por altura · ${SITE_META[focusSite].label}`} icon="height" actions={<InfoTip>Resumen descriptivo de los 1440 azimuts del perfil (mínimo, media y máximo de elevación) para la superficie seleccionada. No es un resultado del motor sino una lectura de sus perfiles.</InfoTip>}>
       <table className="w-full text-sm">
@@ -295,7 +294,7 @@ export function ExploreView() {
                 </Panel>
 
                 <div className="flex flex-col gap-5">
-                  <HorizonSummary core={core} />
+                  <HorizonSummary />
                   <Panel title="Propiedades del punto (A y B)" icon="compare" actions={<Badge tone="neutral">Sin clasificación</Badge>}>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-end text-xs font-semibold">

@@ -38,3 +38,8 @@
 - Implementado: `ContextMap` con zoom (botones, Ctrl+rueda), desplazamiento por arrastre, centrar en sitio, vista completa, escala dinámica y lectura X/Y estereográfica al pasar el puntero (inversa exacta de la figura); marcadores de tamaño constante. Panel de capas con solo capas reales y su procedencia, leyenda de elevación tomada de la figura original (1227–1958 m), capas no disponibles tachadas con motivo; ficha con accesos a Comparador y Timeline; resumen de horizonte por altura; perfiles A/B por altura y superficie.
 - Pruebas: leyenda presente en el SVG original; `figureToXY` inversa exacta. 
 - Comprobado en navegador: centrar en B a ×3,5 mantiene los anillos sobre los puntos del motor y la escala pasa a 250 m.
+
+## F6 — Engineer (2026-11-14)
+
+- Implementado: `src/components/engineer/` — selector discreto 0/2/10 m (radiogroup), escena 2D rotulada «ILUSTRACIÓN · no a escala · sin cálculo de sombras», métricas a la altura seleccionada con Δ frente a 0 m, horizontes 0/2/10 m superpuestos, gráfico de impacto (3 puntos por sitio, sin líneas de unión), franjas de Sol/Tierra por altura, tabla de sensibilidad, ganador de cada criterio por altura (desde comparisons).
+- Comprobado en navegador: W2, A nominal — racha sin Sol 38 h 40 min a 0 m y 0 h a 2/10 m; criterios de Sol: B a 0 m → empate a 2/10 m; Tierra: A en las tres alturas.
