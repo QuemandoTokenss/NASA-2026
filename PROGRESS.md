@@ -56,3 +56,8 @@
 - Integración: al navegar internamente hacia una URL con parámetros explícitos, el estado adopta esa selección (antes se ignoraba); enlaces sin parámetros conservan la selección. Exportación JSON/CSV en Comparador, Regret Lab, Timeline y Engineer. Eliminadas las pantallas provisionales `phase2/`.
 - Comprobado en navegador: desde el Dashboard (estado W1·2 m·published_0002) «Iniciar caso demostrativo» abre Regret Lab con W2·0 m·criterio y la guía en el paso 1 con A 38 h 40 min / B 14 h 40 min.
 - No abordado: bilingüismo ES/EN (P2).
+
+## F10 — Pulido y F11 — QA (2026-11-14)
+
+- Pulido: sin desbordamiento horizontal en todas las rutas a 1440 y 375 px; cabeceras de panel adaptables; área de pulsación de marcadores.
+- QA: Playwright (`e2e/`, Edge del sistema, export estático servido sin red) — 32/32; Vitest 63/63; tsc y ESLint limpios. Ver `QA_REPORT.md` (incluye defectos corregidos y lo no verificado).

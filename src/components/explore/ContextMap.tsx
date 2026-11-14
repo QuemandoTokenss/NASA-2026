@@ -135,6 +135,8 @@ export function ContextMap({
                         onClick={() => onSelectSite(id)}
                         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onSelectSite(id))}
                       >
+                        {/* Área de pulsación: el interior del anillo también selecciona el sitio. */}
+                        <circle cx={p.x} cy={p.y} r={22 * k} fill="transparent" />
                         {focused ? <circle cx={p.x} cy={p.y} r={26 * k} fill={color} opacity={0.18} className="animate-pulse" /> : null}
                         <circle cx={p.x} cy={p.y} r={(focused ? 15 : 12) * k} fill="none" stroke="#050912" strokeWidth={6 * k} opacity={0.55} />
                         <circle cx={p.x} cy={p.y} r={(focused ? 15 : 12) * k} fill="none" stroke={color} strokeWidth={(focused ? 3.5 : 2.5) * k} />

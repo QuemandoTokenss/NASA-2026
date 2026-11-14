@@ -42,3 +42,5 @@ next-env.d.ts
 
 # SITE REGRET: datos derivados generados por `npm run data` (no versionar, se regeneran)
 /public/data/
+/test-results/
+/playwright-report/

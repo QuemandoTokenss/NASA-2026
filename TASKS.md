@@ -14,8 +14,8 @@ Prioridad: P0 debe funcionar · P1 muy importante · P2 mejora. Estado: ✅ hech
 | 8 | F7 Evidencia | Fuentes, referencias, método, parámetros, 414 comprobaciones, Horizons, convergencia, límites, descargas | P0 | ✅ |
 | 9 | F8 Dashboard | Centro de control con cifras reales y acceso al caso demostrativo | P0 | ✅ |
 | 10 | F9 Integración | Flujo completo, URL validada, exportación JSON/CSV | P1 | ✅ |
-| 11 | F10 Pulido | Fidelidad a mockups, 1920/1440/móvil, microinteracciones | P1 | ⬜ |
-| 12 | F11 QA | Tests de datos/ciencia ampliados + E2E Playwright; QA_REPORT | P0 | ⬜ |
+| 11 | F10 Pulido | Fidelidad a mockups, 1920/1440/móvil, microinteracciones | P1 | ✅ |
+| 12 | F11 QA | Tests de datos/ciencia ampliados + E2E Playwright; QA_REPORT | P0 | ✅ |
 | 13 | F12 Entrega | typecheck/lint/test/build, comprobación de rutas y estáticos, Vercel preparado/desplegado | P0 | ⬜ |
 | 14 | P2 | Inglés (i18n) — no abordado: se prioriza P0/P1 | P2 | ⬜ |
 | 15 | P2 | Escena 3D ilustrativa | P2 | ⬜ |
