@@ -15,7 +15,8 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 15_000 },
   fullyParallel: true,
-  workers: 4,
+  // 2 procesos: la escena 3D usa WebGL por software y con 4 se agotan los tiempos de otras pruebas.
+  workers: 2,
   reporter: [["list"]],
   use: {
     baseURL: remote ?? `http://127.0.0.1:${PORT}`,
