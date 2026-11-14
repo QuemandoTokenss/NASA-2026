@@ -30,8 +30,8 @@ test.describe("Dashboard · Mission Control, Evidencia e Historia (bloque E)", (
     await expect(row).toContainText("clones/clone_0003.f32");
   });
 
-  test("Historia abre con el mapa real y enseña las diferencias de los clones", async ({ page }) => {
-    await page.goto("/historia/");
+  test("la presentación de Historia abre con el mapa real", async ({ page }) => {
+    await page.goto("/historia/#pregunta");
     await waitForData(page);
     await expect(page.getByTestId("geomap").first()).toBeVisible();
   });

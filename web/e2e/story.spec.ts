@@ -4,7 +4,8 @@ import { core, hm, noHorizontalOverflow, trackErrors, waitForData } from "./help
 test.describe("Historia (modo presentación)", () => {
   test("recorre las 7 escenas con teclado y muestra valores del paquete", async ({ page }) => {
     const errors = trackErrors(page);
-    await page.goto("/historia/");
+    // Desde PC-18 /historia/ abre la demo interactiva; la presentación se abre con su enlace directo.
+    await page.goto("/historia/#pregunta");
     await waitForData(page);
     const r = core.comparisons.find((c: { window_id: string; height_m: number }) => c.window_id === "W2" && c.height_m === 0).criteria.min_longest_dark_hours;
     await expect(page.getByRole("heading", { level: 1 })).toContainText("¿Cuál es mejor?");

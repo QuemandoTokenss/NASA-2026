@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · Mission Control v2
 
-**Punto de control:** PC-16 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E implementados; pendiente revisión humana de la demo y bloque F)**
+**Punto de control:** PC-18 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E en PR #19; demo interactiva de /historia/ en la rama local `feat/historia-demo-interactiva`, pendiente de ensayo del equipo; bloque F pendiente)**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -78,6 +78,17 @@ Hecho:
 - El panel 3D del DEM pasa a ser la vista principal (primera fila, ancho completo) con el selector de altura 0/2/10 m y «Rendimiento geométrico» a su lado: cambiar la altura actualiza a la vez el mástil, el obstáculo y las métricas del escenario.
 - Con un clon publicado la malla 3D es el recorte de ESE clon (verificado con SHA-256) y el origen vertical es la altura de suelo del clon del paquete; con hipótesis propias se dibuja el nominal con aviso explícito. `data-mesh-surface` en el panel.
 - `MastScene` sigue plegado y rotulado como ilustración.
+
+## 4 quinquies. Demo interactiva de /historia/ (PC-18, rama `feat/historia-demo-interactiva`)
+
+Rama local creada desde `feat/mission-control-v2` (PR #19) para no mezclar este encargo con el PR abierto. **Sin push** (el equipo la revisa antes).
+
+- `/historia/` (y `?lang=en`) abre una demo de una sola pantalla: «Your mission can handle 24 hours without sunlight. Where would you land?». Ventana W2 (14 dic 2026 – 13 ene 2027 UTC), Connecting Ridge, mapa de relieve offline del paquete (`PairMap`), tarjetas A/B con la mayor racha sin Sol, mensaje y acción únicos por paso, franjas Sol/Tierra estables (UNKNOWN rayado).
+- Pasos: elegir A/B (referencia, 0 m: A 38 h 40 min, B 14 h 40 min) → «Test another terrain model» (`correlated_plus`, rotulado «Alternative terrain · team hypothesis»: A 32 h 30 min, B 49 h; regret del motor 16 h 30 min si se eligió B) → «Raise the observer to 2 m» (A y B 0 h; «10 de 10 superficies» comprobado en el paquete). Cumplimiento del límite: B → ninguno → ambos. «Reiniciar demo». «¿Por qué cambió?» abre el horizonte del mismo sitio y altura (referencia vs alternativo) con enlaces a Regret Lab y Evidencia.
+- El límite de 24 h es ilustrativo (único valor nuevo, `DEMO_LIMIT_HOURS`); con horas desconocidas no se declara cumplimiento.
+- La presentación de 7 escenas sigue en «Presentación completa» y en sus enlaces directos (`/historia/#pregunta`, `#inversion`…); tiene «← Demo interactiva».
+- Archivos: `src/lib/science/landingDemo.ts`, `src/components/story/LandingDemo.tsx`, `src/components/story/DemoStrips.tsx`, `src/components/story/StoryView.tsx`, `tests/landing-demo.test.ts`, `e2e/landing-demo.spec.ts`, `e2e/story.spec.ts`, `e2e/mission-control.spec.ts`.
+- Pruebas: tsc y lint limpios; Vitest 119/119; build PASS; Playwright completo 77 PASS, 0 FAIL, 1 omitida (2 procesos, 3,0 min). Revisión visual en navegador a 1600×900 y 375×812. **Pendiente: ensayo del equipo en proyector.**
 
 ## 4 quater. Bloque E terminado (PC-16)
 

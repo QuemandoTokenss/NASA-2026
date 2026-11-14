@@ -18,6 +18,7 @@ import { Badge, Legend } from "../ui/Display";
 import { Icon, type IconName } from "../ui/Icon";
 import { Button, LinkButton } from "../ui/Interactive";
 import { DarkStreakStrips } from "./DarkStreakStrips";
+import { LandingDemo } from "./LandingDemo";
 import { GeoMap } from "../maps/GeoMap";
 import { TERRAIN_MANIFEST } from "@/lib/geospatial/terrain";
 import { L, R } from "@/lib/i18n";
@@ -426,7 +427,7 @@ function Story({ data }: { data: ReadyData }) {
     },
   ];
 
-  return <StoryDeck scenes={scenes} />;
+  return <StoryModes core={core} scenes={scenes} />;
 }
 
 function StreakVisual({ d, variant, caption }: { d: ReturnType<typeof useStoryData>; variant: Variant; caption: string }) {
@@ -494,13 +495,35 @@ function SurfaceGrid({ result, keep }: { result: NonNullable<ReturnType<typeof g
   );
 }
 
+/**
+ * /historia/ abre la demo interactiva. La presentación de siete escenas sigue
+ * disponible con «Presentación completa» y con sus enlaces directos (#pregunta,
+ * #inversion…): si el hash es el de una escena, se abre el modo presentación.
+ */
+function StoryModes({ core, scenes }: { core: Core; scenes: Scene[] }) {
+  const ids = useMemo(() => scenes.map((s) => s.id), [scenes]);
+  const [deck, setDeck] = useState(false);
+  useEffect(() => {
+    const sync = () => setDeck(ids.includes(window.location.hash.slice(1)));
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, [ids]);
+  const exit = useCallback(() => {
+    history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    setDeck(false);
+    window.scrollTo({ top: 0 });
+  }, []);
+  return deck ? <StoryDeck scenes={scenes} onExit={exit} /> : <LandingDemo core={core} />;
+}
+
 const sceneFromHash = (ids: string[]) => {
   if (typeof window === "undefined") return 0;
   const i = ids.indexOf(window.location.hash.slice(1));
   return i >= 0 ? i : 0;
 };
 
-function StoryDeck({ scenes }: { scenes: Scene[] }) {
+function StoryDeck({ scenes, onExit }: { scenes: Scene[]; onExit: () => void }) {
   const ids = useMemo(() => scenes.map((s) => s.id), [scenes]);
   const [idx, setIdx] = useState(0);
   const [full, setFull] = useState(false);
@@ -584,6 +607,9 @@ function StoryDeck({ scenes }: { scenes: Scene[] }) {
             </button>
           ))}
         </div>
+        <button type="button" onClick={onExit} className="text-xs text-ink-muted underline-offset-2 hover:text-ink hover:underline" data-testid="deck-back-to-demo">
+          {L("← Demo interactiva", "← Interactive demo")}
+        </button>
         <span className="tabular text-xs text-ink-faint" aria-hidden>
           {idx + 1} / {scenes.length}
         </span>
