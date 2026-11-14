@@ -9,7 +9,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 
 | | |
 |---|---|
-| Rama | `feat/rediseno-experiencia-lunar` (local, **sin subir, sin PR, sin fusionar**), desde `be84975` = punta de `feat/operacion-final-integracion` (PR #20). Fusionar y publicar lo decide el equipo: `main` despliega en producción |
+| Rama | `feat/rediseno-experiencia-lunar`, desde `be84975` = punta de `feat/operacion-final-integracion` (PR #20). **Subida y con PR #21** (https://github.com/QuemandoTokenss/NASA-2026/pull/21) a petición de Hugo, **apilada sobre la #20** (base `feat/operacion-final-integracion`, para que el diff muestre solo PC-24). Sin fusionar: primero se fusiona la #20, después se cambia la base de la #21 a `main`. Fusionar y publicar lo decide el equipo: `main` despliega en producción |
 | Commits | `6491f1e` Dashboard (globo) · `3fab07e` Engineer (sombra solar + relieve regional) · `1d627d7` Timeline · `28ab76d` capturas y documentos · `a4ce5d8` deslizador · encima, `perf(engineer)` que aligera el relieve regional, con medidas y capturas de Engineer rehechas |
 | Compilación servida | `web/out`, compilada por `npm run verify` sobre el código de esos commits. Servidor: `node scripts/serve-static.ts out 4190` (PID 30428, arrancado por Hugo a las 19:05; lee `out/` del disco en cada petición, así que sirve la compilación final). URL: http://127.0.0.1:4190/ · http://127.0.0.1:4190/timeline/?s=A&w=W2&h=0&v=nominal&t=3200 · http://127.0.0.1:4190/engineer/?s=A&w=W1&h=10&v=nominal&t=629. Si no responde: `cd web && npm run build && node scripts/serve-static.ts out 4190` |
 | Referencia «antes» | `web/docs/capturas/pc24/antes/` (de Hugo, sobre el código de `0871dcf`), reutilizada sin repetir. «Después»: `web/docs/capturas/pc24/despues/` (mismo equipo, mismo Edge, mismo script) |
@@ -84,7 +84,7 @@ Cómo mide el script y qué NO es comparable: `usefulMs` y `settledMs` son reloj
 ### Siguiente paso exacto
 
 1. Revisar en http://127.0.0.1:4190/ : portada (girar, «Polo sur», A/B, «Volver al globo», «Probar la misión»), Timeline y los cuatro casos de Engineer de la tabla.
-2. Si se aprueba: `git push -u origin feat/rediseno-experiencia-lunar` y abrir PR contra la rama que decida el equipo (la PR #20 sigue abierta sobre la base de esta rama). No fusionar en `main` sin esa decisión.
+2. Revisar la PR #21 y su vista previa de Vercel. Si se aprueba: fusionar antes la #20, cambiar la base de la #21 a `main` (`gh pr edit 21 --base main`) y fusionar. No fusionar en `main` sin esa decisión: publica en producción.
 3. Si se pide más cobertura regional o afinar el deslizador, ver «Pendiente».
 
 ## 0. Estado vigente (PC-23) — leer primero
