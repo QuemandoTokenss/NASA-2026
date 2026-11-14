@@ -18,14 +18,17 @@ import {
 import { TERRAIN_BOUNDS } from "@/lib/geospatial/terrain";
 
 /** Radio (m) alrededor del sitio que se dibuja siempre con cada nivel. */
-const NEAR_L0_M = 12_000;
+const NEAR_L0_M = 9_000;
 const NEAR_L1_M = 50_000;
 /** Pausa (ms) antes de pedir los bloques de una visual nueva. */
 const RAY_SETTLE_MS = 450;
 /** De más fino a más grueso. */
 const FINENESS: RegionalLevelId[] = ["L0", "L1", "L2", "F"];
 const SKIRT_M: Record<string, number> = { L0: 60, L1: 220, L2: 700, F: 1500 };
-const STEP: Record<string, number> = { L0: 1, L1: 1, L2: 2, F: 1 };
+// Los niveles gruesos se dibujan con 1 de cada 2 o 4 vértices: son horizonte lejano y, sin GPU, cada triángulo cuenta.
+const STEP: Record<string, number> = { L0: 1, L1: 2, L2: 4, F: 1 };
+/** El relieve regional empieza a pedirse después de que la vista haya cargado y verificado sus datos. */
+const START_DELAY_MS = 900;
 
 /** Malla ya construida de cada bloque (por objeto de rejilla): solo se rehace si cambian el marco o las exclusiones. */
 const MESH_CACHE = new WeakMap<RegionalGrid, { key: string; frame: LocalFrame; mesh: RegionalMesh }>();
@@ -64,7 +67,14 @@ export function useRegionalTerrain(
     return () => clearTimeout(t);
   }, [rayAz, rayDist]);
 
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setStarted(true), START_DELAY_MS);
+    return () => clearTimeout(t);
+  }, []);
+
   const wanted = useMemo(() => {
+    if (!started) return [];
     const list: RegionalBlockEntry[] = [
       ...blocksWithinRadius({ x: site.x, y: site.y }, NEAR_L0_M, "L0"),
       ...blocksWithinRadius({ x: site.x, y: site.y }, NEAR_L1_M, "L1"),
@@ -76,7 +86,7 @@ export function useRegionalTerrain(
       list.push(...blocksAlongRay(ll, ray.azimuthDeg, ray.distanceM + 6000, { levels: ["L0"] }), ...blocksAlongRay(ll, ray.azimuthDeg, ray.distanceM + 20000, { levels: ["L1"] }));
     }
     return list;
-  }, [site.x, site.y, site.lonEastDeg, site.latDeg, ray?.azimuthDeg, ray?.distanceM]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [started, site.x, site.y, site.lonEastDeg, site.latDeg, ray?.azimuthDeg, ray?.distanceM]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const asked = requested.current;
