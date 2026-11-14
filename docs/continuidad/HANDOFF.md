@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · capa geoespacial real
 
-**Punto de control:** PC-09 · 2026-11-14 12:10 (+01:00, Europe/Madrid) · **Estado: EN_CURSO**
+**Punto de control:** PC-11 · 2026-11-14 13:00 (+01:00, Europe/Madrid) · **Estado: LISTO_PARA_RELEVO**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -11,7 +11,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
 | Rama | `feat/geo-real-terrain` — subida a GitHub el 2026-11-14 (PC-07); sin PR ni despliegue |
-| HEAD | remoto `2ca0a66` (PC-07); puede haber commits locales posteriores sin subir: comprobar con `git status -sb` y `git log -3`. Base `main` = `987899d` |
+| HEAD | remoto `2ca0a66` (PC-07). **En local hay 4 commits posteriores SIN SUBIR** (`62ca048`, `3d4cf76`, el de ODE y el de este relevo): `git status -sb` debe decir «ahead 4». Base `main` = `987899d` |
 | Worktree | único (no hay worktrees separados) |
 | Otra copia que NO es la activa | `…\NASA-SpaceApps-2026\site-regret\` (copia antigua previa al repo del equipo; no editar) |
 
@@ -42,7 +42,7 @@ Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.
 | G7 | Timeline y resultados de referencia intactos (§4 G, T9) | VERIFICADO: batería completa PASS en PC-06 | — |
 | G8 | Evidencia por capa (§4 H, §15) | VERIFICADO (E2E PC-06) | `src/components/evidence/GeoEvidence.tsx` |
 | G9 | Corregistro imagen ↔ DEM (T5) | PARCIAL: rejilla de teselas VERIFICADA (NCC 0,95, ~8 m); mosaico fotográfico NO CONCLUYENTE | `scripts/geospatial/check-coregistration.ts`, `data/derived/coregistration.json`, `tests/terrain-mesh.test.ts` |
-| G10 | Navegador ODE/PDS de productos y huellas (§7) | PENDIENTE | — |
+| G10 | Navegador ODE/PDS de productos y huellas (§7) | VERIFICADO en lo implementado (unit 6/6, E2E 3/3, ejecución en vivo); PARCIAL respecto a §7 (ver §4) | `src/lib/geospatial/ode.ts`, `src/components/maps/OdePanel.tsx`, `tests/ode.test.ts`, `tests/fixtures/ode/` |
 | G11 | Ortoimagen NAC concreta de Connecting Ridge (§9) | PENDIENTE (no identificada) | — |
 | G12 | Nomenclatura IAU/USGS (§9) | PENDIENTE | — |
 | G13 | Relieve regional PGDA90 80/240 m en el mapa (§8) | PENDIENTE (no descargado; ~408 MB) | — |
@@ -54,16 +54,20 @@ Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.
 
 ## 4. Tarea activa
 
-**G10 · adaptador y navegador ODE/PDS.** (G9 cerrada en PC-09 con resultado parcial documentado; ver abajo.)
+**G15 · Regret Lab conectado al mapa con superficies reales. Estado: SIN EMPEZAR.** No hay ningún cambio parcial pendiente: el árbol queda limpio tras el commit de relevo.
 
-Resultado de G9 (PC-09, 12:10), `npm run geo:coregistration` → `web/data/derived/coregistration.json`:
-- `Site01_final_adj_5mpp_Hillshade` (sombreado del mismo PGDA78 servido por Moon Trek; 9 teselas, zoom 10): NCC 0,95, fondo −0,03, desfase X −1,7 m · Y −8,3 m (≈ 1 píxel de tesela de 8,36 m), igual en los 4 cuadrantes (±0,4 m). **CONCLUYENTE**: la rejilla WMTS y la del DEM coinciden dentro de la tolerancia (1 píxel de tesela + media celda). Origen del píxel de desfase: NO determinado (no probado a otro zoom).
-- `LRO_NAC_Mosaic_1mpp_SP` (25 teselas, zoom 11): NCC 0,03; **NO CONCLUYENTE**. Intentos: (1) sombreado sin filtrar → máximo en el borde de la búsqueda, domina la iluminación a gran escala; (2) paso alto de 110 m y sombras excluidas (65 % de la ventana queda en sombra) → sin correlación. No repetir estas dos variantes. Vía no probada: puntos de control manuales sobre cráteres, o una ortoimagen NAC concreta con iluminación conocida (G11).
-- Vitest: 3 pruebas nuevas sobre el JSON (8/8 en `tests/terrain-mesh.test.ts`). Evidencia: bloque «Corregistro medido» en `/evidencia/#geo-corregistro`. E2E de evidencia, a11y y 375 px: PASS (3/3). Batería completa NO re-ejecutada tras este cambio.
+Cerrado antes del relevo (detalle en §3 y §6):
+- **G17** documentación (PC-08).
+- **G9** PARCIAL (PC-09): rejilla de teselas verificada contra el DEM (NCC 0,95; desfase X −1,7 m, Y −8,3 m ≈ 1 píxel de tesela, uniforme en 4 cuadrantes); mosaico NAC NO CONCLUYENTE. Variantes ya probadas, no repetir: sombreado sin filtrar (máximo en el borde de búsqueda); paso alto de 110 m con sombras excluidas (65 % en sombra, NCC ≈ 0). Origen del píxel de desfase sin determinar (no se probó otro zoom).
+- **G10** (PC-10/11): adaptador ODE REST y panel en Explore, probado con respuestas grabadas y una vez en vivo. Parcial respecto al megaprompt §7: caja fija de los sitios (sin región visible ni polígono), 3 tipos de producto fijos comprobados con `query=iipt` (no se descubren en vivo; esa respuesta pesa 385 kB), productos proyectados sin cargar como capa, sin GDS. En el mock E2E `GDRDEM` devuelve el error grabado para ejercitar la ruta de error; en el servicio real ese tipo existe.
 
-Qué se intenta ahora (G10): comprobar en vivo el REST de ODE (`https://oderest.rsl.wustl.edu/live2/`) con una consulta acotada a Connecting Ridge; si responde, adaptador `web/src/lib/geospatial/ode.ts` (consulta por región, paginación, productos y huellas), respuestas reales grabadas en `web/tests/fixtures/ode/`, pruebas, y un panel en Explore que liste productos y dibuje huellas, con estado «no disponible» si el servicio falla. Sin scraping.
+Siguiente acción exacta (G15), en `web/`:
+1. Añadir a `data/geospatial/registry.json` los 5 clones `Site01_final_adj_5mpp_000N_err.tif` (URL, bytes y SHA-256 están en `data/source/DERIVADOS_SITE_REGRET/datos/pasaporte.json`, ids `SITE01_CLONE_0001…0005`; carpeta remota `…/Site01/Clones/`). `fetch-originals.ts` guarda por nombre de archivo en `data/raw/pgda78_site01/`. Son 5 × 41 MB: comprobar espacio y avisar antes de descargar.
+2. Ampliar `scripts/geospatial/build-terrain.ts` para generar, por clon, el recorte de DIFERENCIA (clon − nominal) en la misma ventana, con manifiesto y hash. Comprobar con una prueba que clon(sitio A) = `core.horizons_index.A.observer_ground_height_m.published_000N` (valores ya conocidos: 1956,1689…, 1955,8801…).
+3. En el mapa (`GeoMap.tsx`), capa «diferencia clon − nominal» con leyenda divergente; en Regret Lab, enlace a esa capa para la superficie seleccionada y, usando `horizonObstacle` con el perfil de la variante, mostrar qué azimuts cambian de horizonte respecto al nominal. Solo hechos calculados: NO señalar una causa si no se ha calculado.
+4. Límite que hay que documentar, no aproximar: las 4 hipótesis propias (`bias_*`, `correlated_*`) no pueden reconstruirse en la web sin reimplementar el generador PCG64 + filtro gaussiano del motor; sus horizontes sí están en el paquete.
 
-Tarea terminada cuando: adaptador con pruebas sobre respuestas reales + panel visible con huellas, o bloqueo documentado con la respuesta real del servicio.
+Tarea terminada cuando: recortes de diferencia versionados y probados, capa visible con leyenda, vínculo desde Regret Lab, `npm run verify` en verde y resultados anotados aquí.
 
 ## 5. Cambios locales
 
@@ -104,6 +108,11 @@ E2E_LIVE_TREK=1 npx playwright test e2e/geo.spec.ts -g "en vivo"   # opcional, c
 
 PC-06: incluye `a11y.spec.ts` (axe WCAG A/AA en las 8 rutas) y `responsive.spec.ts` (375 px) con los componentes nuevos. No se ha vuelto a lanzar `npm run verify` de una sola vez tras fijar `workers: 2`.
 
+| PC-10 · `npm test` (completo) | **98/98 PASS** | 2026-11-14 ~12:50 |
+| PC-10 · `npx playwright test` (2 procesos, completo) | **62 PASS, 0 FAIL, 1 omitido** (2,7 min) | 2026-11-14 ~12:50 |
+| PC-10 · `npm run geo:coregistration` (con red) | Rejilla CONCLUYENTE; mosaico NAC NO CONCLUYENTE | 2026-11-14 ~12:05 |
+| PC-11 · panel ODE contra el servicio real (script puntual de Playwright, sin mock) | PASS: 253 productos, huella dibujada, teselas reales | 2026-11-14 ~12:55; captura `web/docs/capturas/live-ode.png` |
+
 PC-05, fallos: `/comparador/`, `/timeline/`, `/evidencia/` (carga de ruta), «la navegación conserva la selección» y el clic de `geo.spec.ts`. Todos por TIEMPO (40–60 s; `waitForData` agota sus 15 s), en páginas que no usan mapa ni 3D. Hipótesis: saturación de CPU con 4 workers mientras las pruebas de Engineer dibujan la malla de 160 000 vértices con WebGL por software. Confirmado: con `--workers=2` pasan todas; `workers: 2` queda fijado en `web/playwright.config.ts`.
 
 Evidencia numérica clave (Vitest): el DEM muestreado en el punto que el motor señala como obstáculo reproduce su horizonte en 4 636 direcciones (máx. 1,1e-7°); lectura en A y B = valores exactos del paquete; horizonte interpolado = `sun_horizon_deg`/`earth_horizon_deg` del paquete (< 1e-9°).
@@ -133,6 +142,6 @@ Servidores estáticos de vista previa lanzados por la sesión de Hugo: `127.0.0.
 
 ## 10. Próximas tres tareas
 
-1. **G17**: terminar la documentación (ver §4).
-2. **G9**: comprobar la alineación imagen↔DEM con puntos de control (cráteres identificables en la tesela NAC y en el relieve del DEM) y anotar la tolerancia; ejecutar una vez la prueba en vivo `E2E_LIVE_TREK=1`.
+1. **G15**: Regret Lab ↔ mapa con clones reales (ver §4).
+2. **G11/G9**: identificar con ODE una ortoimagen o producto NAC proyectado de Connecting Ridge (probar `pt=SDNDTM` y `BDRROI` en la caja de los sitios) y usarlo para el corregistro del mosaico.
 3. **G18**: con autorización de Hugo, push de la rama y PR a `main`. No desplegar a Vercel sin su permiso.

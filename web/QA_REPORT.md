@@ -75,3 +75,7 @@ Ejecutado sobre el commit `54cda05` + `workers: 2` (equipo de Hugo, Windows 11, 
 Qué establecen las pruebas nuevas: originales y recortes con SHA-256 = pasaporte/manifiesto; recorte = subconjunto exacto del TIFF; lectura en A y B = valores del paquete; proyección ida/vuelta, base local, distancias con radio lunar; lector WMTS sobre documentos reales y rechazo de respuestas no válidas; el DEM en el punto que el motor señala como obstáculo reproduce su horizonte (4 636 direcciones, máx. 1,1e-7°); horizonte interpolado = el guardado para Sol y Tierra; malla 3D = muestras del raster; en navegador, teselas pedidas según capacidades, cambio de capa y leyenda, lectura por clic, medida A–B, fuera de cobertura, sin red, HTML con 200, escena 3D dibujada y lectura del obstáculo = cálculo independiente, procedencia por capa.
 
 No verificado: alineación imagen↔DEM con puntos de control (solo a la vista), prueba en vivo automatizada, segundo portátil sin red, lector de pantalla. Lista completa de pendientes: [docs/GEOESPACIAL.md](docs/GEOESPACIAL.md).
+
+### Actualización PC-10 (2026-11-14, corregistro y ODE)
+
+`npm test`: **98/98**. `npx playwright test` (2 procesos): **62/62**, 1 omitida. `tsc` y ESLint: 0 errores. Añadidos: corregistro medido teselas ↔ DEM (rejilla verificada, NCC 0,95; mosaico NAC no concluyente) y adaptador ODE REST con panel de productos y huellas (respuestas reales grabadas; además ejecutado una vez contra el servicio real: 253 productos, captura en `docs/capturas/live-ode.png`).

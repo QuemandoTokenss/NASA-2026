@@ -12,3 +12,5 @@
 | PC-07 | 2026-11-14 ~11:30 | Hugo · Claude Code | Rama subida a GitHub a petición de Hugo. Sin PR ni despliegue | `b4ced8b` + este apunte |
 | PC-08 | 2026-11-14 11:45 | Hugo · Claude Code | G17 documentación terminada; megaprompt literal guardado | `62ca048` |
 | PC-09 | 2026-11-14 12:10 | Hugo · Claude Code | G9: corregistro medido (rejilla verificada; mosaico NAC no concluyente). Tarea activa: G10 ODE | commit de PC-09 |
+| PC-10 | 2026-11-14 12:40 | Hugo · Claude Code | G10: adaptador ODE REST + panel de productos y huellas en Explore. Batería completa pendiente de re-ejecutar | sin confirmar al escribir esto |
+| PC-11 | 2026-11-14 13:00 | Hugo · Claude Code | Batería completa PASS (98 + 62). Panel ODE probado en vivo. LISTO_PARA_RELEVO a Asier; siguiente: G15 | commit de relevo (local, sin subir) |

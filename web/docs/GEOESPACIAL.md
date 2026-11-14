@@ -13,9 +13,11 @@ Fecha: 2026-11-14 · rama `feat/geo-real-terrain`. Primera entrega vertical del 
 | WMTS Moon Trek | `src/lib/geospatial/wmts.ts` | GetCapabilities reales (`tests/fixtures/trek/`) | Vitest + tesela real recibida (PNG, CORS `*`) | PASS | CRS declarado ambiguo: se valida la rejilla polar en metros |
 | Mapa en Explore | `src/components/maps/GeoMap.tsx`, `ProfileChart.tsx` | Moon Trek NAC/WAC + recortes PGDA78 | E2E `geo.spec.ts` (teselas, capas, lectura, medida, fuera de cobertura, sin red, HTML con 200) | PASS | Alineación imagen↔DEM solo comprobada a la vista |
 | Terreno 3D + obstáculo en Engineer | `src/components/terrain/` | Recorte del DEM, horizontes y efemérides del paquete | E2E (lienzo con terreno, lectura = cálculo en Node, 10 m, superficie alternativa) | PASS | Malla a 10 m; solo DEM nominal; sin sombras arrojadas |
+| Corregistro teselas ↔ DEM | `scripts/geospatial/check-coregistration.ts` (`npm run geo:coregistration`), `data/derived/coregistration.json` | Teselas reales de Moon Trek (hillshade PGDA78 y mosaico NAC) y recorte del DEM | Ejecución real + Vitest sobre el resultado | Rejilla: PASS (NCC 0,95; desfase −1,7 / −8,3 m, uniforme). Mosaico NAC: NO CONCLUYENTE | El registro propio del mosaico fotográfico no queda demostrado; origen del píxel de desfase sin determinar |
+| Productos y huellas PDS (ODE) | `src/lib/geospatial/ode.ts`, `src/components/maps/OdePanel.tsx` | ODE REST `query=product` (PDS Geosciences Node) | Vitest sobre respuestas reales grabadas; E2E; ejecución en vivo con captura (`docs/capturas/live-ode.png`) | PASS (253 productos NAC en la caja de los sitios) | Caja fija de los sitios; 3 tipos de producto; sin carga como capa; sin GDS |
 | Procedencia por capa | `src/components/evidence/GeoEvidence.tsx` | Registro y manifiesto | E2E (enlace desde la leyenda, hash completo) | PASS | — |
 
-Batería completa sobre el árbol de trabajo: `tsc` y ESLint limpios, Vitest 89/89, build correcto, Playwright 59/59 + 1 omitida (en vivo), con 2 procesos. Con 4 procesos fallaban 5 por tiempo (WebGL por software).
+Batería completa (PC-10, tras corregistro y ODE): `tsc` y ESLint limpios, Vitest 98/98, build correcto, Playwright 62/62 + 1 omitida (en vivo), con 2 procesos. Con 4 procesos fallaban 5 por tiempo (WebGL por software).
 
 ## Inventario de recursos visuales (clases del encargo)
 
@@ -38,7 +40,7 @@ No hay imágenes rasterizadas en `public/` ni URLs externas de imagen aparte de 
 
 ## Pendiente (no se muestra como si existiera)
 
-Navegador ODE/PDS y huellas; ortoimagen NAC concreta; nomenclatura IAU/USGS; relieve regional PGDA90 en el mapa; clones en 3D y Regret Lab enlazado al mapa; puntos de control cuantitativos imagen↔DEM; prueba en vivo automatizada (`E2E_LIVE_TREK=1`) y prueba sin red en otro portátil; escenarios nuevos calculados. Tampoco se ha desplegado ni subido la rama.
+Búsqueda ODE por región visible o polígono y carga de productos proyectados como capa; corregistro numérico del mosaico fotográfico; ortoimagen NAC concreta; nomenclatura IAU/USGS; relieve regional PGDA90 en el mapa; clones en 3D y Regret Lab enlazado al mapa; prueba en vivo automatizada (`E2E_LIVE_TREK=1`) y prueba sin red en otro portátil; escenarios nuevos calculados. Tampoco se ha desplegado ni subido la rama.
 
 ## Reproducir
 

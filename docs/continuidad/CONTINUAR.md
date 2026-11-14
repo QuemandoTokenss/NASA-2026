@@ -22,9 +22,8 @@ Preparación, dentro de web/:
   npm ci
 Los originales NASA (web/data/raw/, 205 MB) no están en Git y NO hacen falta para trabajar ni para las pruebas: los recortes derivados sí están versionados. Solo si vas a regenerarlos: npm run geo:fetch && npm run geo:build.
 
-Asume UNA sola tarea activa: la de la sección «Tarea activa» del HANDOFF. Hoy es:
-  terminar la documentación (G17): actualizar web/README.md, web/QA_REPORT.md, web/DECISIONS.md, docs/VALIDATION.md y docs/STATUS.md con los resultados reales anotados en HANDOFF §6 (Vitest 89/89, E2E 59/59 con 2 procesos). No inventes cifras: si dudas, vuelve a ejecutar `npm run verify` en web/.
-Después: alineación imagen↔DEM con puntos de control (G9) y, solo con permiso de Hugo, push y PR (G18).
+Asume UNA sola tarea activa: la de la sección «Tarea activa» del HANDOFF. Hoy es G15 (Regret Lab conectado al mapa con los clones reales del DEM); el HANDOFF §4 da los pasos exactos. Lee también docs/continuidad/01_REANUDAR_IMPLEMENTACION.md y el megaprompt literal docs/continuidad/MEGAPROMPT_ORIGINAL.md: el encargo NO está terminado.
+IMPORTANTE: si `git status -sb` no dice que estás al día con el remoto, o no ves los commits de corregistro y ODE en `git log --oneline -6`, es que Hugo aún no ha subido los últimos commits: PARA y pídeselo.
 
 Reglas que no puedes romper:
 - No tocar web/data/source/. No inventar terreno, texturas, métricas, fechas ni coordenadas. Solo sitios A (ROI 4) y B (ROI 6), ventanas W1/W2, alturas 0/2/10 m.
