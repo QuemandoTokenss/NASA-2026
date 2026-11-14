@@ -26,3 +26,26 @@ export function figureXY(xM: number, yM: number) {
 
 /** Píxeles de la figura por metro (para barras de escala). */
 export const FIGURE_PX_PER_M = CONTEXT_FIGURE.plot.width / (CONTEXT_FIGURE.boundsXY[2] - CONTEXT_FIGURE.boundsXY[0]);
+
+/**
+ * Leyenda de la figura: los colores extremos y la escala se leen de la propia
+ * figura (pie: «Oscuro: 1227 m · Claro: 1958 m»). Un test comprueba que el
+ * color más oscuro y el más claro existen en el SVG original.
+ */
+export const CONTEXT_LEGEND = {
+  darkM: 1227,
+  lightM: 1958,
+  stops: ["#234b6e", "#3d5c74", "#566d79", "#6d7c7f", "#868d84", "#9e9d8a", "#b6ad8f", "#cebd95", "#e6cd9b"],
+  caption: "Altura del terreno sobre la esfera de referencia (promedio a 40 m/píxel)",
+} as const;
+
+/** Inversa de figureXY: unidades de la figura → X/Y estereográficos (m). */
+export function figureToXY(fx: number, fy: number) {
+  const [xmin, ymin, xmax, ymax] = CONTEXT_FIGURE.boundsXY;
+  const { x0, y0, width, height } = CONTEXT_FIGURE.plot;
+  return {
+    xM: xmin + ((fx - x0) / width) * (xmax - xmin),
+    yM: ymax - ((fy - y0) / height) * (ymax - ymin),
+    inside: fx >= x0 && fx <= x0 + width && fy >= y0 && fy <= y0 + height,
+  };
+}

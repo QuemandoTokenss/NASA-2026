@@ -32,3 +32,9 @@
 - Implementado: `src/components/timeline/` (TimelineView, TimePlayer) y `src/components/charts/TimeCharts.tsx` (eje UTC común, curvas, franjas por tramos con tooltip de intervalo y censura). Curvas nominales de elevación de Sol/Tierra y del horizonte en su azimut con sombreado de Sol visible; franjas «Sol visible», «Tierra visible», «Estado A», «Estado B»; reproductor (play/pausa, ±10 min, ±1 día, velocidades, deslizador accesible) sobre los 4320 intervalos; lectura del instante (estado de A/B, tramo original, elevación/horizonte/azimut nominales); métricas y tiempo por estado (recuento de state_codes); eventos acotados (original verificado por SHA-256, `loadOriginalJson`); horizonte con trayectorias nominales del cielo. Superficies no nominales: solo estados/métricas y aviso, sin combinar cielo nominal y horizonte alternativo.
 - Corregido: escritura de URL con retardo de 180 ms (el navegador limita replaceState durante la reproducción).
 - Comprobado en navegador: índice 1200 de W2 = 22 dic 2026 08:00 UTC; reproducción avanza y pausa; A en BOTH con Sol 0,739° > horizonte −1,249° y Tierra 5,536° > −1,038°; sin desbordamiento horizontal.
+
+## F5 — Explore (2026-11-14)
+
+- Implementado: `ContextMap` con zoom (botones, Ctrl+rueda), desplazamiento por arrastre, centrar en sitio, vista completa, escala dinámica y lectura X/Y estereográfica al pasar el puntero (inversa exacta de la figura); marcadores de tamaño constante. Panel de capas con solo capas reales y su procedencia, leyenda de elevación tomada de la figura original (1227–1958 m), capas no disponibles tachadas con motivo; ficha con accesos a Comparador y Timeline; resumen de horizonte por altura; perfiles A/B por altura y superficie.
+- Pruebas: leyenda presente en el SVG original; `figureToXY` inversa exacta. 
+- Comprobado en navegador: centrar en B a ×3,5 mantiene los anillos sobre los puntos del motor y la escala pasa a 250 m.

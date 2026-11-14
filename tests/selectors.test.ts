@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { HEIGHTS_M, SITE_IDS, VARIANTS, WINDOW_IDS, variantFamily } from "@/lib/contract/constants";
 import { getComparison, getCriterionResult, getScenarioSeries, getScenarioSummary, getSite } from "@/lib/data/selectors";
-import { CONTEXT_FIGURE, figureXY } from "@/lib/figure";
+import { CONTEXT_FIGURE, CONTEXT_LEGEND, figureToXY, figureXY } from "@/lib/figure";
 import { SOURCE, core, readChunk } from "./helpers";
 
 const C = core();
@@ -96,5 +96,23 @@ describe("figura de contexto", () => {
     const ctx = JSON.parse(readFileSync(join(SOURCE, "DERIVADOS_SITE_REGRET", "datos", "contexto_2d.json"), "utf8"));
     expect(ctx.bounds_xy_m).toEqual([...CONTEXT_FIGURE.boundsXY]);
     expect(ctx.display_pixel_size_m).toBe(CONTEXT_FIGURE.displayPixelSizeM);
+  });
+
+  it("la leyenda usa los colores extremos y las alturas del pie de la figura original", () => {
+    const svg = readFileSync(join(SOURCE, "DERIVADOS_SITE_REGRET", "figuras", "mapa_sitios.svg"), "utf8");
+    expect(svg).toContain(`fill="${CONTEXT_LEGEND.stops[0]}"`);
+    expect(svg).toContain(`fill="${CONTEXT_LEGEND.stops[CONTEXT_LEGEND.stops.length - 1]}"`);
+    expect(svg).toContain(`Oscuro: ${CONTEXT_LEGEND.darkM} m · Claro: ${CONTEXT_LEGEND.lightM} m`);
+  });
+
+  it("figureToXY es la inversa exacta de figureXY", () => {
+    for (const id of ["A", "B"] as const) {
+      const s = getSite(C, id)!;
+      const p = figureXY(s.x_m, s.y_m);
+      const back = figureToXY(p.x, p.y);
+      expect(back.xM).toBeCloseTo(s.x_m, 6);
+      expect(back.yM).toBeCloseTo(s.y_m, 6);
+      expect(back.inside).toBe(true);
+    }
   });
 });
