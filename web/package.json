@@ -6,6 +6,7 @@
     "data": "node scripts/prepare-data.ts && node scripts/geospatial/publish-terrain.ts",
     "geo:fetch": "node scripts/geospatial/fetch-originals.ts",
     "geo:build": "node scripts/geospatial/build-terrain.ts",
+    "geo:coregistration": "node scripts/geospatial/check-coregistration.ts",
     "predev": "npm run data",
     "dev": "next dev",
     "prebuild": "npm run data",

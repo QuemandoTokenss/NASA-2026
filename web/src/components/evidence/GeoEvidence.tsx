@@ -1,6 +1,7 @@
 "use client";
 
 import { formatBytes, formatNumber } from "@/lib/format";
+import coregistration from "../../../data/derived/coregistration.json";
 import { GEO_REGISTRY, TERRAIN_MANIFEST, registryAsset, terrainUrl, type RegistryAsset } from "@/lib/geospatial/terrain";
 import { L } from "@/lib/i18n";
 import { Badge, Callout } from "../ui/Display";
@@ -133,6 +134,47 @@ export function GeoEvidence() {
           <Row k={L("Modelo de píxel", "Pixel model")} v={g.pixel_model} />
           <Row k={L("Límites", "Limits")} v={<ul className="list-disc pl-4">{TERRAIN_MANIFEST.limits.map((l) => <li key={l}>{l}</li>)}</ul>} />
         </dl>
+        <div id="geo-corregistro" className="scroll-mt-24 rounded-xl border border-line bg-bg-2/60 p-4" data-testid="coregistration">
+          <h3 className="text-sm font-semibold text-ink">{L("Corregistro medido entre teselas y DEM", "Measured co-registration between tiles and DEM")}</h3>
+          <p className="mt-1 text-xs text-ink-faint">
+            {L(
+              "Correlación normalizada entre teselas reales de Moon Trek y el relieve sombreado calculado con el DEM, buscando el desplazamiento (±80 m) que la maximiza, en la ventana completa y por cuadrantes. Regla de concluyente: máximo > 0,3, al menos 0,2 sobre el fondo y fuera del borde de búsqueda.",
+              "Normalised correlation between real Moon Trek tiles and shaded relief computed from the DEM, searching the shift (±80 m) that maximises it, over the whole window and by quadrant. Conclusive rule: peak > 0.3, at least 0.2 above background and not on the search edge.",
+            )}
+          </p>
+          <ul className="mt-3 grid gap-3 lg:grid-cols-2">
+            {coregistration.checks.map((c) => {
+              const q = Object.values(c.quadrants);
+              return (
+                <li key={c.image.layer} className="rounded-lg border border-line/70 p-3 text-xs">
+                  <p className="flex flex-wrap items-center gap-2 font-mono text-ink">
+                    {c.image.layer}
+                    {c.conclusive ? <Badge tone="ok" icon="check">{L("Concluyente", "Conclusive")}</Badge> : <Badge tone="warn" icon="alert">{L("No concluyente", "Inconclusive")}</Badge>}
+                  </p>
+                  <dl className="mt-1">
+                    <Row k={L("Qué comprueba", "What it checks")} v={c.role === "tile_grid_georeferencing" ? L("Georreferenciación de la rejilla de teselas (sombreado del mismo producto PGDA78 servido por Moon Trek)", "Georeferencing of the tile grid (shaded relief of the same PGDA78 product served by Moon Trek)") : L("Registro del mosaico fotográfico frente al DEM", "Registration of the photographic mosaic against the DEM")} />
+                    <Row k={L("Correlación máxima · fondo", "Peak correlation · background")} v={`${formatNumber(c.whole_window.peak_ncc, 2)} · ${formatNumber(c.whole_window.background_ncc_at_search_edge, 2)}`} />
+                    {c.conclusive ? (
+                      <>
+                        <Row k={L("Desfase estimado", "Estimated offset")} v={`X ${formatNumber(c.whole_window.offset_x_m, 1)} m · Y ${formatNumber(c.whole_window.offset_y_m, 1)} m (${formatNumber(c.whole_window.offset_m, 1)} m; ${L("tesela", "tile")} ${formatNumber(c.image.tile_resolution_m, 2)} m/px, ${L("celda", "cell")} ${c.analysis.cell_m} m)`} />
+                        <Row k={L("Por cuadrantes", "By quadrant")} v={q.map((x) => `${formatNumber(x.offset_x_m, 1)} / ${formatNumber(x.offset_y_m, 1)} m`).join(" · ")} />
+                      </>
+                    ) : (
+                      <Row k={L("Lectura", "Reading")} v={L(`Sin máximo fiable: el mosaico es multitemporal, con luz rasante y un ${formatNumber((1 - c.analysis.valid_image_fraction) * 100, 0)} % de la ventana en sombra. No se da ningún desfase.`, `No reliable peak: the mosaic is multi-temporal, with grazing light and ${formatNumber((1 - c.analysis.valid_image_fraction) * 100, 0)} % of the window in shadow. No offset is given.`)} />
+                    )}
+                    <Row k={L("Teselas", "Tiles")} v={`${c.image.tiles} · zoom ${c.image.zoom} · ${c.image.fetched_utc_date}`} />
+                  </dl>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-2 text-[11px] text-ink-faint">
+            {L(
+              "El desfase de la rejilla equivale a aproximadamente un píxel de tesela y es igual en los cuatro cuadrantes; su origen no está determinado. La alineación del mosaico fotográfico con el DEM NO queda demostrada numéricamente: comparte rejilla y proyección con la capa verificada, pero su propio registro depende del productor. No es una certificación geodésica.",
+              "The grid offset is about one tile pixel and equal in all four quadrants; its origin is undetermined. The alignment of the photographic mosaic with the DEM is NOT demonstrated numerically: it shares grid and projection with the verified layer, but its own registration depends on the producer. Not a geodetic certification.",
+            )}
+          </p>
+        </div>
         <ul className="grid gap-3 xl:grid-cols-2">
           {GEO_REGISTRY.assets.map((a) => (
             <AssetCard key={a.id} a={registryAsset(a.id)!} />

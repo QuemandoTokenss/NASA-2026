@@ -1,0 +1,255 @@
+{
+  "schema": "site-regret-coregistration/2",
+  "generator": "scripts/geospatial/check-coregistration.ts",
+  "conclusive_rule": "peak NCC > 0.3, at least 0.2 above the search-edge background, and not on the search edge",
+  "checks": [
+    {
+      "role": "tile_grid_georeferencing",
+      "image": {
+        "layer": "Site01_final_adj_5mpp_Hillshade",
+        "capabilities_url": "https://trek.nasa.gov/tiles/Moon/SP/Site01_final_adj_5mpp_Hillshade/1.0.0/WMTSCapabilities.xml",
+        "capabilities_sha256": "90675722f33b303493797018499e6c916cb1421668076e475fea8be30776f4bf",
+        "zoom": "10",
+        "tile_resolution_m": 8.3612823486328,
+        "tiles": 9,
+        "tile_sha256": {
+          "516/505": "da2749ad979a4bf4142f1756aa04e02981f6424234cfbbc6ff32c4b9bf6db112",
+          "516/506": "c6392a86c14780681de043129e12e306c0b5854cb5f509200a4415b837614ab9",
+          "516/507": "61d646704ce8a7ef0b641c8e27284960dbef387eba67bcd60fa751e474357056",
+          "517/505": "c85c25e71dd9e2bb524116f368a7ec6b0731f70e90497fe5034da0c333a494f6",
+          "517/506": "0521b240a245b63908dc766b58c24fe6da5d133353544da7aae07e4285e47b5f",
+          "517/507": "b4004558566b2a84fc31413ad033bd29985663099dfcd2040859fba52647f879",
+          "518/505": "27add6ce1cfffbddf09131ef56f377175c868101ddc7e1852862657fadbee8fc",
+          "518/506": "61e6f82daed30cce0e73fdc2890019962f6175a440a4f5bb87c81142d9e8b28f",
+          "518/507": "48c3a00cd8bc09e9ec499682a3e5d0a1f7d7d7df0b82a5305a6dab4d3dec2135"
+        },
+        "fetched_utc_date": "2026-11-14"
+      },
+      "dem": {
+        "file": "elevation.f32",
+        "sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65",
+        "source_sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e"
+      },
+      "analysis": {
+        "cell_m": 10,
+        "grid": [
+          400,
+          400
+        ],
+        "window_bounds_xy_m": [
+          -13000,
+          -14000,
+          -9000,
+          -10000
+        ],
+        "max_shift_m": 80,
+        "light_azimuths_step_deg": 15,
+        "light_altitudes_deg": [
+          3,
+          8,
+          20,
+          45
+        ],
+        "valid_image_fraction": 1,
+        "shadow_level_excluded_below": 0,
+        "high_pass_radius_cells": 5,
+        "method": "Normalized cross-correlation between the high-passed image (cell mean, shadows excluded) and the high-passed Lambertian shaded relief of the DEM; peak over light direction and integer shifts, parabolic sub-cell refinement."
+      },
+      "whole_window": {
+        "peak_ncc": 0.9511403235010784,
+        "ncc_at_zero_shift_best_light": 0.8028054656193585,
+        "background_ncc_at_search_edge": -0.028044849934199992,
+        "light_azimuth_map_deg": 315,
+        "light_altitude_deg": 45,
+        "offset_x_m": -1.7538537316624645,
+        "offset_y_m": -8.315857353590658,
+        "offset_m": 8.498793234179438,
+        "peak_at_search_edge": false
+      },
+      "quadrants": {
+        "north_west": {
+          "peak_ncc": 0.9456033483372468,
+          "ncc_at_zero_shift_best_light": 0.8099601864993027,
+          "background_ncc_at_search_edge": -0.020910423865074787,
+          "light_azimuth_map_deg": 315,
+          "light_altitude_deg": 45,
+          "offset_x_m": -2.058317411141698,
+          "offset_y_m": -7.987699545833788,
+          "offset_m": 8.24863713588629,
+          "peak_at_search_edge": false
+        },
+        "north_east": {
+          "peak_ncc": 0.9498227606625093,
+          "ncc_at_zero_shift_best_light": 0.8250086105437057,
+          "background_ncc_at_search_edge": -0.04249454675115516,
+          "light_azimuth_map_deg": 315,
+          "light_altitude_deg": 45,
+          "offset_x_m": -1.5837898761270326,
+          "offset_y_m": -8.182624037147457,
+          "offset_m": 8.334490176671025,
+          "peak_at_search_edge": false
+        },
+        "south_west": {
+          "peak_ncc": 0.9496994116226289,
+          "ncc_at_zero_shift_best_light": 0.7836383704738681,
+          "background_ncc_at_search_edge": -0.01889368028557256,
+          "light_azimuth_map_deg": 315,
+          "light_altitude_deg": 45,
+          "offset_x_m": -1.9760842458049863,
+          "offset_y_m": -8.38683442948209,
+          "offset_m": 8.61649004491184,
+          "peak_at_search_edge": false
+        },
+        "south_east": {
+          "peak_ncc": 0.9554390986414272,
+          "ncc_at_zero_shift_best_light": 0.797713876667659,
+          "background_ncc_at_search_edge": -0.026643374609825292,
+          "light_azimuth_map_deg": 315,
+          "light_altitude_deg": 45,
+          "offset_x_m": -1.6187397749981551,
+          "offset_y_m": -8.483575333890869,
+          "offset_m": 8.636629487535208,
+          "peak_at_search_edge": false
+        }
+      },
+      "limits": [
+        "Mosaico multitemporal con luz rasante: el sombreado lambertiano no modela sombras arrojadas ni cambios de iluminación entre imágenes.",
+        "Estima un desfase traslacional; no mide rotación, escala ni distorsión local.",
+        "No es una certificación de exactitud geodésica del mosaico ni del DEM."
+      ],
+      "conclusive": true
+    },
+    {
+      "role": "orbital_image_registration",
+      "image": {
+        "layer": "LRO_NAC_Mosaic_1mpp_SP",
+        "capabilities_url": "https://trek.nasa.gov/tiles/Moon/SP/LRO_NAC_Mosaic_1mpp_SP/1.0.0/WMTSCapabilities.xml",
+        "capabilities_sha256": "c947088cbf67b5167ca4c3757088b509c94fc2297cd1f31c9ab9749bf6500bc4",
+        "zoom": "11",
+        "tile_resolution_m": 4.1806411743164,
+        "tiles": 25,
+        "tile_sha256": {
+          "1033/1011": "985fa61e69be878bf48a59daad729d6363cea130dc19a132bd96cf45a6d49edf",
+          "1033/1012": "0c3a23f67b7c886a5a04423efed05756b67fb83eff830309036fb3020daed223",
+          "1033/1013": "637ef723bc003180f09a7f2f3e7a3ad1ef64014586c4301d99f152bec22f0594",
+          "1033/1014": "a85d056324757bdd55e2e8d2eb2f3927b929c919f97529b6385d9397503a8d46",
+          "1033/1015": "7fbdb8041565e07cb1882e457d18206f26518c2c517e1153456ff239aba3d8bb",
+          "1034/1011": "82e69105c33cdfefd572bfdbc26f31e1dd99148bebc0fb9a1001fd46944f3b96",
+          "1034/1012": "e2cf896d938089aff28b76df94ac650a895d51fb7731f810d3a75e8ef10a4b73",
+          "1034/1013": "db4bc799db42244ebc702ede347157f06a8800eadd254fbc93a5af376569463f",
+          "1034/1014": "3479a4077533c9570bd169615efb7950b36808b96373543f7ea7496e66432d6e",
+          "1034/1015": "e9b7db01cfaf24ae0df906f1cb09956bfba15e2fc462b8c300d0bff272e1e067",
+          "1035/1011": "ffb3863bf55487acbb8e7853872f6548d5032205d5323ce9e19cb0a8f8d666c0",
+          "1035/1012": "f278f59f6a1ff23b54cd811fa4c897b2b8545fbcaf439121642dd40926ed3e53",
+          "1035/1013": "6c138504508315ca01e6ecbf43bde2bb6bc03c26552bb93351d3df6649d0c0d5",
+          "1035/1014": "2a7f3b035c48605701ffd5f9871483605f920b60cc309c9216c41762864f55b9",
+          "1035/1015": "d59d64b66aa836e6c4962212280a881f5e33f4cd897f235b9010a86b7142f993",
+          "1036/1011": "6c5936eb733395e26281ee576fd613d23214d8b2d59eed05e646d473c3e89816",
+          "1036/1012": "b10b10d1854eb5387f54b677b49ed8592e2080f52067890ef0cc6d94523684b9",
+          "1036/1013": "6474b9f4fc18d179d01d8b64bf6ae5698a401efe5e7b5933345b6cd8e1651b54",
+          "1036/1014": "85c24a440a3ee3666232b5720a6b87f6b87c07e722be6f1ab406bbbb7928c107",
+          "1036/1015": "8787146eecb3579ba19edae1e7ee00dfb2497231f697a72e354d33359c21b81f",
+          "1037/1011": "31f7e98800757707a2e8860a17af7390b47d26e04c8a4d9e4843486ffa734108",
+          "1037/1012": "fc8da4f25b89a2c76018f591c3ff862e2ffaf8bde8f01167a96d687f3566e314",
+          "1037/1013": "ade27749f7584c2a70e907151d32da4d2442a330916cd2f7324ffe1e0342a9cd",
+          "1037/1014": "59cc787153d2710da3af68e1fbbd04327c97d8ae16fc4b3cc10167412ce7003b",
+          "1037/1015": "85601ce35746b8b7156a15f9cb15455f9c127d06a7c1a13439eb34c48228f56c"
+        },
+        "fetched_utc_date": "2026-11-14"
+      },
+      "dem": {
+        "file": "elevation.f32",
+        "sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65",
+        "source_sha256": "3ba7b97cb00a2bcf21189c3aeb535f65afc21207154ab9f0d43c5bdc1f7e747e"
+      },
+      "analysis": {
+        "cell_m": 10,
+        "grid": [
+          400,
+          400
+        ],
+        "window_bounds_xy_m": [
+          -13000,
+          -14000,
+          -9000,
+          -10000
+        ],
+        "max_shift_m": 80,
+        "light_azimuths_step_deg": 15,
+        "light_altitudes_deg": [
+          3,
+          8,
+          20,
+          45
+        ],
+        "valid_image_fraction": 0.352225,
+        "shadow_level_excluded_below": 12,
+        "high_pass_radius_cells": 5,
+        "method": "Normalized cross-correlation between the high-passed image (cell mean, shadows excluded) and the high-passed Lambertian shaded relief of the DEM; peak over light direction and integer shifts, parabolic sub-cell refinement."
+      },
+      "whole_window": {
+        "peak_ncc": 0.03443753573169477,
+        "ncc_at_zero_shift_best_light": 0.012892299794543718,
+        "background_ncc_at_search_edge": 0.004061674373599281,
+        "light_azimuth_map_deg": 195,
+        "light_altitude_deg": 8,
+        "offset_x_m": 40.556021136835284,
+        "offset_y_m": 70.40054621795144,
+        "offset_m": 81.24670921481895,
+        "peak_at_search_edge": false
+      },
+      "quadrants": {
+        "north_west": {
+          "peak_ncc": 0.09578454155843513,
+          "ncc_at_zero_shift_best_light": 0.03434952014458904,
+          "background_ncc_at_search_edge": -0.0004013703461587905,
+          "light_azimuth_map_deg": 195,
+          "light_altitude_deg": 45,
+          "offset_x_m": 80,
+          "offset_y_m": 80,
+          "offset_m": 113.13708498984761,
+          "peak_at_search_edge": true
+        },
+        "north_east": {
+          "peak_ncc": 0.30230972974346026,
+          "ncc_at_zero_shift_best_light": 0.06198929542658686,
+          "background_ncc_at_search_edge": 0.016956934922536714,
+          "light_azimuth_map_deg": 210,
+          "light_altitude_deg": 3,
+          "offset_x_m": -39.54846333728923,
+          "offset_y_m": 80,
+          "offset_m": 89.2416996271413,
+          "peak_at_search_edge": true
+        },
+        "south_west": {
+          "peak_ncc": 0.05267225938656621,
+          "ncc_at_zero_shift_best_light": 0.014412550507798884,
+          "background_ncc_at_search_edge": 0.007894300727351177,
+          "light_azimuth_map_deg": 240,
+          "light_altitude_deg": 3,
+          "offset_x_m": -80,
+          "offset_y_m": 17.37592558667989,
+          "offset_m": 81.86527218542571,
+          "peak_at_search_edge": true
+        },
+        "south_east": {
+          "peak_ncc": 0.06439540063577712,
+          "ncc_at_zero_shift_best_light": 0.031706260229511146,
+          "background_ncc_at_search_edge": 0.010471273062519645,
+          "light_azimuth_map_deg": 225,
+          "light_altitude_deg": 45,
+          "offset_x_m": -74.70776158091044,
+          "offset_y_m": -64.56053129124602,
+          "offset_m": 98.73860360081115,
+          "peak_at_search_edge": false
+        }
+      },
+      "limits": [
+        "Mosaico multitemporal con luz rasante: el sombreado lambertiano no modela sombras arrojadas ni cambios de iluminación entre imágenes.",
+        "Estima un desfase traslacional; no mide rotación, escala ni distorsión local.",
+        "No es una certificación de exactitud geodésica del mosaico ni del DEM."
+      ],
+      "conclusive": false
+    }
+  ]
+}

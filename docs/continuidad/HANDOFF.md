@@ -1,6 +1,6 @@
 # HANDOFF · SITE REGRET · capa geoespacial real
 
-**Punto de control:** PC-08 · 2026-11-14 11:45 (+01:00, Europe/Madrid) · **Estado: EN_CURSO**
+**Punto de control:** PC-09 · 2026-11-14 12:10 (+01:00, Europe/Madrid) · **Estado: EN_CURSO**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
 
 ## 1. Dónde se trabaja
@@ -41,7 +41,7 @@ Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.
 | G6 | Terreno 3D real en Engineer + «qué tapa el Sol/la Tierra» (§4 F, §11) | VERIFICADO (E2E PC-06) | `src/components/terrain/`, `src/lib/geospatial/mesh.ts`, `horizon.ts` |
 | G7 | Timeline y resultados de referencia intactos (§4 G, T9) | VERIFICADO: batería completa PASS en PC-06 | — |
 | G8 | Evidencia por capa (§4 H, §15) | VERIFICADO (E2E PC-06) | `src/components/evidence/GeoEvidence.tsx` |
-| G9 | Alineación imagen ↔ DEM con puntos de control (T5) | PARCIAL: solo comprobación visual | — |
+| G9 | Corregistro imagen ↔ DEM (T5) | PARCIAL: rejilla de teselas VERIFICADA (NCC 0,95, ~8 m); mosaico fotográfico NO CONCLUYENTE | `scripts/geospatial/check-coregistration.ts`, `data/derived/coregistration.json`, `tests/terrain-mesh.test.ts` |
 | G10 | Navegador ODE/PDS de productos y huellas (§7) | PENDIENTE | — |
 | G11 | Ortoimagen NAC concreta de Connecting Ridge (§9) | PENDIENTE (no identificada) | — |
 | G12 | Nomenclatura IAU/USGS (§9) | PENDIENTE | — |
@@ -54,17 +54,16 @@ Encargo: ver [ENCARGO_VIGENTE.md](ENCARGO_VIGENTE.md). Reglas del repo: `AGENTS.
 
 ## 4. Tarea activa
 
-**G9 · corregistro cuantitativo imagen orbital ↔ DEM.** (G17 documentación: terminada en PC-08; ver `web/README.md`, `QA_REPORT.md`, `DECISIONS.md` D20–D24, `docs/VALIDATION.md`, `docs/STATUS.md`.)
+**G10 · adaptador y navegador ODE/PDS.** (G9 cerrada en PC-09 con resultado parcial documentado; ver abajo.)
 
-Qué se intenta (PC-08, 11:45): script `web/scripts/geospatial/check-coregistration.ts` que
-1. descarga las teselas reales `LRO_NAC_Mosaic_1mpp_SP` (zoom 11, ~4,18 m/px) que cubren la ventana de 4 × 4 km a `web/data/raw/trek/` (no versionado), verificando firma PNG;
-2. las decodifica y remuestrea a la rejilla del DEM a 10 m;
-3. calcula la correlación normalizada entre la imagen y el relieve sombreado del DEM para varios azimuts de luz y desplazamientos de ±80 m, y localiza el máximo (desplazamiento estimado) en la ventana completa y por cuadrantes;
-4. escribe `web/data/derived/coregistration.json` con procedencia, y se muestra en Evidencia.
+Resultado de G9 (PC-09, 12:10), `npm run geo:coregistration` → `web/data/derived/coregistration.json`:
+- `Site01_final_adj_5mpp_Hillshade` (sombreado del mismo PGDA78 servido por Moon Trek; 9 teselas, zoom 10): NCC 0,95, fondo −0,03, desfase X −1,7 m · Y −8,3 m (≈ 1 píxel de tesela de 8,36 m), igual en los 4 cuadrantes (±0,4 m). **CONCLUYENTE**: la rejilla WMTS y la del DEM coinciden dentro de la tolerancia (1 píxel de tesela + media celda). Origen del píxel de desfase: NO determinado (no probado a otro zoom).
+- `LRO_NAC_Mosaic_1mpp_SP` (25 teselas, zoom 11): NCC 0,03; **NO CONCLUYENTE**. Intentos: (1) sombreado sin filtrar → máximo en el borde de la búsqueda, domina la iluminación a gran escala; (2) paso alto de 110 m y sombras excluidas (65 % de la ventana queda en sombra) → sin correlación. No repetir estas dos variantes. Vía no probada: puntos de control manuales sobre cráteres, o una ortoimagen NAC concreta con iluminación conocida (G11).
+- Vitest: 3 pruebas nuevas sobre el JSON (8/8 en `tests/terrain-mesh.test.ts`). Evidencia: bloque «Corregistro medido» en `/evidencia/#geo-corregistro`. E2E de evidencia, a11y y 375 px: PASS (3/3). Batería completa NO re-ejecutada tras este cambio.
 
-Límite conocido de antemano: el mosaico es multitemporal y con luz rasante; el sombreado simple no modela sombras arrojadas. Si la correlación no es concluyente, se documenta como NO CONCLUYENTE, no se fuerza un número.
+Qué se intenta ahora (G10): comprobar en vivo el REST de ODE (`https://oderest.rsl.wustl.edu/live2/`) con una consulta acotada a Connecting Ridge; si responde, adaptador `web/src/lib/geospatial/ode.ts` (consulta por región, paginación, productos y huellas), respuestas reales grabadas en `web/tests/fixtures/ode/`, pruebas, y un panel en Explore que liste productos y dibuje huellas, con estado «no disponible» si el servicio falla. Sin scraping.
 
-Tarea terminada cuando: el JSON existe con resultado (o «no concluyente» razonado), hay prueba Vitest sobre él, aparece en `/evidencia/` y G9 queda actualizado en §3.
+Tarea terminada cuando: adaptador con pruebas sobre respuestas reales + panel visible con huellas, o bloqueo documentado con la respuesta real del servicio.
 
 ## 5. Cambios locales
 

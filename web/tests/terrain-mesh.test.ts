@@ -100,3 +100,37 @@ describe("Sol y Tierra frente al horizonte del motor", () => {
     expect(worst).toBeLessThan(1e-9);
   });
 });
+
+describe("corregistro medido teselas ↔ DEM (resultado guardado de una ejecución real)", () => {
+  const co = JSON.parse(readFileSync(join(ROOT, "data", "derived", "coregistration.json"), "utf8"));
+  const by = (layer: string) => co.checks.find((c: { image: { layer: string } }) => c.image.layer === layer);
+
+  it("usa el DEM versionado y teselas identificadas por hash", () => {
+    for (const c of co.checks) {
+      expect(c.dem.sha256).toBe(TERRAIN_MANIFEST.layers[0].sha256);
+      expect(Object.keys(c.image.tile_sha256).length).toBe(c.image.tiles);
+      for (const h of Object.values<string>(c.image.tile_sha256)) expect(h).toMatch(/^[0-9a-f]{64}$/);
+    }
+  });
+
+  it("la rejilla de teselas queda registrada con el DEM dentro de la tolerancia", () => {
+    const c = by("Site01_final_adj_5mpp_Hillshade");
+    expect(c.conclusive).toBe(true);
+    expect(c.whole_window.peak_ncc).toBeGreaterThan(0.9);
+    // Tolerancia justificada por las fuentes: un píxel de tesela (8,36 m) más media celda de análisis (5 m).
+    const tolerance = c.image.tile_resolution_m + c.analysis.cell_m / 2;
+    expect(c.whole_window.offset_m).toBeLessThan(tolerance);
+    // Desfase uniforme: sin rotación ni escala apreciables en la ventana.
+    for (const q of Object.values<{ offset_x_m: number; offset_y_m: number; peak_at_search_edge: boolean }>(c.quadrants)) {
+      expect(q.peak_at_search_edge).toBe(false);
+      expect(Math.abs(q.offset_x_m - c.whole_window.offset_x_m)).toBeLessThan(1);
+      expect(Math.abs(q.offset_y_m - c.whole_window.offset_y_m)).toBeLessThan(1);
+    }
+  });
+
+  it("el mosaico fotográfico se declara NO concluyente (no se fuerza un número)", () => {
+    const c = by("LRO_NAC_Mosaic_1mpp_SP");
+    expect(c.conclusive).toBe(false);
+    expect(c.whole_window.peak_ncc).toBeLessThan(0.3);
+  });
+});

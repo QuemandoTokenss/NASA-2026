@@ -10,3 +10,5 @@
 | PC-05 | 2026-11-14 ~11:05 | Hugo · Claude Code | Batería completa con 4 procesos: Vitest 89/89, E2E 54 PASS / 5 FAIL por tiempo | `54cda05` |
 | PC-06 | 2026-11-14 11:20 | Hugo · Claude Code | E2E 59/59 con 2 procesos (fijado en la configuración); `web/docs/GEOESPACIAL.md` con inventario. Tarea activa: resto de documentación | commit de PC-06 |
 | PC-07 | 2026-11-14 ~11:30 | Hugo · Claude Code | Rama subida a GitHub a petición de Hugo. Sin PR ni despliegue | `b4ced8b` + este apunte |
+| PC-08 | 2026-11-14 11:45 | Hugo · Claude Code | G17 documentación terminada; megaprompt literal guardado | `62ca048` |
+| PC-09 | 2026-11-14 12:10 | Hugo · Claude Code | G9: corregistro medido (rejilla verificada; mosaico NAC no concluyente). Tarea activa: G10 ODE | commit de PC-09 |
