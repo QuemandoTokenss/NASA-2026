@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { ROUTES, noHorizontalOverflow, trackErrors, waitForData } from "./helpers";
 
 test.describe("móvil (375 px)", () => {

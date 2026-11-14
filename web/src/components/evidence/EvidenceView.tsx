@@ -28,6 +28,7 @@ import { Badge, Callout, KeyValueList, NatureBadge, StatTile } from "../ui/Displ
 import { Icon } from "../ui/Icon";
 import { InfoTip } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { GeoEvidence } from "./GeoEvidence";
 import { L, R } from "@/lib/i18n";
 
 const arcsec = (deg: number) => `${formatNumber(Math.abs(deg) * 3600, 3)}″`;
@@ -414,6 +415,8 @@ function EvidenceBody({ core, manifest, integrity }: { core: Core; manifest: Dat
           )}
         </ChunkGate>
       </div>
+
+      <GeoEvidence />
 
       <div className="grid gap-5 xl:grid-cols-3">
         <Panel title={L("Parámetros e hipótesis", "Parameters and hypotheses")} icon="flask" actions={<Badge tone="uncertainty">MODELED</Badge>}>

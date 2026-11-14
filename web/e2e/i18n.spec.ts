@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { noHorizontalOverflow, trackErrors } from "./helpers";
 
 test.describe("Idioma (ES/EN)", () => {

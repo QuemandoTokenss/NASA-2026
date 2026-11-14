@@ -21,6 +21,8 @@ export default defineConfig({
     baseURL: remote ?? `http://127.0.0.1:${PORT}`,
     channel,
     trace: "off",
+    // WebGL por software para la escena 3D en modo sin cabecera.
+    launchOptions: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] },
   },
   webServer: remote
     ? undefined

@@ -539,8 +539,8 @@ export function GeoMap({
       data-tiles-loaded={tiles.key === basemap ? tiles.loaded : 0}
       className="grid gap-5 lg:grid-cols-[290px_minmax(0,1fr)]"
     >
-      <div className="flex flex-col gap-5">
-        <fieldset className="flex flex-col gap-2">
+      <div className="flex min-w-0 flex-col gap-5">
+        <fieldset className="flex min-w-0 flex-col gap-2">
           <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint">{L("Imagen de fondo", "Background image")}</legend>
           {(
             [
@@ -594,12 +594,12 @@ export function GeoMap({
           ) : null}
         </fieldset>
 
-        <fieldset className="flex flex-col gap-2">
+        <fieldset className="flex min-w-0 flex-col gap-2">
           <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint">{L("Capa numérica del DEM (PGDA78)", "Numeric DEM layer (PGDA78)")}</legend>
           <label className="sr-only" htmlFor="geomap-analytic">
             {L("Capa numérica", "Numeric layer")}
           </label>
-          <select id="geomap-analytic" value={analytic} onChange={(e) => setAnalytic(e.target.value as AnalyticId)} className="rounded-xl border border-line-strong bg-surface-2 px-3 py-2 text-sm text-ink">
+          <select id="geomap-analytic" value={analytic} onChange={(e) => setAnalytic(e.target.value as AnalyticId)} className="w-full min-w-0 rounded-xl border border-line-strong bg-surface-2 px-3 py-2 text-sm text-ink">
             <option value="none">{L("Ninguna", "None")}</option>
             {ANALYTIC_LAYERS.map((id) => (
               <option key={id} value={id}>
