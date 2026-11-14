@@ -11,3 +11,16 @@ SITE REGRET is a prototype for comparing two candidate lunar landing sites acros
 3. Open a pull request with the checks you ran. A teammate reviews the result before it goes into `main`.
 
 See [project status](docs/STATUS.md) and [source verification](docs/SOURCES.md).
+
+## Web app
+
+The working prototype is in [`web/`](web) — live at https://site-regret.vercel.app (presentation mode: `/historia/`, English: `?lang=en`).
+
+```bash
+cd web
+npm ci
+npm run dev       # http://localhost:3000
+npm run verify    # typecheck, lint, unit tests, build and browser tests
+```
+
+What has been done so far, how it was checked and what is left: [docs/TRABAJO_REALIZADO.md](docs/TRABAJO_REALIZADO.md).
