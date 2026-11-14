@@ -273,7 +273,7 @@ export function PairContext({ sites }: { sites: Site[] }) {
 }
 
 /** Miniatura del DEM real alrededor de un sitio (relieve + ROI), sin depender del Comparador. */
-export function SiteTerrainThumb({ site }: { site: Site }) {
+export function SiteTerrainThumb({ site, compact = false }: { site: Site; compact?: boolean }) {
   const [elev, setElev] = useState<RasterGrid | null>(null);
   const [rois, setRois] = useState<RoiPolygon[] | null>(null);
   useEffect(() => {
@@ -285,9 +285,9 @@ export function SiteTerrainThumb({ site }: { site: Site }) {
     };
   }, []);
   return (
-    <div className="w-28 shrink-0">
+    <div className={compact ? "w-16 shrink-0" : "w-28 shrink-0"}>
       {elev ? <SiteCrop site={site} grids={{ elevation: elev }} rois={rois} overlay="none" /> : <span className="block aspect-square w-full animate-pulse rounded-xl bg-surface-3/50" />}
-      <span className="mt-1 block text-center text-[10px] leading-tight text-ink-faint">{L("DEM PGDA78 · 800 m", "PGDA78 DEM · 800 m")}</span>
+      {compact ? null : <span className="mt-1 block text-center text-[10px] leading-tight text-ink-faint">{L("DEM PGDA78 · 800 m", "PGDA78 DEM · 800 m")}</span>}
     </div>
   );
 }

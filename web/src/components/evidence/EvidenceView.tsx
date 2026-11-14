@@ -29,6 +29,7 @@ import { Icon } from "../ui/Icon";
 import { InfoTip } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
 import { GeoEvidence } from "./GeoEvidence";
+import { HeightsEvidence } from "./HeightsEvidence";
 import { L, R } from "@/lib/i18n";
 
 const arcsec = (deg: number) => `${formatNumber(Math.abs(deg) * 3600, 3)}″`;
@@ -483,6 +484,8 @@ function EvidenceBody({ core, manifest, integrity }: { core: Core; manifest: Dat
           </Callout>
         </Panel>
       </div>
+
+      <HeightsEvidence core={core} />
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Panel title={L("Integridad y ejecución", "Integrity and run")} icon="hash">

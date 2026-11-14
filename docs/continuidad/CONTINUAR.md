@@ -1,5 +1,7 @@
 # Prompt para la siguiente sesión
 
+> **Superado el 14-11-2026 (PC-23).** Las ramas y commits que cita el texto de abajo ya están en `main`. Para continuar: lee `docs/continuidad/HANDOFF.md` §0 (estado vigente, propietarios, pruebas y siguiente acción) y trabaja en la rama que indique; no en `main`, que publica en producción. El resto se conserva como registro.
+
 Copia y pega esto en tu IA, dentro del repositorio.
 
 ```text

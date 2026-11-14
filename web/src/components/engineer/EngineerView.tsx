@@ -172,7 +172,12 @@ function HeightImpact({ core }: { core: Core }) {
           )),
         )}
       </svg>
-      <p className="mt-2 text-[11px] text-ink-faint">Tres puntos calculados por sitio; sin líneas de unión porque no hay datos entre alturas.</p>
+      <p className="mt-2 text-[11px] text-ink-faint">
+        {L(
+          "Tres alturas del contrato site-regret/0.1 por sitio (0, 2 y 10 m), las únicas calculadas para todas las superficies; sin líneas de unión. Para el terreno nominal, las 61 alturas calculadas (0–30 m cada 0,5 m) están en «Rendimiento geométrico».",
+          "Three heights of the site-regret/0.1 contract per site (0, 2 and 10 m), the only ones computed for every surface; no joining lines. For the nominal terrain, the 61 computed heights (0–30 m every 0.5 m) are under “Geometric performance”.",
+        )}
+      </p>
     </Panel>
   );
 }
@@ -397,8 +402,8 @@ function EngineerBody({ core }: { core: Core }) {
 
       <Callout tone="neutral" icon="info" title={L("Qué no calcula Engineer", "What Engineer does not compute")}>
         {L(
-          "No hay modelo de estructura, materiales, albedo, potencia eléctrica ni enlace de radio. «Mástil de 2/10 m» es un observador geométrico elevado sobre el terreno (configuration.heights_m), etiquetado como SIMULATED.",
-          "There is no model of structure, materials, albedo, electrical power or radio link. “2/10 m mast” is a geometric observer raised above the terrain (configuration.heights_m), labelled SIMULATED.",
+          "No hay modelo de estructura, materiales, cargas, cimentación, albedo, potencia eléctrica ni enlace de radio. Una «torre de h m» es solo un observador geométrico elevado h metros sobre el terreno (etiquetado SIMULATED): que la visibilidad mejore a cierta altura no dice que esa torre sea construible ni segura, y aquí no se recomienda ninguna altura. Las 61 alturas de 0 a 30 m solo existen para el terreno nominal (paquete adicional, calculado con el motor original); con otras superficies solo hay 0, 2 y 10 m.",
+          "There is no model of structure, materials, loads, foundations, albedo, electrical power or radio link. An “h m tower” is only a geometric observer raised h metres above the terrain (labelled SIMULATED): better visibility at some height does not mean that tower is buildable or safe, and no height is recommended here. The 61 heights from 0 to 30 m exist only for the nominal terrain (additional package, computed with the original engine); other surfaces only have 0, 2 and 10 m.",
         )}
       </Callout>
     </>

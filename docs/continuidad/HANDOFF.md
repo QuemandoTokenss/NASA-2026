@@ -1,7 +1,111 @@
-# HANDOFF · SITE REGRET · Mission Control v2
+# HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-21 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO (bloques A–E en PR #19; demo de /historia/ en `feat/historia-demo-interactiva` (`4fe3247`); iteración visual en `feat/timeline-engineer-visual` (`17beb48`); rediseño para el jurado (PC-20, `25f24f8`) y rediseño integral con acabado (PC-21: Dashboard, Explore, Engineer con deslizador 0–30 m, Timeline, Comparador) en la rama local `feat/jurado-rediseno-visual`, encima; todo pendiente de revisión del equipo; bloque F pendiente)**
-Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git.
+**Punto de control:** PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0. Estado vigente (PC-23) — leer primero
+
+### 0.1 Reconciliación (comprobada con Git, GitHub y Vercel, no con informes)
+
+| | |
+|---|---|
+| `main` (local = `origin/main`) | `aae19b2568befda0d40f03e9ee2528847c59289c` · «feat(engineer): calculate nominal visibility across the mast range» (PC-22, paquete de alturas 0–30 m) |
+| Rama de trabajo | `feat/operacion-final-integracion`, creada desde `main` = `aae19b2`. Commits locales: `029ef05` (código y pruebas) y `0871dcf` (espera de carga en las pruebas E2E) = **commit candidato verificado**; encima, el commit de estos documentos (no toca `web/src`). Sin push al escribir esto |
+| PR fusionadas | #9, #18, #19. Los commits de PC-18 a PC-22 (`4fe3247` … `aae19b2`) llegaron a `main` por push directo, sin PR |
+| PR abiertas | #14, #15, #16, #17 (Aritz; las cuatro **en conflicto con `main`**, todas tocan `docs/VALIDATION.md`) · #7 y #8 (borradores de Aritz, sin conflicto) |
+| Producción | https://site-regret.vercel.app → despliegue `dpl_9htxT2H2dz7jRCQvWMikpJu28hGt`, creado el 14-11-2026 17:37:30 (+01:00), `githubCommitSha` = `aae19b2…` (`main`). **Producción = `main`.** |
+| Cómo se despliega | **Automático desde GitHub**: Vercel (proyecto `site-regret`, cuenta de Hugo) construye cada push a `main` y mueve el alias de producción (alias `site-regret-git-main-…`). Las ramas reciben vista previa. Los documentos que dicen «desde la CLI / sin despliegue automático» están superados |
+| Protección de `main` | **Ninguna** (la API responde «Branch not protected») y sin CI en `main` (el flujo de CI está en la PR #16, sin fusionar). **Cualquier push a `main` publica en producción sin pruebas.** Pendiente de decisión humana: proteger la rama |
+
+Documentos superados detectados (el código y Git mandan):
+
+- `docs/STATUS.md` (dice que la capa geoespacial no está en `main`) y `docs/DEMO.md` (describe la demo antigua de 7 escenas como entrada de `/historia/`): **no se han tocado porque la PR #15 de Aritz los modifica**; hay que actualizarlos al resolver esa PR.
+- `docs/continuidad/CONTINUAR.md` (rama `feat/mission-control-v2`, ramas locales «sin subir»): superado por esta sección.
+- `web/README.md`, `docs/TRABAJO_REALIZADO.md` §9, `docs/DECISIONS.md` y `AGENTS.md` (recuento de pruebas y forma de despliegue): corregidos en PC-23.
+- `web/PROGRESS.md`, `web/QA_REPORT.md`, `web/TASKS.md`: registro histórico de la primera entrega (PC-01 a PC-12); no describen el estado actual.
+
+### 0.2 Propietarios por módulo (si hay solapamiento, gana el propietario ya asignado)
+
+| Módulo / archivos | Propietario | Notas |
+|---|---|---|
+| `web/src/**`, `web/e2e/**`, `web/tests/**`, `web/scripts/**`, `web/data/derived/**`, `web/*.md` | Hugo · Claude Code (integrador único) | Nadie más edita estos archivos sin acuerdo previo y PR |
+| `docs/continuidad/**`, `docs/TRABAJO_REALIZADO.md`, `docs/AI_USE.md`, `AGENTS.md`, `CLAUDE.md` | Hugo · Claude Code | Checkpoints y reglas |
+| `docs/VALIDATION.md`, `docs/DEMO.md`, `docs/STATUS.md`, `.github/workflows/**` | Aritz (PR #14–#17) | El integrador NO los edita: se actualizan al resolver sus PR |
+| `docs/site-regret/**` (PR #8), sección Orchestrator del `README.md` raíz (PR #7) | Aritz (borradores) | — |
+| Auditoría científica y técnica, pruebas de regresión independientes | Oier · Claude Code | Solo en ramas `audit/*` o `test/*` nuevas, mediante PR; archivos nuevos (p. ej. `web/tests/audit-*.test.ts`), sin editar los existentes |
+| Pruebas reales de UX, jurado, accesibilidad, navegador, contenido y entrega oficial | ChatGPT Work | Entrega informes e incidencias (issues); no edita el repositorio |
+| `web/data/source/**` | Nadie | Paquete original: no se modifica nunca |
+
+Reglas de integración: nadie salvo el integrador empuja a `main`; toda aportación llega en rama aislada con PR; fusionar y publicar lo deciden el integrador y el integrador humano (Hugo).
+
+### 0.3 Qué cambia en el candidato (rama `feat/operacion-final-integracion`)
+
+| Archivo | Cambio | Motivo |
+|---|---|---|
+| `web/src/components/story/LandingDemo.tsx` | Demo guiada en tres pasos: **1 · Elige** (A o B, sin cifras ni gráficos a la vista) → **2 · Descubre** (mayor racha sin Sol de A y B con el relieve de referencia, franjas de 30 días) → **3 · Cambia el terreno** (relieve alternativo y bloque **REGRET** con su explicación llana y «mejor elección: referencia → alternativo»). «Observador a 2 m» pasa a ser un extra. Cada paso tiene una acción principal y las salidas «Ver explicación» y «Ver evidencia» | P1: el giro final debe enseñar el regret sin jerga; la primera pantalla no debe exigir leer gráficos |
+| `web/src/components/home/HomeView.tsx`, `comparador/PairTerrain.tsx` | Portada: mensaje de 10 segundos («Elegimos entre dos lugares de la Luna. Las montañas pueden tapar el Sol. Y si nuestro mapa del relieve cambia un poco, la mejor elección también puede cambiar») y fichas de A y B con su recorte real del DEM dentro de la primera pantalla | P1 |
+| `web/src/components/evidence/HeightsEvidence.tsx` (nuevo), `EvidenceView.tsx`, `lib/data/engineerHeights.ts` | Evidencia documenta el paquete adicional de alturas: 244 escenarios, generador y hashes, contrastes con el contrato, límites, descarga del manifiesto; comprueba en el navegador que el SHA-256 del motor es el del paquete `site-regret/0.1` | P0: el paquete de alturas no tenía procedencia visible en la web |
+| `web/src/components/engineer/EngineerView.tsx` | Texto de «Impacto de la altura» bilingüe y correcto (decía, solo en español, que «no hay datos entre alturas»); «Qué no calcula Engineer» distingue geometría de viabilidad estructural y declara que no se recomienda ninguna altura | P0: veracidad |
+| `web/src/components/terrain/TerrainScene.tsx`, `web/e2e/geo.spec.ts` | Evento de diagnóstico `site-regret:render-now` (dibujo síncrono) y la prueba lo usa antes de leer el lienzo | P0: la prueba «dibuja la malla del DEM» **fallaba en `aae19b2`** (ver 0.4) |
+| `web/tests/engineer-heights.test.ts` | +2 pruebas: igualdad con el contrato en TODOS los campos en 0/2/10 m y métricas de las 244 alturas recontadas desde sus propios estados | P0: cobertura de la auditoría |
+| `web/e2e/landing-demo.spec.ts`, `jurado-pc21.spec.ts`, `engineer-heights.spec.ts`, `helpers.ts` | Adaptadas al nuevo flujo; portada; ficha de Evidencia (+1 prueba); arrastre rápido emitido dentro de la página; espera de carga del paquete de 15 a 30 s | Estabilidad de la suite sin rebajar ninguna comprobación |
+
+No se ha tocado: `web/data/source/`, el contrato `site-regret/0.1`, `HEIGHTS_M`, el paquete de alturas, Regret Lab, Timeline, Comparador (salvo la miniatura compartida) ni Explore.
+
+### 0.4 Auditoría del paquete de alturas de Engineer (`web/data/derived/engineer-heights/v1`)
+
+Hecha con un script independiente (no el generador) sobre los archivos versionados y el paquete publicado:
+
+- Trazabilidad: `engine_sha256` del manifiesto = `pipeline.py` del repositorio = línea de `SHA256_TRANSFERENCIA.txt` (`08e52de1…`); `generator_sha256` = `scripts/engine/engineer_heights.py` actual (`088cf068…`).
+- Integridad: 371 archivos en disco = 371 declarados; 0 discrepancias de SHA-256 o tamaño.
+- Coherencia en 0, 2 y 10 m con el contrato: **162 de 162 comparaciones exactas** (horizonte: elevación, distancia, origen, desconocidos, cota lejana y bandera; las seis series temporales; estados; intervalos; métricas; estado del escenario).
+- Sin interpolación: las métricas de los 244 escenarios coinciden con el recuento de sus propios `state_codes`; 0 intervalos `UNKNOWN`; los intervalos son la codificación por tramos de los estados.
+- Física: el horizonte no sube al elevar el observador (0 muestras en contra); suelo del observador = contrato; paralaje Sol/Tierra entre 0 y 30 m ≤ 4,8·10⁻⁶°.
+- Interfaz: con superficies no nominales solo existen 0/2/10 m y cualquier otra altura es «vista previa sin cálculo» (probado en E2E); no se muestra ningún intervalo recomendado de altura.
+- **Lectura científica a tener presente en la presentación:** en W2, con el terreno nominal, la mayor racha sin Sol pasa de 38 h 40 min (A) y 14 h 40 min (B) a 0 m a **0 h en ambos a 0,5 m**. El resultado a ras de suelo depende de relieve muy cercano (decenas de metros, rejilla de 5 m): es una propiedad del modelo, no una certeza sobre el terreno real, y refuerza el mensaje del proyecto; no debe presentarse como «con 50 cm de mástil se resuelve».
+- **Decisión pendiente (humana):** el visor 3D de Engineer añade «grano y manchas del regolito procedurales» al sombreado. Está rotulado como presentación ilustrativa y no altera la malla ni ningún dato, pero el encargo geoespacial (§3) prohibía texturas de ruido presentadas como dato lunar. Opciones: mantener con el rótulo actual o retirarlo.
+
+### 0.5 Pruebas
+
+| Sobre | Comando | Resultado |
+|---|---|---|
+| `aae19b2` (= producción) | `npm run verify` (2 procesos) | typecheck y lint limpios · Vitest 124/124 · build PASS · Playwright **87 PASS, 5 FAIL, 1 omitida**. Durante esa pasada la máquina estaba cargada (auditoría y navegador en paralelo) |
+| `aae19b2` | Las dos specs afectadas en serie (`--workers=1`) | 20 PASS, **1 FAIL real**, 1 omitida. El fallo real: `geo.spec.ts` «dibuja la malla del DEM…» leía 0 % de píxeles porque PC-22 pasó el visor a renderizado bajo demanda sin `preserveDrawingBuffer` y la prueba leía el lienzo fuera del fotograma. **La escena SÍ se dibuja** (comprobado en producción); el defecto era de la prueba. Los otros 4 eran de tiempo (15 s de `waitForData`, arrastre rápido del deslizador) |
+| Candidato, antes del commit | `npm run verify` (2 procesos) | typecheck y lint limpios · Vitest **126/126** · build PASS · Playwright **92 PASS, 1 FAIL, 1 omitida**. El fallo: `engineer-heights.spec.ts` «una respuesta lenta…», en su parte de arrastre rápido (pedía una altura intermedia de más). La prueba enviaba 8 órdenes seguidas y exigía que todas llegaran dentro de los 180 ms de asentamiento del deslizador: depende de la carga (también falló en `aae19b2` con 2 procesos y pasó en serie). Se reescribió para emitir el arrastre dentro de la página, en una sola tarea; el comportamiento de la aplicación no cambia |
+| Candidato | Specs afectadas ×2 (`engineer-heights`, `landing-demo`, `geo`, `--repeat-each=2`, 2 procesos) | **52 PASS, 0 FAIL**, 2 omitidas (la opcional en vivo, dos veces) |
+| Commit `029ef05` | `npm run verify` completo (2 procesos) | Vitest 126/126 · build PASS · Playwright **92 PASS, 1 FAIL, 1 omitida**. El fallo, en otra prueba distinta (`timeline-engineer-visual.spec.ts` «azimut manual…»): `waitForData` agotó sus 15 s; esa spec en serie: 4/4 PASS. Es el patrón de tiempo conocido desde PC-13, que en cada pasada completa caía en una prueba diferente. Se amplió la espera de carga del paquete a 30 s en `e2e/helpers.ts` (solo pruebas) |
+| **Commit candidato `0871dcf`** | `npm run verify` completo (2 procesos, 5,8 min de E2E) | typecheck y lint limpios · Vitest **126/126** · build PASS · Playwright **93 PASS, 0 FAIL, 1 omitida** · salida 0 |
+| Omitida (declarada) | `geo.spec.ts` «Moon Trek en vivo» | Solo corre con `E2E_LIVE_TREK=1`; no ejecutada en esta sesión |
+
+Revisión visual hecha por la IA en navegador (servidor de desarrollo): portada y demo en 1440×900 y 375×812, español e inglés, sin errores de consola ni desbordamiento horizontal; ficha de Evidencia. **No sustituye la revisión humana.**
+
+No comprobado en PC-23 (declarado): zoom al 200 %, recorrido completo solo con teclado de la demo nueva, lector de pantalla real, WebGL desactivado en un navegador real (existe mensaje de caída, no probado aquí), prueba en proyector, segundo portátil sin red.
+
+### 0.6 Alcance P2 («wow lunar»): estado, sin desarrollo nuevo en PC-23
+
+Ya existe en `main`: Luna NASA en portada; mapa OpenLayers con imágenes LRO NAC; visor 3D del DEM en Engineer con rotación y zoom, torre a la altura real, Sol y Tierra en sus direcciones del paquete, línea de visión hasta el relieve que fija el horizonte, control de instante compartido con Timeline, caída si WebGL falla, y `prefers-reduced-motion` global. **No existe** un globo lunar 3D manipulable con A/B ni reproducción automática dentro de la escena 3D. No se ha iniciado: P0 y P1 tenían trabajo pendiente y queda menos de un día y medio para la entrega. Si se aborda, en rama propia con vista previa, sin tocar `main`.
+
+### 0.7 Entrega NASA (antes del 15-11-2026 23:59, hora local): qué falta
+
+| Requisito | Estado |
+|---|---|
+| Aplicación pública y usable | Producción en `aae19b2`, responde. El candidato de PC-23 no está publicado |
+| Demo pública (≤ 7 diapositivas o vídeo ≤ 30 s) | **No acreditada** en el repositorio. `/historia/#pregunta` tiene 7 escenas, pero hace falta un enlace público de diapositivas o vídeo aparte |
+| Ficha del proyecto en inglés | **No acreditada** en el repositorio |
+| Fuentes NASA y licencias | `docs/SOURCES.md` sigue en `RESOURCE_TAB_UNVERIFIED` (issue #1): falta que una persona confirme la entrada exacta de la pestaña *Resources* del reto y sus condiciones. Añadir las imágenes de presentación (SVS 5187, SVS 4851, SVS 4720, Blue Marble AS17-148-22727, SDO PIA26681, Moon Trek) con su crédito |
+| Declaración de herramientas de IA | `docs/AI_USE.md` actualizado con esta sesión; **faltan** las herramientas de los demás (Claude Code de Oier, ChatGPT Work, Agent Orchestrator u otras) y confirmar el modelo de las sesiones PC-13 a PC-22 |
+| Enlaces separados y accesibles sin permisos | Por comprobar al tener todos los enlaces (el repositorio de GitHub es **privado**) |
+| Confirmación humana de envío | Pendiente (`SUBMIT` en `docs/STATUS.md`: dos miembros) |
+
+**Veredicto: NO-GO para declarar la entrega cerrada.** La aplicación publicada es válida y estable, pero hay comprobaciones críticas sin acreditar (tabla anterior) y el candidato necesita revisión humana antes de publicarse.
+
+### 0.8 Siguiente acción exacta
+
+1. Hugo revisa el candidato (local: `cd web && npm run build && npm run serve`, o la vista previa de Vercel de la rama si se sube) recorriendo portada → «Probar la misión» → tres pasos → Evidencia, en español e inglés y en móvil.
+2. Si lo aprueba: subir la rama, abrir PR contra `main`, comprobar la vista previa y fusionar. La fusión publica en producción; después, verificar `https://site-regret.vercel.app` y que el `githubCommitSha` del despliegue es el del merge.
+3. Rollback si algo falla: en Vercel, promover el despliegue anterior `dpl_9htxT2H2dz7jRCQvWMikpJu28hGt` (`vercel promote https://site-regret-91h9xgawb-hugofdezdiez-5644s-projects.vercel.app`), y revertir el merge en Git para que `main` y producción vuelvan a coincidir.
+4. Decidir con Aritz el orden de sus PR #14–#17 (hay que rehacerlas sobre `main`: las cuatro añaden filas a `docs/VALIDATION.md`) y fusionar #16 (CI) cuanto antes; proteger `main`.
+5. Cerrar la tabla 0.7 con el equipo.
 
 ## 1. Dónde se trabaja
 

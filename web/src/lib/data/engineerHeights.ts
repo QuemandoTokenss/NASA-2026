@@ -29,7 +29,8 @@ export interface EngineerHeightsManifest {
   generated_at_utc: string;
   scenario_count: number;
   heights: { positions: Array<{ k: number; key: string; height_m: number }> };
-  method: { engine_sha256: string; generator: string; generator_sha256: string };
+  method: { engine_sha256: string; generator: string; generator_sha256: string; differences_from_engine?: string[] };
+  validation?: { passed: number; failed: number; contrast_passed: number; contrast_failed: number };
   files: Record<string, { sha256: string; bytes: number }>;
 }
 

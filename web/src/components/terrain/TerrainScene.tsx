@@ -62,6 +62,9 @@ interface BodyRig {
   ray: THREE.Line;
   label: THREE.Sprite;
 }
+/** Evento de diagnóstico: dibuja la escena de forma síncrona (ver el efecto del visor). */
+export const RENDER_NOW_EVENT = "site-regret:render-now";
+
 interface Rig {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -291,6 +294,11 @@ export function TerrainScene({
       },
     };
     controls.addEventListener("change", rig.requestRender);
+    // Diagnóstico: el búfer de WebGL solo es legible en la misma tarea en que se dibuja (se renderiza
+    // bajo demanda y sin preserveDrawingBuffer). Este evento dibuja de forma síncrona para que una
+    // prueba o una captura puedan leer el lienzo justo después.
+    const renderNow = () => draw();
+    host.addEventListener(RENDER_NOW_EVENT, renderNow);
 
     fetch(`${BASE_PATH}/scene/stars-svs4851-v1.bin`, { signal: abort.signal })
       .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`HTTP ${r.status}`))))
@@ -333,6 +341,7 @@ export function TerrainScene({
       clearTimeout(t);
       abort.abort();
       if (pending) cancelAnimationFrame(pending);
+      host.removeEventListener(RENDER_NOW_EVENT, renderNow);
       ro.disconnect();
       controls.dispose();
       terrain.geometry.dispose();

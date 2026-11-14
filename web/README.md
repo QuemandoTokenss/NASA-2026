@@ -4,9 +4,9 @@ Comparador de dos emplazamientos del polo sur lunar —**A = Connecting Ridge RO
 
 > ¿Hasta qué punto podemos confiar en que un emplazamiento es mejor que otro si el relieve usado en el cálculo contiene incertidumbre?
 
-**Producción:** https://site-regret.vercel.app (desplegado con Vercel; versión de `main`, sin la capa geoespacial).
+**Producción:** https://site-regret.vercel.app (Vercel publica automáticamente cada push a `main`). Estado vigente, propietarios y pendientes: [`../docs/continuidad/HANDOFF.md`](../docs/continuidad/HANDOFF.md) §0.
 
-> **Rama `feat/geo-real-terrain` (14-11-2026):** añade la capa geoespacial real (mapa con imágenes orbitales de NASA Moon Trek, capas numéricas del DEM PGDA78 y terreno 3D). No está en `main` ni desplegada: https://site-regret.vercel.app muestra la versión anterior. El encargo geoespacial NO está completo; estado y pendientes en [docs/GEOESPACIAL.md](docs/GEOESPACIAL.md) y `../docs/continuidad/HANDOFF.md`.
+> `main` incluye la capa geoespacial real (mapa con imágenes orbitales de NASA Moon Trek, capas numéricas del DEM PGDA78 y terreno 3D), Mission Control v2, la demo guiada de `/historia/` y el paquete adicional de alturas de Engineer (0–30 m). Lo pendiente del encargo geoespacial está en [docs/GEOESPACIAL.md](docs/GEOESPACIAL.md).
 
 
 ## Secciones
@@ -55,17 +55,19 @@ npm run serve
 npm run verify
 ```
 
-Encadena `typecheck → lint → test (Vitest, 89) → build → test:e2e (Playwright, 59 + 1 opcional en vivo, incluida la auditoría axe-core WCAG A/AA)`. Las pruebas de navegador no usan la red: Moon Trek se responde con respuestas reales grabadas (`tests/fixtures/trek/`). Prueba opcional contra el servicio real: `E2E_LIVE_TREK=1 npx playwright test e2e/geo.spec.ts -g "en vivo"`. Detalle en [QA_REPORT.md](QA_REPORT.md). Para probar un despliegue: `E2E_BASE_URL=https://site-regret.vercel.app npx playwright test`. Con Chrome: `PW_CHANNEL=chrome`.
+Encadena `typecheck → lint → test (Vitest) → build → test:e2e (Playwright, con una prueba opcional en vivo e incluida la auditoría axe-core WCAG A/AA)`; los recuentos vigentes están en `../docs/continuidad/HANDOFF.md` §0.5. Con la máquina cargada algunas pruebas de navegador agotan sus 15 s: repetir las afectadas con `--workers=1` antes de darlas por fallidas. Las pruebas de navegador no usan la red: Moon Trek se responde con respuestas reales grabadas (`tests/fixtures/trek/`). Prueba opcional contra el servicio real: `E2E_LIVE_TREK=1 npx playwright test e2e/geo.spec.ts -g "en vivo"`. Detalle en [QA_REPORT.md](QA_REPORT.md). Para probar un despliegue: `E2E_BASE_URL=https://site-regret.vercel.app npx playwright test`. Con Chrome: `PW_CHANNEL=chrome`.
 
 ## Despliegue (Vercel)
 
-`vercel.json` define `npm ci`, `npm run build` y la carpeta `out/` (sitio estático). `.vercelignore` excluye resultados locales y `qa_entradas.json` (contiene rutas de un equipo del autor). Con la CLI autenticada:
+`vercel.json` define `npm ci`, `npm run build` y la carpeta `out/` (sitio estático). `.vercelignore` excluye resultados locales y `qa_entradas.json` (contiene rutas de un equipo del autor).
+
+El proyecto de Vercel `site-regret` está conectado al repositorio de GitHub: **cada push a `main` se publica en producción** (https://site-regret.vercel.app) y cada rama recibe una vista previa. Por eso `main` solo se actualiza mediante PR revisada y con `npm run verify` en verde. Para saber qué commit sirve producción: `vercel inspect https://site-regret.vercel.app` y el campo `githubCommitSha` de `vercel api "/v6/deployments?app=site-regret&target=production&limit=3"`. Para volver a un despliegue anterior: `vercel promote <url-del-despliegue>` y revertir el commit en `main`.
+
+Despliegue manual (solo si falla la integración con GitHub; sube la carpeta de trabajo, no un commit):
 
 ```bash
 vercel deploy --prod --yes
 ```
-
-El despliegue actual es https://site-regret.vercel.app.
 
 ## Demostración local sin conexión
 
