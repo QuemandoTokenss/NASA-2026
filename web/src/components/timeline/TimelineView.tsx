@@ -256,23 +256,15 @@ function TimelineBody({ core }: { core: Core }) {
       </ChunkGate>
 
       {/*
-        Zona principal (gráfico y geometría) + columna de lectura (sitio → instante → métricas → eventos).
-        Una sola instancia de cada panel: por debajo de `xl` las dos columnas se disuelven (`contents`) y el
-        orden lo fija `order`, con el instante justo tras el reproductor.
+        Zona principal: primero la geometría (Sol–Tierra–Luna y cielo local, juntos en escritorio) y debajo
+        «Elevación sobre el horizonte» con sus franjas. A la derecha, la columna de lectura
+        (sitio → instante → métricas → eventos). Sin `order-*`: el orden visual, de lectura y de teclado es
+        el del código; en móvil se apila Geometría → Cielo local → Elevación → lectura.
       */}
       <div className="flex flex-col gap-5 xl:grid xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_380px] min-[1700px]:grid-cols-[minmax(0,1fr)_740px]!" data-testid="timeline-layout">
-      <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-5" data-testid="timeline-main">
-        <div className="order-2 min-w-0 xl:order-none" data-testid="timeline-chart">
-          <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
-            {(c: EphemerisClockChunk) => (
-              <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
-                {(s: ScenarioChunk) => <MainCharts core={core} scen={s} times={c.times_utc} eph={ephData} ephState={eph.status} />}
-              </ChunkGate>
-            )}
-          </ChunkGate>
-        </div>
+      <div className="flex min-w-0 flex-col gap-5" data-testid="timeline-main">
 
-      <div className="order-3 grid min-w-0 gap-5 lg:grid-cols-2 xl:order-none xl:grid-cols-1 min-[1700px]:grid-cols-2!" data-testid="timeline-physical">
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-2" data-testid="timeline-physical">
         <Panel
           title={`${L("Geometría Sol–Tierra–Luna", "Sun–Earth–Moon geometry")} · ${SITE_META[focusSite].label}`}
           icon="orbit"
@@ -351,14 +343,23 @@ function TimelineBody({ core }: { core: Core }) {
         </Panel>
       </div>
 
+        <div className="min-w-0" data-testid="timeline-chart">
+          <ChunkGate state={clock} label={L("reloj UTC de la ventana", "window UTC clock")} minHeight="min-h-80">
+            {(c: EphemerisClockChunk) => (
+              <ChunkGate state={scen} label={L("estados de los escenarios", "scenario states")} minHeight="min-h-80">
+                {(s: ScenarioChunk) => <MainCharts core={core} scen={s} times={c.times_utc} eph={ephData} ephState={eph.status} />}
+              </ChunkGate>
+            )}
+          </ChunkGate>
+        </div>
       </div>
 
-      <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-5 min-[1700px]:grid! min-[1700px]:grid-cols-2 min-[1700px]:items-start" data-testid="timeline-reading">
-        <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-5">
-        <div className="order-4 min-w-0 xl:order-none" data-testid="timeline-site">
+      <div className="flex min-w-0 flex-col gap-5 min-[1700px]:grid! min-[1700px]:grid-cols-2 min-[1700px]:items-start" data-testid="timeline-reading">
+        <div className="flex min-w-0 flex-col gap-5">
+        <div className="min-w-0" data-testid="timeline-site">
           <SiteSidebar core={core} horizon={horizonData} />
         </div>
-        <div className="order-1 min-w-0 xl:order-none" data-testid="timeline-instant">
+        <div className="min-w-0" data-testid="timeline-instant">
           <ChunkGate state={clock} label={L("reloj", "clock")}>
             {(c: EphemerisClockChunk) => (
               <ChunkGate state={scen} label={L("estados", "states")}>
@@ -368,13 +369,13 @@ function TimelineBody({ core }: { core: Core }) {
           </ChunkGate>
         </div>
         </div>
-        <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-5">
-        <div className="order-5 min-w-0 xl:order-none" data-testid="timeline-metrics">
+        <div className="flex min-w-0 flex-col gap-5">
+        <div className="min-w-0" data-testid="timeline-metrics">
           <ChunkGate state={scen} label={L("métricas", "metrics")}>
             {(s: ScenarioChunk) => <Metrics core={core} scen={s} />}
           </ChunkGate>
         </div>
-        <div className="order-6 min-w-0 xl:order-none" data-testid="timeline-events">
+        <div className="min-w-0" data-testid="timeline-events">
           {isNominal ? (
             <ChunkGate state={events} label={L("eventos acotados", "bounded events")}>
               {(e: BoundedEvent[]) => <Events core={core} events={e} />}

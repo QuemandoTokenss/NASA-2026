@@ -1,0 +1,30 @@
+{
+  "description": "Mapa fotográfico estático de Connecting Ridge para la demo «Presentar» (/historia/). Solo presentación: las cifras de la demo salen del paquete site-regret/0.1. Imágenes preparadas por el equipo (ZIP «site-regret-imagenes-presentar», 14-11-2026) e integradas sin modificar.",
+  "georeferencing": "connecting-ridge-metadata.json: 1440 × 900 px, bounds_xy_m [-12095, -12608.75, -9995, -11296.25] en la estereográfica polar sur lunar del proyecto (R = 1 737 400 m), 1,458 m por píxel, fila 0 al norte de la rejilla. Las posiciones de A y B del metadato coinciden con las X/Y del paquete (comprobado en tests/presentar-map.test.ts).",
+  "assets": [
+    {
+      "file": "connecting-ridge-orbital.webp",
+      "sha256": "f00eed4e67b7f11188e1d264d5e34e2cb963814092ab5907e9eb4e8925d0c929",
+      "role": "Imagen principal",
+      "credit": "NASA Moon Trek · LRO/LROC NAC (capa LRO_NAC_Mosaic_1mpp_SP, registro trek.sp.LRO_NAC_Mosaic_1mpp_SP)",
+      "processing": "Mosaico WMTS (zoom 12, 15 teselas, 2,09 m/px nativos) recortado y remuestreado al encuadre. Las sombras corresponden a la adquisición de las imágenes, no a un instante simulado."
+    },
+    {
+      "file": "connecting-ridge-relieve.webp",
+      "sha256": "c3527a7d117d8bd5b4c69d635d0a780e6e92dc79c085f2313b1d7c1760a33521",
+      "role": "Respaldo si la imagen principal no carga",
+      "credit": "NASA GSFC · LRO LOLA, PGDA78 Site01",
+      "input_sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65",
+      "processing": "Relieve sombreado en gris con luz sintética (ilustrativa) del DEM de 5 m (= web/data/derived/terrain/elevation.f32), remuestreado al mismo encuadre."
+    },
+    {
+      "file": "connecting-ridge-metadata.json",
+      "sha256": "52aeb6b065070c84f865c504db1ee6c29727a508953fcf2f75c86238ab14a764",
+      "role": "Encuadre, escala y posición de A y B"
+    }
+  ],
+  "references_not_published": {
+    "presentar-referencia-visual.png": "08ec9896a7e10b0d4d4655670311f273c5be58737a7b1b4b49558400ec62c963",
+    "connecting-ridge-referencia-ab.webp": "91699d4ad5b328e817de103d08c198ef79ec93ecce9ac9cdc0b21a1020738923"
+  }
+}

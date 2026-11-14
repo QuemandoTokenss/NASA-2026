@@ -612,8 +612,8 @@ function Method({ core }: { core: Core }) {
         <li>
           <strong className="text-ink">{L("Fracciones:", "Fractions:")}</strong>{" "}
           {L(
-            "excluyen el nominal; los empates no cuentan como conservación; si el nominal empata, no se calcula fracción (null).",
-            "exclude the nominal; ties do not count as holding; if the nominal ties, no fraction is computed (null).",
+            "excluyen el nominal; los empates no cuentan como conservación; si el nominal empata, no hay una elección inicial que comparar y no se calcula fracción.",
+            "exclude the nominal; ties do not count as holding; if the nominal ties, there is no initial choice to compare and no fraction is computed.",
           )}
         </li>
         <li>
@@ -723,6 +723,16 @@ function RegretBody({ core }: { core: Core }) {
   const metric = CRITERION_METRIC[criterion];
   const nomA = getScenarioSummary(core, { siteId: "A", windowId, heightM, variant: "nominal" })!.metrics[metric];
   const nomB = getScenarioSummary(core, { siteId: "B", windowId, heightM, variant: "nominal" })!.metrics[metric];
+  // Empate porque los dos valores nominales son 0 h y están completos (sin horas desconocidas): se explica en llano.
+  const nomUnknown = (["A", "B"] as const).reduce((acc, s) => acc + (getScenarioSummary(core, { siteId: s, windowId, heightM, variant: "nominal" })!.metrics.unknown_hours ?? 0), 0);
+  const zeroTie = result.nominal_winner === "TIE" && nomA === 0 && nomB === 0 && nomUnknown === 0;
+  const ZERO_TIE: Record<string, [string, string]> = {
+    longest_dark_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios tiene un tramo sin Sol según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site has a stretch without sunlight according to the model. That is why they tie on this criterion."],
+    sun_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve el Sol según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Sun according to the model. That is why they tie on this criterion."],
+    dte_center_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve la Tierra según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Earth according to the model. That is why they tie on this criterion."],
+    joint_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve a la vez el Sol y la Tierra según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Sun and the Earth at the same time according to the model. That is why they tie on this criterion."],
+  };
+  const zeroTieText = zeroTie ? L(...(ZERO_TIE[metric] ?? ["Los dos sitios dan 0 h en esta métrica según el modelo. Por eso empatan.", "Both sites give 0 h on this metric according to the model. That is why they tie."])) : null;
   const worstOwn = keep ? Math.max(...own.variants.map((v) => regretOfKeeping(result.cases[v], keep) ?? 0)) : null;
   const worstPub = keep ? Math.max(...pub.variants.map((v) => regretOfKeeping(result.cases[v], keep) ?? 0)) : null;
 
@@ -732,9 +742,10 @@ function RegretBody({ core }: { core: Core }) {
       {controls}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatTile icon={METRIC_META[metric].icon} tone="a" label={`${METRIC_META[metric].label} · A (nominal)`} value={formatHoursMinutes(nomA)} detail={L("Superficie nominal", "Nominal surface")} />
-        <StatTile icon={METRIC_META[metric].icon} tone="b" label={`${METRIC_META[metric].label} · B (nominal)`} value={formatHoursMinutes(nomB)} detail={L("Superficie nominal", "Nominal surface")} />
+        <StatTile testId="regret-kpi-a" icon={METRIC_META[metric].icon} tone="a" label={`${METRIC_META[metric].label} · A (nominal)`} value={formatHoursMinutes(nomA)} detail={L("Superficie nominal", "Nominal surface")} />
+        <StatTile testId="regret-kpi-b" icon={METRIC_META[metric].icon} tone="b" label={`${METRIC_META[metric].label} · B (nominal)`} value={formatHoursMinutes(nomB)} detail={L("Superficie nominal", "Nominal surface")} />
         <StatTile
+          testId="regret-kpi-choice"
           icon="compare"
           label={L("Elección nominal", "Nominal choice")}
           value={result.nominal_winner === "TIE" ? L("Empate", "Tie") : result.nominal_winner === "UNKNOWN" ? L("No determinable", "Not determinable") : SITE_META[result.nominal_winner].label}
@@ -748,7 +759,7 @@ function RegretBody({ core }: { core: Core }) {
           detail={
             nominalChoice
               ? L(`Empates ${own.tie} · ${pub.tie} — inversiones ${own.inverted} · ${pub.inverted}`, `Ties ${own.tie} · ${pub.tie} — flips ${own.inverted} · ${pub.inverted}`)
-              : L("El nominal empata: sin fracción (null)", "The nominal ties: no fraction (null)")
+              : L("El escenario de referencia empata, así que no hay una elección inicial que comparar", "The reference scenario is a tie, so there is no initial choice to compare")
           }
         />
         <StatTile
@@ -759,6 +770,13 @@ function RegretBody({ core }: { core: Core }) {
           detail={worstPub === null ? L("Elige un sitio a conservar", "Choose a site to keep") : `${L("Propias · clones", "Team · clones")}: ${formatHoursMinutes(worstPub)}`}
         />
       </div>
+
+      {zeroTieText ? (
+        <p className="-mt-1 rounded-xl border border-line bg-bg-2/70 px-4 py-2.5 text-sm text-ink" data-testid="regret-zero-tie">
+          <Icon name="info" className="mr-1.5 inline size-4 align-[-3px] text-accent" />
+          {zeroTieText}
+        </p>
+      ) : null}
 
       <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
         <Panel

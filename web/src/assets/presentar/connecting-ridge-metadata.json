@@ -1,0 +1,127 @@
+{
+  "map": {
+    "width": 1440,
+    "height": 900,
+    "bounds_xy_m": [
+      -12095.0,
+      -12608.75,
+      -9995.0,
+      -11296.25
+    ],
+    "frame": "MOON_ME_DE421",
+    "projection": "Lunar south polar stereographic",
+    "raster_metres_per_output_pixel": 1.4583333333333333,
+    "scale_bar_200m_px": 137.14285714285714
+  },
+  "sites": [
+    {
+      "id": "A",
+      "roi": 4,
+      "x_m": -11287.5,
+      "y_m": -12167.5,
+      "pixel_xy": [
+        553.7142857142857,
+        597.4285714285714
+      ],
+      "fraction_xy": [
+        0.3845238095238095,
+        0.6638095238095238
+      ]
+    },
+    {
+      "id": "B",
+      "roi": 6,
+      "x_m": -10802.5,
+      "y_m": -11737.5,
+      "pixel_xy": [
+        886.2857142857143,
+        302.57142857142856
+      ],
+      "fraction_xy": [
+        0.6154761904761905,
+        0.33619047619047615
+      ]
+    }
+  ],
+  "sources": {
+    "orbital": {
+      "file": "connecting-ridge-orbital.webp",
+      "credit": "NASA Moon Trek / LRO LROC NAC",
+      "layer": "LRO_NAC_Mosaic_1mpp_SP",
+      "matrix": "default028mm",
+      "zoom": 12,
+      "tiles_row_col": [
+        [
+          2069,
+          2025
+        ],
+        [
+          2069,
+          2026
+        ],
+        [
+          2069,
+          2027
+        ],
+        [
+          2069,
+          2028
+        ],
+        [
+          2069,
+          2029
+        ],
+        [
+          2070,
+          2025
+        ],
+        [
+          2070,
+          2026
+        ],
+        [
+          2070,
+          2027
+        ],
+        [
+          2070,
+          2028
+        ],
+        [
+          2070,
+          2029
+        ],
+        [
+          2071,
+          2025
+        ],
+        [
+          2071,
+          2026
+        ],
+        [
+          2071,
+          2027
+        ],
+        [
+          2071,
+          2028
+        ],
+        [
+          2071,
+          2029
+        ]
+      ],
+      "native_tile_metres_per_pixel": 2.0903205871582,
+      "url": "https://trek.nasa.gov/moon/",
+      "processing": "WMTS mosaic cropped and resampled; orbital shadows correspond to image acquisition"
+    },
+    "relief": {
+      "file": "connecting-ridge-relieve.webp",
+      "credit": "NASA GSFC / LRO LOLA, PGDA78 Site01",
+      "url": "https://pgda.gsfc.nasa.gov/products/78",
+      "input_sha256": "c481895647e36346610ab0f1a8ac61a970fa5353bfc2462979a8e391eab74d65",
+      "processing": "Grayscale shaded relief, synthetic lighting; 5 m raster resampled for display"
+    }
+  }
+}

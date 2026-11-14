@@ -6,7 +6,9 @@ const summary = (site: string, h: number, v: string) =>
   core.scenario_summaries.find((s: { site_id: string; window_id: string; height_m: number; variant: string }) => s.site_id === site && s.window_id === "W2" && s.height_m === h && s.variant === v).metrics.longest_dark_hours;
 const regretB = core.comparisons.find((c: { window_id: string; height_m: number }) => c.window_id === "W2" && c.height_m === 0).criteria.min_longest_dark_hours.cases.correlated_plus.regret_B_hours;
 
+/** Horas mostradas; antes de elegir no se enseña ninguna cifra (devuelve "?"). */
 async function hours(page: Page, site: "A" | "B") {
+  if ((await page.getByTestId(`demo-card-${site}`).getAttribute("data-revealed")) !== "true") return "?";
   return (await page.getByTestId(`demo-hours-${site}`).textContent())?.trim();
 }
 async function compliance(page: Page) {
@@ -18,12 +20,14 @@ test.describe("Historia · demo interactiva «Where would you land?»", () => {
     const errors = trackErrors(page);
     await page.goto("/historia/?lang=en");
     await waitForData(page);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your mission can handle 24 hours without sunlight. Where would you land?");
-    await expect(page.getByText("illustrative limit for this demo")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Where would you land?");
+    await expect(page.getByTestId("demo-subtitle")).toContainText("Your example mission can handle up to 24 hours in a row without sunlight.");
+    await expect(page.getByText("Illustrative limit for this demo")).toBeVisible();
     await expect(page.getByText(/14 Dec 2026 – 13 Jan 2027 UTC/)).toBeVisible();
     // Paso 1 · Elegir: antes de elegir no se enseña ninguna cifra, ningún veredicto ni ningún gráfico.
     expect(await hours(page, "A")).toBe("?");
     expect(await hours(page, "B")).toBe("?");
+    await expect(page.getByTestId("demo-hours-A")).toHaveCount(0);
     await expect(page.locator("[data-compliance]")).toHaveCount(0);
     await expect(page.getByTestId("demo-strips-panel")).toHaveCount(0);
     await expect(page.getByTestId("demo-regret")).toHaveCount(0);

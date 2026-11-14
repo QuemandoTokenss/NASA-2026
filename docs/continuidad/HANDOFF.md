@@ -1,7 +1,30 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-24 (ver §0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-25 (ver §0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-ter. PC-25 · ajustes finales para el jurado — IMPLEMENTADO Y VERIFICADO EN LOCAL (leer primero)
+
+**2026-11-14 (+01:00).** Sobre PC-24 (§0-bis), misma rama `feat/rediseno-experiencia-lunar` (PR #21, apilada sobre #20). Commit local de este punto de control encima de `6dc33fb`; **sin push** al escribir esto (subirlo actualiza la PR #21). Nada fusionado ni publicado.
+
+| Bloque | Archivos | Qué cambió |
+|---|---|---|
+| Timeline | `web/src/components/timeline/TimelineView.tsx`, `web/e2e/timeline-pc24.spec.ts` | Geometría Sol–Tierra–Luna y Cielo local, juntos (dos columnas desde `lg`), son el primer bloque bajo el reproductor; debajo, «Elevación sobre el horizonte» con franjas y leyenda; a la derecha (desde `xl`) la columna Sitio → Instante → Métricas → Eventos. Se quitaron todos los `order-*` y `contents`: el orden del código = orden visual, de lectura y de teclado. Móvil: Geometría → Cielo local → Elevación → lectura (el instante ya no va justo tras el reproductor; lo exige la coincidencia de órdenes) |
+| Cabecera | `web/src/components/layout/AppShell.tsx` | Fuera `DataStatusPill` (etiqueta verde con el hash) y sus importaciones. ES/EN y Presentar siguen alineados. La verificación SHA-256 del paquete, el bloqueo con dato alterado (`DataGate`) y los hashes de Evidencia no cambian |
+| Presentar | `web/src/components/story/LandingDemo.tsx`, `RidgePhotoMap.tsx` (nuevo), `web/src/assets/presentar/` (nuevo), `ui/Icon.tsx` (+`chevronRight`), `ui/Display.tsx` (`testId` opcional en `StatTile`) | `PairMap` sustituido por la foto local de Connecting Ridge del ZIP del equipo (`connecting-ridge-orbital.webp`, NASA Moon Trek · LRO/LROC NAC) con capa de marcadores HTML/SVG; respaldo `connecting-ridge-relieve.webp` (DEM PGDA78, luz ilustrativa, rotulado) si la foto no carga. Encuadre, escala y A/B del metadato (verificados contra el paquete en `tests/presentar-map.test.ts`); relación 1440:900 fija. Pregunta «¿Dónde alunizarías?» + una línea (24 h, límite ilustrativo); la definición larga pasa a «Ver explicación». Escritorio: foto grande a la izquierda, panel de decisión compacto a la derecha (Sitio A / Sitio B sin «?»; al elegir, el panel cambia y el mapa marca «tu elección»). Relieve y altura del paso, en la esquina de la foto. Recorrido, reinicio, idiomas, Evidencia y presentación de 7 escenas, intactos. `PairMap.tsx` sigue en el código (lo usan otras vistas). Referencias de diseño del ZIP no publicadas (hashes en `SOURCES.json`) |
+| Regret Lab | `web/src/components/regret/RegretLabView.tsx`, `web/e2e/app.spec.ts` | Con empate nominal y A = B = 0 h sin horas desconocidas, una línea lo explica (texto por métrica; para la racha sin Sol, el pedido). «sin fracción (null)» → «El escenario de referencia empata, así que no hay una elección inicial que comparar» (también en el método). Valores y tolerancia de 10 min sin cambios |
+
+**Comprobaciones del paquete (Regret Lab):** W1 y W2 a 2 y 10 m: las 20 filas (A/B × 10 superficies) dan `longest_dark_hours = 0` y `unknown_hours = 0` → Empate correcto, «Se mantiene» = No aplica, «Elige un sitio a conservar». Criterio Tierra visible en W2 nominal a 10 m: A 399 h, B 398 h 10 min, gana A. W2 nominal 0 m, racha sin Sol: A 38 h 40 min, B 14 h 40 min, sin texto de empate. Todo en `e2e/jurado-pc25.spec.ts`.
+
+**Verificación:** `npm run verify` sobre el código final: typecheck y lint limpios · Vitest **156/156** (17 archivos; +3 `presentar-map.test.ts`) · build PASS · Playwright **113 PASS, 0 FAIL, 1 omitida** (la opcional en vivo de Moon Trek), 4,9 min. Nuevas: `e2e/jurado-pc25.spec.ts` (Presentar a 1280×720 con red externa cortada y caminos B y A, alineación de marcadores a 1440×900, 1280×720, 1024×768 y 390×844 con error < 1 px de imagen, respaldo de relieve, móvil; cabecera; Regret Lab) y Timeline a 1440×900, 1280×720 y 390 px más la sincronización de geometría y cielo local con el reproductor.
+
+**Capturas** (compilación servida en 4190): `web/docs/capturas/pc25/` — `timeline-{1440x900,1280x720,390x844}.png`, `presentar-{1280x720,1440x900,390x844}.png`, `presentar-B-*.png` (paso 2), `presentar-B-paso3-*.png` (regret), `regret-W2-10m-{empate,tierra}.png`, `log.json` (posiciones de marcadores medidas).
+
+**URL locales:** http://127.0.0.1:4190/historia/ · http://127.0.0.1:4190/timeline/?s=A&w=W2&h=0&v=nominal&t=3200 · http://127.0.0.1:4190/regret-lab/?w=W2&h=10&v=nominal&c=min_longest_dark_hours
+
+**Pendiente:** revisión humana; subir el commit (actualiza la PR #21); en móvil, el instante seleccionado queda tras el gráfico (consecuencia de igualar órdenes); no comprobado con lector de pantalla real ni en Safari/Firefox.
+
+**Siguiente paso exacto:** revisar las tres URL; si se aprueba, `git push` (actualiza la PR #21) y seguir §0-bis «Siguiente paso exacto» (fusionar #20, retarget de #21 a `main`).
 
 ## 0-bis. PC-24 · rediseño de la experiencia lunar — IMPLEMENTADO Y VERIFICADO EN LOCAL, pendiente de revisión del equipo (leer antes que §0)
 

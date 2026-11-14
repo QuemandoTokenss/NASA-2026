@@ -109,17 +109,19 @@ export function StatTile({
   detail,
   icon,
   tone = "neutral",
+  testId,
 }: {
   label: string;
   value: ReactNode;
   unit?: string;
   detail?: ReactNode;
+  testId?: string;
   icon?: IconName;
   tone?: "neutral" | "a" | "b" | "uncertainty";
 }) {
   const accent = { neutral: "text-ink", a: "text-site-a", b: "text-site-b", uncertainty: "text-uncertainty" }[tone];
   return (
-    <div className="rounded-xl border border-line bg-surface-2/70 p-4">
+    <div className="rounded-xl border border-line bg-surface-2/70 p-4" data-testid={testId}>
       <div className="flex items-center gap-2 text-xs font-medium text-ink-muted">
         {icon ? <Icon name={icon} className="size-4" /> : null}
         {label}
