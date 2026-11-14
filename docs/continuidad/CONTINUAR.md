@@ -23,7 +23,7 @@ Preparación, dentro de web/:
 Los originales NASA (web/data/raw/, 205 MB) no están en Git y NO hacen falta para trabajar ni para las pruebas: los recortes derivados sí están versionados. Solo si vas a regenerarlos: npm run geo:fetch && npm run geo:build.
 
 Asume UNA sola tarea activa: la de la sección «Tarea activa» del HANDOFF. Hoy es G15 (Regret Lab conectado al mapa con los clones reales del DEM); el HANDOFF §4 da los pasos exactos. Lee también docs/continuidad/01_REANUDAR_IMPLEMENTACION.md y el megaprompt literal docs/continuidad/MEGAPROMPT_ORIGINAL.md: el encargo NO está terminado.
-IMPORTANTE: si `git status -sb` no dice que estás al día con el remoto, o no ves los commits de corregistro y ODE en `git log --oneline -6`, es que Hugo aún no ha subido los últimos commits: PARA y pídeselo.
+Los commits de corregistro y ODE ya estan en el remoto (PC-12): `git log --oneline -6` debe mostrarlos.
 
 Reglas que no puedes romper:
 - No tocar web/data/source/. No inventar terreno, texturas, métricas, fechas ni coordenadas. Solo sitios A (ROI 4) y B (ROI 6), ventanas W1/W2, alturas 0/2/10 m.
