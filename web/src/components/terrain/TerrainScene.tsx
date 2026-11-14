@@ -449,8 +449,9 @@ export function TerrainScene({
     if (!r || !host) return;
     if (!lightEnu) {
       // Sol oculto, desconocido o sin datos: sin luz directa ni sombra solar; luz neutra para leer la escena.
+      // Intensidad 0 en lugar de quitar `castShadow`: cambiar el número de luces con sombra obliga a
+      // three.js a recompilar todos los materiales (≈ 1 s la primera vez). Una luz a 0 no ilumina ni sombrea.
       r.light.intensity = 0;
-      r.light.castShadow = false;
       r.neutral.hemi.intensity = 1.25;
       r.neutral.ambient.intensity = 0.28;
       r.neutral.top.intensity = 0.55;
@@ -464,7 +465,6 @@ export function TerrainScene({
       const elev = Math.asin(Math.max(-1, Math.min(1, l.y)));
       // La elevación es la real (rasante en el polo). Solo la intensidad compensa que el suelo reciba ∝ sin(elevación).
       r.light.intensity = 3.3 * Math.min(5, Math.max(1, 0.3 / Math.max(0.01, Math.sin(elev))));
-      r.light.castShadow = true;
       r.neutral.hemi.intensity = 0.42;
       r.neutral.ambient.intensity = 0.08;
       r.neutral.top.intensity = 0;

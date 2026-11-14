@@ -10,7 +10,7 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | | |
 |---|---|
 | Rama | `feat/rediseno-experiencia-lunar` (local, **sin subir, sin PR, sin fusionar**), desde `be84975` = punta de `feat/operacion-final-integracion` (PR #20). Fusionar y publicar lo decide el equipo: `main` despliega en producción |
-| Commits | `6491f1e` Dashboard (globo) · `3fab07e` Engineer (sombra solar + relieve regional) · `1d627d7` Timeline · encima, el commit de capturas y documentos de este punto de control |
+| Commits | `6491f1e` Dashboard (globo) · `3fab07e` Engineer (sombra solar + relieve regional) · `1d627d7` Timeline · `28ab76d` capturas y documentos · encima, `perf(engineer)` (deslizador) con las medidas y capturas de Engineer rehechas |
 | Compilación servida | `web/out`, compilada por `npm run verify` sobre el código de esos commits. Servidor: `node scripts/serve-static.ts out 4190` (PID 30428, arrancado por Hugo a las 19:05; lee `out/` del disco en cada petición, así que sirve la compilación final). URL: http://127.0.0.1:4190/ · http://127.0.0.1:4190/timeline/?s=A&w=W2&h=0&v=nominal&t=3200 · http://127.0.0.1:4190/engineer/?s=A&w=W1&h=10&v=nominal&t=629. Si no responde: `cd web && npm run build && node scripts/serve-static.ts out 4190` |
 | Referencia «antes» | `web/docs/capturas/pc24/antes/` (de Hugo, sobre el código de `0871dcf`), reutilizada sin repetir. «Después»: `web/docs/capturas/pc24/despues/` (mismo equipo, mismo Edge, mismo script) |
 
@@ -61,13 +61,13 @@ Capturas: `web/docs/capturas/pc24/despues/engineer-obstaculo-{fuera,sol-oculto,c
 
 | Vista | Antes | Después | Nota |
 |---|---|---|---|
-| Dashboard · contenido útil (botón de misión) | 387 ms | 417 ms | |
+| Dashboard · contenido útil (botón de misión) | 387 ms | 417–485 ms (dos pasadas) | |
 | Dashboard · transferido / peticiones | 4 902 KB / 81 | 6 180 KB / 88 | + three.js, textura 2k y cielo; la capa `elevation.f32` (2,5 MB) ya se cargaba |
 | Dashboard · arrastre del globo | sin globo | mediana 6,1 ms, p95 6,2 ms | |
 | Timeline · útil / transferido | 111 ms / 6 303 KB | 135 ms / 6 374 KB | |
 | Engineer · útil / transferido / peticiones | 116 ms / 8 561 KB / 100 | 148 ms / 9 776 KB / 131 | + bloques regionales (≈ 1,2 MB) |
 | Engineer · órbita | mediana 6,1 ms, p95 6,2 ms | mediana 6,1 ms, p95 6,2 ms | |
-| Engineer · deslizador hasta 30 m con dato | 263 ms | **1 041 ms** | Más lento: al cambiar la altura cambia el punto del horizonte y se piden y mallan bloques regionales nuevos |
+| Engineer · deslizador hasta 30 m con dato | 263 ms | **318 ms** (316–334 en 4 medidas) | La primera versión de PC-24 daba 1 041 ms. Causa aislada midiendo con y sin relieve regional: al pasar a luz neutra durante la carga se quitaba `castShadow`, y three.js recompila todos los materiales cuando cambia el número de luces con sombra (≈ 0,9 s la primera vez). Ahora la luz solar conserva `castShadow` y en modo neutro va a intensidad 0. Además, los bloques de la visual se piden tras 450 ms de pausa |
 
 Cómo mide el script y qué NO es comparable: `usefulMs` y `settledMs` son relojes de Node alrededor de Playwright (incluyen su latencia; `settledMs` lleva 1,8 s fijos de espera). El intervalo entre fotogramas es `requestAnimationFrame` de la página: **6,1 ms es el tope de la pantalla (~165 Hz)**, así que solo demuestra que no se pierden fotogramas, no cuánto margen queda. `transferKB` es contra un servidor local sin compresión. «Arrastre del globo» no tiene valor «antes».
 
@@ -75,7 +75,7 @@ Cómo mide el script y qué NO es comparable: `usefulMs` y `settledMs` son reloj
 
 - **Revisión humana** de las tres vistas (proyector incluido) antes de cualquier fusión. No se ha subido la rama.
 - Relieve regional: fuera de los bloques L0 (puntos de horizonte del motor + 25 km) solo hay L1/L2/F; ahí las crestas entre vértices no están y la visual termina en «Límite del visor 3D» con el punto real en el mapa. No existe en el paquete un caso de **Sol oculto por cresta regional** a 2 ni a 10 m (no comprobado a 0 m ni en alturas intermedias). Entre el recorte de 4 km y el borde de la tesela Site01 (16 km) el motor usó PGDA78 de 5 m, que la web no publica: ahí el 80 m es contexto, con un escalón de hasta ~6 m (RMS 0,7 m) en la junta. Ampliar: `node scripts/geospatial/build-regional.ts --ring-km=40 --sector=A:120-140:150` y `publish-regional.ts`.
-- El deslizador de altura tarda más en mostrar el dato (ver tabla). Mejora posible: construir las mallas regionales fuera del hilo principal o no pedir bloques de la visual durante el arrastre.
+- Tras el ajuste del deslizador (commit posterior a `28ab76d`) se recompiló y se repasaron sobre la compilación final `engineer-pc24`, `engineer-heights`, `timeline-engineer-visual`, `geo`, `jurado-pc21` y `a11y` (2 procesos): 43 PASS, 1 FAIL, 1 omitida. El fallo, `engineer-heights.spec.ts` «volver a 10 m…», fue de tiempo de carga (la altura 19,5 m no llegó en 20 s); esa spec en serie ×2: 12/12 PASS. **El `npm run verify` completo no se ha repetido después de este ajuste.**
 - Con el Sol a 1–2° la torre iluminada queda muy clara y el suelo oscuro (es la geometría real); la luz neutra del caso «Sol oculto» es plana a propósito.
 - Globo: la textura global es de 2k (≈ 5 km/px); el detalle fino solo existe en el casquete sur. La rotación es de tipo «trackball» (puede acumular giro); «Volver al globo» lo restablece.
 - Sin comprobar: lector de pantalla real, zoom al 200 %, Safari/Firefox, móvil físico, inglés de forma visual en las vistas nuevas.

@@ -20,6 +20,8 @@ import { TERRAIN_BOUNDS } from "@/lib/geospatial/terrain";
 /** Radio (m) alrededor del sitio que se dibuja siempre con cada nivel. */
 const NEAR_L0_M = 12_000;
 const NEAR_L1_M = 50_000;
+/** Pausa (ms) antes de pedir los bloques de una visual nueva. */
+const RAY_SETTLE_MS = 450;
 /** De más fino a más grueso. */
 const FINENESS: RegionalLevelId[] = ["L0", "L1", "L2", "F"];
 const SKIRT_M: Record<string, number> = { L0: 60, L1: 220, L2: 700, F: 1500 };
@@ -45,12 +47,22 @@ const intersects = (a: Bounds, b: Bounds) => a[0] < b[2] && a[2] > b[0] && a[1] 
 export function useRegionalTerrain(
   frame: LocalFrame,
   site: { x: number; y: number; lonEastDeg: number; latDeg: number },
-  ray: { azimuthDeg: number; distanceM: number } | null,
+  liveRay: { azimuthDeg: number; distanceM: number } | null,
 ): { pieces: RegionalPiece[]; grids: RegionalGrid[]; pending: number; failed: number } {
   const [grids, setGrids] = useState<Map<string, RegionalGrid>>(() => new Map());
   const [pending, setPending] = useState(0);
   const [failed, setFailed] = useState(0);
   const requested = useRef(new Set<string>());
+
+  // La visual solo pide bloques cuando lleva un momento quieta: mientras se arrastra la altura o el
+  // azimut cambia a cada paso, y pedir y mallar bloques en cada uno retrasaba el dato de la altura final.
+  const rayAz = liveRay?.azimuthDeg ?? null;
+  const rayDist = liveRay?.distanceM ?? null;
+  const [ray, setRay] = useState<{ azimuthDeg: number; distanceM: number } | null>(null);
+  useEffect(() => {
+    const t = setTimeout(() => setRay(rayAz === null || rayDist === null ? null : { azimuthDeg: rayAz, distanceM: rayDist }), RAY_SETTLE_MS);
+    return () => clearTimeout(t);
+  }, [rayAz, rayDist]);
 
   const wanted = useMemo(() => {
     const list: RegionalBlockEntry[] = [

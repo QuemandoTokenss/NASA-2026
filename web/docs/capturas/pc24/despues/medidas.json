@@ -5,48 +5,48 @@
  "pages": {
   "dashboard": {
    "url": "/",
-   "usefulMs": 417,
-   "settledMs": 4502,
-   "domContentLoaded": 88,
-   "load": 157,
-   "fcp": 376,
-   "transferKB": 6180,
+   "usefulMs": 485,
+   "settledMs": 4558,
+   "domContentLoaded": 99,
+   "load": 143,
+   "fcp": 416,
+   "transferKB": 6181,
    "requests": 88,
    "interaction": {
     "frames": 91,
     "medianMs": 6.1,
     "p95Ms": 6.2,
-    "maxMs": 6
+    "maxMs": 7
    }
   },
   "timeline": {
    "url": "/timeline/?s=A&w=W2&h=0&v=nominal&t=3200",
-   "usefulMs": 135,
-   "settledMs": 4278,
-   "domContentLoaded": 58,
-   "load": 101,
-   "fcp": 68,
-   "transferKB": 6374,
-   "requests": 91,
+   "usefulMs": 132,
+   "settledMs": 4192,
+   "domContentLoaded": 49,
+   "load": 96,
+   "fcp": 56,
+   "transferKB": 6373,
+   "requests": 85,
    "interaction": null
   },
   "engineer": {
    "url": "/engineer/?s=A&w=W1&h=10&v=nominal&t=3200",
-   "usefulMs": 148,
-   "settledMs": 5366,
-   "domContentLoaded": 54,
-   "load": 107,
-   "fcp": 64,
-   "transferKB": 9776,
-   "requests": 131,
+   "usefulMs": 167,
+   "settledMs": 5615,
+   "domContentLoaded": 85,
+   "load": 96,
+   "fcp": 72,
+   "transferKB": 9775,
+   "requests": 129,
    "interaction": {
     "orbit": {
-     "frames": 109,
+     "frames": 103,
      "medianMs": 6.1,
-     "p95Ms": 6.2,
-     "maxMs": 6
+     "p95Ms": 6.3,
+     "maxMs": 12
     },
-    "sliderTo30Ms": 1041
+    "sliderTo30Ms": 318
    }
   }
  }
