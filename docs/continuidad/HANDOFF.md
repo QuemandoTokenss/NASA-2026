@@ -10,12 +10,12 @@ Documento principal del relevo. Si contradice al código o a `git status`, manda
 | Directorio de trabajo (raíz Git) | `C:\Users\Hugo\Desktop\Hugo\Proyectos\NASA-SpaceApps-2026\NASA-2026` |
 | Aplicación | subcarpeta `web/` (Next.js, export estático) |
 | Remoto | `QuemandoTokenss/NASA-2026` (GitHub, privado) |
-| Rama | `feat/geo-real-terrain` — **solo local, sin push** |
+| Rama | `feat/geo-real-terrain` — subida a GitHub el 2026-11-14 (PC-07); sin PR ni despliegue |
 | HEAD | `4b77455` o un commit posterior solo de documentos (código: `54cda05`; base `main` = `987899d`). Comprobar con `git log -1` |
 | Worktree | único (no hay worktrees separados) |
 | Otra copia que NO es la activa | `…\NASA-SpaceApps-2026\site-regret\` (copia antigua previa al repo del equipo; no editar) |
 
-Quien retome en otro equipo: clonar el repo, y como la rama no está subida, **pedir a Hugo que haga push de `feat/geo-real-terrain`** (o recibir la carpeta). Sin esa rama, en `main` no hay nada de lo descrito aquí.
+Quien retome en otro equipo: clonar el repo y hacer `git switch feat/geo-real-terrain`. En `main` no hay nada de lo descrito aquí.
 
 ## 2. Encargo y decisiones que se conservan
 
