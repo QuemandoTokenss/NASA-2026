@@ -1,9 +1,11 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control vigente:** PC-28 en rama `fix/regret-lab-height-audit` (§0-nonies); producción = PC-27 + #27 (`f395794`). La sección 0.7 recoge la comprobación de entrega del 15-11-2026.
+**Punto de control vigente:** PC-28 publicado: PR #28 fusionada en `main` con el merge `e38fdd9` (§0-nonies), producción = `e38fdd9`. La sección 0.7 recoge la comprobación de entrega del 15-11-2026.
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
 
-## 0-nonies. PC-28 · Auditoría de alturas y Regret Lab — EN RAMA, PR abierta, sin fusionar (leer primero)
+## 0-nonies. PC-28 · Auditoría de alturas y Regret Lab — PUBLICADO (leer primero)
+
+**Fusión (2026-11-15, a petición de Hugo):** PR #28 fusionada en `main` con el commit de merge `e38fdd9` (`e38fdd901fbc764c35fe0a2fa14505a99d29a9f8`). Antes: cabeza `f5dfbad`, Vercel en verde, estado `CLEAN`. Estado Vercel del merge: success; producción sirve `/icon.svg` (200) y el `favicon.ico` nuevo (SHA-256 `921e9c0c…`). Incluye además el icono de pestaña con el logotipo de la cabecera (`web/src/app/icon.svg`, `favicon.ico`, `apple-icon.png`). Rollback: promover en Vercel el despliegue anterior (`f395794`) o revertir el merge `e38fdd9`.
 
 **2026-11-15.** Rama `fix/regret-lab-height-audit` desde `origin/main` = `f395794` (= producción). Encargo: incidente de los ceros de oscuridad a 2 y 10 m en Regret Lab (W2) y salto 0 → 0,5 m. Sin merge ni despliegue: necesita revisión humana.
 
