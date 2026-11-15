@@ -1,7 +1,26 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-27 en rama (§0-septies); PC-26 (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-27 publicado (§0-octies, §0-septies); PC-26 (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Esa línea de estado es histórica: producción = `main` = `c9749ca` (§0-octies).**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-octies. Fusión de la PR #25 (PC-27) — PUBLICADA (leer primero)
+
+**2026-11-15.** PR #25 fusionada en `main` con el commit de merge `c9749ca` (`c9749cac54ad21765c358a1124ab11424d493c76`), a petición de Hugo. Antes: cabeza de la PR = `c6f7cb6`, check de Vercel en verde, estado `CLEAN`, sin conflictos. **Producción = `c9749ca`** (estado Vercel del commit: success, «Deployment has completed»).
+
+**Comprobado en producción** (navegador sin preferencia guardada, https://site-regret.vercel.app/?lang=en):
+
+- 375×667: «Try the mission» en y = 597–649, dentro de la pantalla.
+- `/historia/`: flecha derecha A → B y flecha izquierda B → A, con foco y `aria-checked` en la tarjeta nueva; Tab lleva a «Try a different terrain map».
+- Camino B tras cambiar el terreno: A 32 h 30 min, B 49 h, regret 16 h 30 min; mensaje «Keeping B means 16 h 30 min more without sunlight than choosing A in this scenario. In this test, both sites are over the 24 h limit.»; etiqueta «Alternative terrain · team hypothesis».
+- «See the evidence» → recarga: sigue en inglés (`lang="en"`, preferencia guardada `en`). Sin errores de consola.
+
+**Pruebas previas a la fusión:** las de §0-septies. Además, según el encargo de Hugo, Codex ejecutó la suite completa (156 unitarias y 123 escenarios E2E; la prueba del inspector de Explore pasó al reintentar, 5/5 en local y 3/3 en producción); esa pasada no se ha repetido en esta sesión.
+
+**Rollback:** promover en Vercel el despliegue anterior (`ddbbf6c`) o revertir el merge `c9749ca` en Git.
+
+**Enlace público de entrega:** https://site-regret.vercel.app/?lang=en
+
+**Pendiente:** esta nota vive en la rama `docs/relevo-pc27-main` (commit local, sin subir); la tabla §0.7 de la entrega NASA no se ha revisado en esta sesión.
 
 ## 0-septies. PC-27 · cuatro hallazgos de la revisión del jurado — EN RAMA, sin fusionar (leer primero)
 
