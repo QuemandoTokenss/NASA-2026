@@ -2,7 +2,7 @@
  "schema": "site-regret-height-audit-summary/1",
  "nature": "DIAGNOSTIC_AUDIT · no es un escenario del contrato site-regret/0.1",
  "engine_sha256": "08e52de18993c465f1c0f7b94d815a50ef9643d8929c72c9ce426ec0e2062a54",
- "script_sha256": "2387a2fb21875539f2f5b9e73050853560d0a6186e99b37be1282eb27669dd46",
+ "script_sha256": "3dde11713546102848f50d892787459e81c310e49ce2ad1792aabeb1da07e05b",
  "sites": {
   "A": {
    "toterr_m": 0.2713887691497803,

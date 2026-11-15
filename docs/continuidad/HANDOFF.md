@@ -1,7 +1,27 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control vigente:** PC-27 publicado en `c9749ca`. La sección 0.7 recoge la comprobación de entrega del 15-11-2026.
+**Punto de control vigente:** PC-28 en rama `fix/regret-lab-height-audit` (§0-nonies); producción = PC-27 + #27 (`f395794`). La sección 0.7 recoge la comprobación de entrega del 15-11-2026.
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-nonies. PC-28 · Auditoría de alturas y Regret Lab — EN RAMA, PR abierta, sin fusionar (leer primero)
+
+**2026-11-15.** Rama `fix/regret-lab-height-audit` desde `origin/main` = `f395794` (= producción). Encargo: incidente de los ceros de oscuridad a 2 y 10 m en Regret Lab (W2) y salto 0 → 0,5 m. Sin merge ni despliegue: necesita revisión humana.
+
+**Dictamen científico** (`docs/SCIENCE_HEIGHT_AUDIT.md`): no hay error en el motor; los datos del contrato y del paquete de alturas **se conservan**. A 0 m la sombra W2 la produce microrrelieve a 25–31 m que asoma 0,03–0,13 m sobre la línea del Sol, menos que el error vertical del DEM (0,27–0,30 m): rachas inestables (A 33 h 50 min – 54 h 10 min, B 0 h – 26 h 10 min con ±2,5 m), aunque B < A en las 14 configuraciones. Desde 0,5 m ninguna configuración da sombra; margen solar mínimo a 2 m ≥ 0,90°. Geometría del motor = vectores cartesianos independientes (< 5·10⁻⁹°).
+
+| Módulo | Problema | Solución | Archivos | Prueba |
+|---|---|---|---|---|
+| Ciencia | Ceros a 2/10 m y salto 0→0,5 m sin explicar | Auditoría reproducible con el motor importado sin modificar | `web/scripts/engine/height_audit.py`, `web/data/derived/height-audit/v1/{audit,summary}.json`, `docs/SCIENCE_HEIGHT_AUDIT.md` | `tests/height-audit.test.ts` (14) |
+| Regret Lab | Empate a 0 h parecía pantalla vacía | Veredicto con tipo de resultado (empate sin oscuridad / toda la ventana / diferencia / no determinable) y los 4 criterios con valores; indica cuál sí diferencia (la selección solo cambia si el usuario pulsa) | `src/components/regret/RegretVerdict.tsx`, `src/lib/science/regretSummary.ts` | `e2e/regret-lab-pc28.spec.ts` |
+| Regret Lab | 2 y 10 m sin historia útil | «¿Qué cambia con la altura?»: alturas del contrato + paquete 0–30 m (puntos, sin interpolar) + franja de ganador + avisos de la auditoría | `src/components/regret/HeightEvolution.tsx`, `src/lib/science/heightAudit.ts` | ídem |
+| Demo guiada | Explicaba W2 · 0 m con controles en 2/10 m | Se pausa si la selección no coincide con el paso; «Volver al caso» o «Cerrar» | `RegretLabView.tsx` | ídem + `app.spec.ts` |
+| Otras vistas | Revisadas con W2 · 2 m · racha sin Sol (Dashboard, Explore, Timeline, Comparador, Engineer, Evidencia, Historia) | Sin cambios: cifras coherentes (720 h Sol, 0 h racha, Tierra A 398 h 40 min / B 398 h); el bloque del Dashboard rotula su caso fijo «W2 · 0 m» | — | lectura en navegador |
+
+**Capturas** (antes = producción, después = rama; 1440×900 y 390×844): `web/docs/capturas/pc28/{antes,despues}/` con `log.json`; script `web/scripts/qa/capture-pc28.mjs`.
+
+**Verificación:** `npm run verify`: tipos y lint limpios · Vitest **170/170** (18 archivos; +14 `height-audit.test.ts`) · build PASS · Playwright **123 PASS, 4 FAIL, 1 omitida** (12,7 min). Los 4 fallos fueron esperas agotadas de carga de datos (`waitForData` / clic) mientras la auditoría Python se regeneraba en paralelo con la CPU saturada (`mission-control` ×2, `regret-lab-pc28` ×2). Repetidas sin carga: `mission-control`, `regret-lab-pc28`, `app`, `jurado-pc25` ×2 → **78/78 PASS**. No hubo una pasada completa con salida 0.
+
+**Pendiente:** revisión humana; el Comparador podría reutilizar el aviso «otro criterio sí diferencia» (fuera de alcance); DEM de mayor resolución para cerrar el caso de 0 m.
 
 ## 0-octies. Fusión de la PR #25 (PC-27) — PUBLICADA (leer primero)
 

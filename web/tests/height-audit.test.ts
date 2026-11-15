@@ -24,7 +24,8 @@ describe("auditoría de alturas: trazabilidad", () => {
     expect(audit.engine_sha256).toBe(engineSha);
     expect(HEIGHT_AUDIT.engine_sha256).toBe(engineSha);
     expect(HEIGHT_AUDIT.script_sha256).toBe(audit.script_sha256);
-    expect(audit.script_sha256).toBe(sha256(readFileSync(join(ROOT, "scripts", "engine", "height_audit.py"))));
+    // Finales de línea normalizados a LF (Git puede dar CRLF en Windows).
+    expect(audit.script_sha256).toBe(sha256(readFileSync(join(ROOT, "scripts", "engine", "height_audit.py"), "utf8").replace(/\r\n/g, "\n")));
   });
 
   it("el barrido de la auditoría reproduce el contrato a 0, 2 y 10 m (superficie nominal)", () => {

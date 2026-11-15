@@ -221,7 +221,7 @@ def main():
     grids = {w['id']: P.sky_grid(w) for w in P.WINDOWS}
     out = dict(schema='site-regret-height-audit/1', nature='DIAGNOSTIC_AUDIT · no es un escenario del contrato site-regret/0.1',
                engine_sha256=hashlib.sha256((SOURCE / 'motor/pipeline.py').read_bytes()).hexdigest(),
-               script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               script_sha256=hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n', b'\n')).hexdigest(),  # LF: igual en Windows y Linux
                generated_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'),
                config=dict(sweep_heights_m=SWEEP, sensitivity_heights_m=SENS_HEIGHTS, azimuth_step_deg=STEP,
                            radial_factor=FACTOR, near_field_m=NEAR_M, time_step_minutes=10, surface='nominal'),

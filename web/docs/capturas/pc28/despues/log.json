@@ -2,7 +2,7 @@
  {
   "case": "regret-W1-0m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 0 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -13,7 +13,7 @@
  {
   "case": "regret-W1-2m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -24,7 +24,7 @@
  {
   "case": "regret-W1-10m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 10 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -35,7 +35,7 @@
  {
   "case": "regret-W2-0m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
   "verdict": "decisive",
   "verdictText": "Con «minimizar la racha más larga sin sol», gana Sitio B por 24 h (W2 · 0 m, superficie nominal).",
   "hint": null,
@@ -46,7 +46,7 @@
  {
   "case": "regret-W2-2m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -57,7 +57,7 @@
  {
   "case": "regret-W2-10m-dark",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 10 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -68,7 +68,7 @@
  {
   "case": "regret-W2-2m-earth",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
   "verdict": "decisive",
   "verdictText": "Con «maximizar horas con tierra visible», gana Sitio A por 40 min (W2 · 2 m, superficie nominal).",
   "hint": null,
@@ -79,7 +79,7 @@
  {
   "case": "regret-W2-0m-inverted",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
   "verdict": "decisive",
   "verdictText": "Con «minimizar la racha más larga sin sol», gana Sitio B por 24 h (W2 · 0 m, superficie nominal).",
   "hint": null,
@@ -90,7 +90,7 @@
  {
   "case": "regret-W1-0m-sun-clone",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
   "verdict": "tie_full",
   "verdictText": "Los dos sitios dan 720 h de 720 h en «horas con sol» (W1 · 0 m): el criterio no puede separarlos.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -101,7 +101,7 @@
  {
   "case": "regret-demo",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -112,7 +112,7 @@
  {
   "case": "regret-W2-2m-dark-en",
   "viewport": "1440x900",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
   "verdict": "tie_no_dark",
   "verdictText": "Neither site has a stretch without Sun in W2 at 2 m: the model detected no darkness in the 720 h analysed. It is a valid result, not missing data, but it does not guarantee permanent light or safety.",
   "hint": "With this criterion both sites tie. Most Earth hours and Most Sun + Earth hours do tell them apart (same data; the selection only changes if you pick one).",
@@ -127,7 +127,7 @@
  {
   "case": "regret-W1-0m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 0 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -138,7 +138,7 @@
  {
   "case": "regret-W1-2m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -149,7 +149,7 @@
  {
   "case": "regret-W1-10m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W1 a 10 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -160,7 +160,7 @@
  {
   "case": "regret-W2-0m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
   "verdict": "decisive",
   "verdictText": "Con «minimizar la racha más larga sin sol», gana Sitio B por 24 h (W2 · 0 m, superficie nominal).",
   "hint": null,
@@ -171,7 +171,7 @@
  {
   "case": "regret-W2-2m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -182,7 +182,7 @@
  {
   "case": "regret-W2-10m-dark",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 10 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -193,7 +193,7 @@
  {
   "case": "regret-W2-2m-earth",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
   "verdict": "decisive",
   "verdictText": "Con «maximizar horas con tierra visible», gana Sitio A por 40 min (W2 · 2 m, superficie nominal).",
   "hint": null,
@@ -204,7 +204,7 @@
  {
   "case": "regret-W2-0m-inverted",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
   "verdict": "decisive",
   "verdictText": "Con «minimizar la racha más larga sin sol», gana Sitio B por 24 h (W2 · 0 m, superficie nominal).",
   "hint": null,
@@ -215,7 +215,7 @@
  {
   "case": "regret-W1-0m-sun-clone",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
   "verdict": "tie_full",
   "verdictText": "Los dos sitios dan 720 h de 720 h en «horas con sol» (W1 · 0 m): el criterio no puede separarlos.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -226,7 +226,7 @@
  {
   "case": "regret-demo",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
   "verdict": "tie_no_dark",
   "verdictText": "Ninguno de los dos sitios tiene un tramo sin Sol en W2 a 2 m: el modelo no detectó oscuridad en las 720 h analizadas. Es un resultado válido, no falta de datos, pero no garantiza iluminación permanente ni seguridad.",
   "hint": "Con este criterio ambos emplazamientos empatan. Más horas con Tierra y Más horas Sol + Tierra sí permiten diferenciarlos (mismos datos; la selección solo cambia si eliges uno).",
@@ -237,7 +237,7 @@
  {
   "case": "regret-W2-2m-dark-en",
   "viewport": "390x844",
-  "url": "http://localhost:3000/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
+  "url": "http://127.0.0.1:4191/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
   "verdict": "tie_no_dark",
   "verdictText": "Neither site has a stretch without Sun in W2 at 2 m: the model detected no darkness in the 720 h analysed. It is a valid result, not missing data, but it does not guarantee permanent light or safety.",
   "hint": "With this criterion both sites tie. Most Earth hours and Most Sun + Earth hours do tell them apart (same data; the selection only changes if you pick one).",
