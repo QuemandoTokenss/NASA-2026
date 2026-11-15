@@ -1,7 +1,26 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-27 en rama (§0-septies); PC-26 (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control vigente:** PC-27 publicado en `c9749ca`. La sección 0.7 recoge la comprobación de entrega del 15-11-2026.
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-octies. Fusión de la PR #25 (PC-27) — PUBLICADA (leer primero)
+
+**2026-11-15.** PR #25 fusionada en `main` con el commit de merge `c9749ca` (`c9749cac54ad21765c358a1124ab11424d493c76`), a petición de Hugo. Antes: cabeza de la PR = `c6f7cb6`, check de Vercel en verde, estado `CLEAN`, sin conflictos. **Producción = `c9749ca`** (estado Vercel del commit: success, «Deployment has completed»).
+
+**Comprobado en producción** (navegador sin preferencia guardada, https://site-regret.vercel.app/?lang=en):
+
+- 375×667: «Try the mission» en y = 597–649, dentro de la pantalla.
+- `/historia/`: flecha derecha A → B y flecha izquierda B → A, con foco y `aria-checked` en la tarjeta nueva; Tab lleva a «Try a different terrain map».
+- Camino B tras cambiar el terreno: A 32 h 30 min, B 49 h, regret 16 h 30 min; mensaje «Keeping B means 16 h 30 min more without sunlight than choosing A in this scenario. In this test, both sites are over the 24 h limit.»; etiqueta «Alternative terrain · team hypothesis».
+- «See the evidence» → recarga: sigue en inglés (`lang="en"`, preferencia guardada `en`). Sin errores de consola.
+
+**Pruebas previas a la fusión:** las de §0-septies. Además, según el encargo de Hugo, Codex ejecutó la suite completa (156 unitarias y 123 escenarios E2E; la prueba del inspector de Explore pasó al reintentar, 5/5 en local y 3/3 en producción); esa pasada no se ha repetido en esta sesión.
+
+**Rollback:** promover en Vercel el despliegue anterior (`ddbbf6c`) o revertir el merge `c9749ca` en Git.
+
+**Enlace público de entrega:** https://site-regret.vercel.app/?lang=en
+
+**Entrega NASA:** ver la tabla actualizada en §0.7.
 
 ## 0-septies. PC-27 · cuatro hallazgos de la revisión del jurado — EN RAMA, sin fusionar (leer primero)
 
@@ -238,19 +257,19 @@ No comprobado en PC-23 (declarado): zoom al 200 %, recorrido completo solo con t
 
 Ya existe en `main`: Luna NASA en portada; mapa OpenLayers con imágenes LRO NAC; visor 3D del DEM en Engineer con rotación y zoom, torre a la altura real, Sol y Tierra en sus direcciones del paquete, línea de visión hasta el relieve que fija el horizonte, control de instante compartido con Timeline, caída si WebGL falla, y `prefers-reduced-motion` global. **No existe** un globo lunar 3D manipulable con A/B ni reproducción automática dentro de la escena 3D. No se ha iniciado: P0 y P1 tenían trabajo pendiente y queda menos de un día y medio para la entrega. Si se aborda, en rama propia con vista previa, sin tocar `main`.
 
-### 0.7 Entrega NASA (antes del 15-11-2026 23:59, hora local): qué falta
+### 0.7 Entrega NASA (15-11-2026, hora de Bilbao)
 
 | Requisito | Estado |
 |---|---|
-| Aplicación pública y usable | Producción en `aae19b2`, responde. El candidato de PC-23 no está publicado |
-| Demo pública (≤ 7 diapositivas o vídeo ≤ 30 s) | **No acreditada** en el repositorio. `/historia/#pregunta` tiene 7 escenas, pero hace falta un enlace público de diapositivas o vídeo aparte |
-| Ficha del proyecto en inglés | **No acreditada** en el repositorio |
-| Fuentes NASA y licencias | `docs/SOURCES.md` sigue en `RESOURCE_TAB_UNVERIFIED` (issue #1): falta que una persona confirme la entrada exacta de la pestaña *Resources* del reto y sus condiciones. Añadir las imágenes de presentación (SVS 5187, SVS 4851, SVS 4720, Blue Marble AS17-148-22727, SDO PIA26681, Moon Trek) con su crédito |
-| Declaración de herramientas de IA | `docs/AI_USE.md` actualizado con esta sesión; **faltan** las herramientas de los demás (Claude Code de Oier, ChatGPT Work, Agent Orchestrator u otras) y confirmar el modelo de las sesiones PC-13 a PC-22 |
-| Enlaces separados y accesibles sin permisos | Por comprobar al tener todos los enlaces (el repositorio de GitHub es **privado**) |
-| Confirmación humana de envío | Pendiente (`SUBMIT` en `docs/STATUS.md`: dos miembros) |
+| App y código públicos | App verificada en producción en `c9749ca`. GitHub abre sin cuenta. |
+| Ficha del proyecto en inglés | Visible sin cuenta. Resumen, seis figuras con texto alternativo, fuentes, declaración de IA y enlaces a solución y código comprobados en Chrome. |
+| Fuentes, créditos y licencia | Apache-2.0 para software original del equipo. Datos e imágenes con condiciones de sus proveedores. Véase [SOURCES.md](../SOURCES.md). La correspondencia exacta con la pestaña Resources no está acreditada. |
+| Pruebas | 156 unitarias, 122 E2E contra producción, incluido Moon Trek en vivo, y la demo sin red externa aprobada en local. |
+| Vídeo oficial | Pendiente de subir por el equipo. Añadir el enlace público, comprobar el límite de 30 s y los créditos del archivo final. |
+| Envío | Pendiente de confirmación en el portal por el equipo. El correo local pide Submit for Judging antes de las 16:00 y otra vez antes de las 23:59. |
 
-**Veredicto: NO-GO para declarar la entrega cerrada.** La aplicación publicada es válida y estable, pero hay comprobaciones críticas sin acreditar (tabla anterior) y el candidato necesita revisión humana antes de publicarse.
+**Enlace público:** https://www.spaceappschallenge.org/2026/find-a-team/quemandotokens/?tab=project
+
 
 ### 0.8 Siguiente acción exacta
 
