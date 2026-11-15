@@ -81,7 +81,8 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
   const [gridError, setGridError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("sun");
   const [manualAz, setManualAz] = useState(0);
-  const [exaggeration, setExaggeration] = useState(1);
+  // Escala real fija (×1): sin selector de exageración vertical.
+  const exaggeration = 1;
   const [preset, setPreset] = useState<{ view: ViewPreset; nonce: number }>({ view: "tower", nonce: 0 });
   // Torre (inmediata) y altura de análisis (asentada). Fuera de 0/2/10 no se toca la URL analítica (`h`).
   const [towerH, setTowerH] = useState<number>(heightM);
@@ -438,16 +439,6 @@ export function TerrainPanel({ core, onHeightState }: { core: Core; onHeightStat
               </Link>
             </div>
           )}
-          <label className="ml-auto flex items-center gap-1.5 text-xs text-ink-faint">
-            {L("Exag.", "Exag.")}
-            <select value={exaggeration} onChange={(e) => setExaggeration(Number(e.target.value))} className="rounded-md border border-line-strong bg-surface-2 px-1.5 py-0.5 text-ink" aria-label={L("Exageración vertical", "Vertical exaggeration")}>
-              {[1, 2, 5].map((x) => (
-                <option key={x} value={x}>
-                  ×{x}
-                </option>
-              ))}
-            </select>
-          </label>
           <p className="w-full text-[11px] leading-snug text-ink-faint" data-testid="height-range-note">
             {L(
               "Terreno nominal: visibilidad calculada por el motor de 0 a 30 m cada 0,5 m. Otras superficies: 0, 2 y 10 m (el resto, vista previa de la torre).",

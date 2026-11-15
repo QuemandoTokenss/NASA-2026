@@ -31,7 +31,7 @@ test.describe("navegación y rutas", () => {
   test("parámetros de URL inválidos se rechazan con aviso y valores por defecto", async ({ page }) => {
     await page.goto("/comparador/?w=W9&h=7&v=published_0099&c=score");
     await expect(page.getByText("Parámetros de URL ignorados")).toBeVisible();
-    await expect(page).toHaveURL(/w=W1&h=0&v=nominal/);
+    await expect(page).toHaveURL(/w=W1&h=2&v=nominal/); // altura por defecto: 2 m
     await expect(page.getByRole("combobox", { name: "Criterio de decisión" })).toHaveValue("");
   });
 
