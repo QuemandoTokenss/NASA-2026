@@ -33,9 +33,9 @@ test.describe("Idioma (ES/EN)", () => {
     await page.goto("/?lang=en");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await page.getByRole("link", { name: "Try the mission" }).click();
-    await expect(page).toHaveURL(/\/historia\/$/);
+    await expect(page).toHaveURL(/\/historia\/(\?|$)/); // la selección se añade a la URL ~180 ms después
     await page.getByTestId("demo-evidence").click();
-    await expect(page).toHaveURL(/\/evidencia\/$/);
+    await expect(page).toHaveURL(/\/evidencia\/(\?|$)/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await page.reload();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");

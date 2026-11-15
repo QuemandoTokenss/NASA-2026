@@ -35,7 +35,7 @@ export interface Selection {
 export const DEFAULT_SELECTION: Selection = {
   focusSite: "A",
   windowId: "W1",
-  heightM: 0,
+  heightM: 2, // torre a 2 m por defecto: 0 m depende de microrrelieve (docs/SCIENCE_HEIGHT_AUDIT.md)
   variant: "nominal",
   criterion: null,
   timeIndex: 0,
