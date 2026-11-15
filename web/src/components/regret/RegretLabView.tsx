@@ -18,6 +18,7 @@ import { CRITERION_META, FAMILY_META, SITE_META, VARIANT_LABEL, WINNER_LABEL } f
 import { OUTCOME_LABEL, familyCounts, otherSite, outcomeOf, regretOfKeeping, type FamilyCounts, type Outcome } from "@/lib/science/decision";
 import { DEMO_CASE, DEMO_HASH, relevantPerturbation } from "@/lib/science/demo";
 import { CRITERION_METRIC, METRIC_META } from "@/lib/science/metrics";
+import { criterionSnapshots } from "@/lib/science/regretSummary";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { DivergingBar } from "../charts/Bars";
 import { ControlBar } from "../data/ControlBar";
@@ -30,6 +31,8 @@ import { Badge, Callout, NatureBadge, SiteDot, StatTile, WinnerTag } from "../ui
 import { Icon } from "../ui/Icon";
 import { Button, InfoTip, LinkButton } from "../ui/Interactive";
 import { PageHeader, Panel } from "../ui/Panel";
+import { HeightEvolution } from "./HeightEvolution";
+import { kindLabel, RegretVerdict } from "./RegretVerdict";
 import { TerrainDiffLab } from "./TerrainDiffLab";
 import { L, R } from "@/lib/i18n";
 
@@ -366,7 +369,7 @@ function DemoGuide({
   setKeep: (s: SiteId) => void;
   onClose: () => void;
 }) {
-  const { dispatch } = useSelection();
+  const { selection, dispatch } = useSelection();
   const { windowId, heightM, criterion } = DEMO_CASE;
   const r = getCriterionResult(core, windowId, heightM, criterion)!;
   const nominalWinner = r.nominal_winner;
@@ -377,16 +380,22 @@ function DemoGuide({
   const own = familyCounts(r, "own");
   const pub = familyCounts(r, "published");
 
+  // Configuración que explica cada paso: la demo NUNCA describe otra selección.
+  const expectedVariant = (n: number): Variant => (n >= 2 && v ? v : "nominal");
+  const inSync =
+    selection.windowId === windowId && selection.heightM === heightM && selection.criterion === criterion && selection.variant === expectedVariant(step);
+
+  function resync(n: number) {
+    dispatch({ type: "setWindow", value: windowId });
+    dispatch({ type: "setHeight", value: heightM });
+    dispatch({ type: "setCriterion", value: criterion });
+    dispatch({ type: "setVariant", value: expectedVariant(n) });
+    if (n >= 1 && keep) setKeep(keep);
+  }
+
   function go(n: number) {
     setStep(n);
-    if (n === 0) {
-      dispatch({ type: "setWindow", value: windowId });
-      dispatch({ type: "setHeight", value: heightM });
-      dispatch({ type: "setCriterion", value: criterion });
-      dispatch({ type: "setVariant", value: "nominal" });
-    }
-    if (n === 1 && keep) setKeep(keep);
-    if (n === 2 && v) dispatch({ type: "setVariant", value: v });
+    resync(n);
   }
 
   const texts = [
@@ -479,9 +488,7 @@ function DemoGuide({
           <li key={label}>
             <button
               type="button"
-              onClick={() => {
-                for (let k = 0; k <= i; k++) go(k);
-              }}
+              onClick={() => go(i)}
               aria-current={i === step ? "step" : undefined}
               className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
                 i === step ? "border-uncertainty bg-uncertainty-soft text-ink" : i < step ? "border-uncertainty/30 text-ink-muted" : "border-line text-ink-faint hover:text-ink"
@@ -493,15 +500,40 @@ function DemoGuide({
           </li>
         ))}
       </ol>
-      <p aria-live="polite" className="mt-4 min-h-12 max-w-5xl text-[15px] leading-relaxed text-ink-muted">
-        {texts[step]}
-      </p>
+      {inSync ? (
+        <p aria-live="polite" className="mt-4 min-h-12 max-w-5xl text-[15px] leading-relaxed text-ink-muted" data-testid="demo-text">
+          {texts[step]}
+        </p>
+      ) : (
+        <div aria-live="polite" className="mt-4 flex flex-col gap-2 rounded-xl border border-warn/40 bg-warn/10 p-3 text-sm text-ink" data-testid="demo-paused">
+          <p>
+            {R(
+              "Demostración en pausa: explica {demo}, pero ahora estás viendo {now}. Sus textos no se aplican a esta selección.",
+              "Demo paused: it explains {demo}, but you are now viewing {now}. Its texts do not apply to this selection.",
+              {
+                demo: <strong>{`${windowId} · ${heightM} m · ${CRITERION_META[criterion].short} · ${VARIANT_LABEL[expectedVariant(step)]}`}</strong>,
+                now: (
+                  <strong>{`${selection.windowId} · ${selection.heightM} m · ${selection.criterion ? CRITERION_META[selection.criterion].short : L("sin criterio", "no criterion")} · ${VARIANT_LABEL[selection.variant]}`}</strong>
+                ),
+              },
+            )}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="regret" icon="reset" onClick={() => resync(step)}>
+              {L(`Volver al caso (paso ${step + 1})`, `Back to the case (step ${step + 1})`)}
+            </Button>
+            <Button size="sm" variant="secondary" icon="close" onClick={onClose}>
+              {L("Cerrar la demostración y explorar", "Close the demo and explore")}
+            </Button>
+          </div>
+        </div>
+      )}
       <div className="mt-3 flex gap-2">
-        <Button size="sm" icon="stepBack" disabled={step === 0} onClick={() => go(step - 1)}>
+        <Button size="sm" icon="stepBack" disabled={step === 0 || !inSync} onClick={() => go(step - 1)}>
           {L("Anterior", "Previous")}
         </Button>
         {step < DEMO_STEPS().length - 1 ? (
-          <Button size="sm" variant="regret" iconRight="stepForward" onClick={() => go(step + 1)}>
+          <Button size="sm" variant="regret" iconRight="stepForward" disabled={!inSync} onClick={() => go(step + 1)}>
             {L("Siguiente", "Next")}
           </Button>
         ) : (
@@ -723,16 +755,7 @@ function RegretBody({ core }: { core: Core }) {
   const metric = CRITERION_METRIC[criterion];
   const nomA = getScenarioSummary(core, { siteId: "A", windowId, heightM, variant: "nominal" })!.metrics[metric];
   const nomB = getScenarioSummary(core, { siteId: "B", windowId, heightM, variant: "nominal" })!.metrics[metric];
-  // Empate porque los dos valores nominales son 0 h y están completos (sin horas desconocidas): se explica en llano.
-  const nomUnknown = (["A", "B"] as const).reduce((acc, s) => acc + (getScenarioSummary(core, { siteId: s, windowId, heightM, variant: "nominal" })!.metrics.unknown_hours ?? 0), 0);
-  const zeroTie = result.nominal_winner === "TIE" && nomA === 0 && nomB === 0 && nomUnknown === 0;
-  const ZERO_TIE: Record<string, [string, string]> = {
-    longest_dark_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios tiene un tramo sin Sol según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site has a stretch without sunlight according to the model. That is why they tie on this criterion."],
-    sun_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve el Sol según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Sun according to the model. That is why they tie on this criterion."],
-    dte_center_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve la Tierra según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Earth according to the model. That is why they tie on this criterion."],
-    joint_hours: ["En esta ventana y a esta altura, ninguno de los dos sitios ve a la vez el Sol y la Tierra según el modelo. Por eso empatan en este criterio.", "In this window and at this height, neither site sees the Sun and the Earth at the same time according to the model. That is why they tie on this criterion."],
-  };
-  const zeroTieText = zeroTie ? L(...(ZERO_TIE[metric] ?? ["Los dos sitios dan 0 h en esta métrica según el modelo. Por eso empatan.", "Both sites give 0 h on this metric according to the model. That is why they tie."])) : null;
+  const nominalKind = criterionSnapshots(core, windowId, heightM).find((x) => x.criterion === criterion)!.kind;
   const worstOwn = keep ? Math.max(...own.variants.map((v) => regretOfKeeping(result.cases[v], keep) ?? 0)) : null;
   const worstPub = keep ? Math.max(...pub.variants.map((v) => regretOfKeeping(result.cases[v], keep) ?? 0)) : null;
 
@@ -740,6 +763,8 @@ function RegretBody({ core }: { core: Core }) {
     <>
       {demo}
       {controls}
+
+      <RegretVerdict core={core} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatTile testId="regret-kpi-a" icon={METRIC_META[metric].icon} tone="a" label={`${METRIC_META[metric].label} · A (nominal)`} value={formatHoursMinutes(nomA)} detail={L("Superficie nominal", "Nominal surface")} />
@@ -749,7 +774,7 @@ function RegretBody({ core }: { core: Core }) {
           icon="compare"
           label={L("Elección nominal", "Nominal choice")}
           value={result.nominal_winner === "TIE" ? L("Empate", "Tie") : result.nominal_winner === "UNKNOWN" ? L("No determinable", "Not determinable") : SITE_META[result.nominal_winner].label}
-          detail={`|D| = ${formatHoursMinutes(Math.abs(result.cases.nominal.D_hours ?? 0))} · ${L("tolerancia", "tolerance")} ${formatHoursMinutes(result.tie_tolerance_hours)}`}
+          detail={`${kindLabel(nominalKind)} · |D| = ${result.cases.nominal.D_hours === null ? "—" : formatHoursMinutes(Math.abs(result.cases.nominal.D_hours))} · ${L("tolerancia", "tolerance")} ${formatHoursMinutes(result.tie_tolerance_hours)}`}
         />
         <StatTile
           icon="shuffle"
@@ -771,12 +796,7 @@ function RegretBody({ core }: { core: Core }) {
         />
       </div>
 
-      {zeroTieText ? (
-        <p className="-mt-1 rounded-xl border border-line bg-bg-2/70 px-4 py-2.5 text-sm text-ink" data-testid="regret-zero-tie">
-          <Icon name="info" className="mr-1.5 inline size-4 align-[-3px] text-accent" />
-          {zeroTieText}
-        </p>
-      ) : null}
+      <HeightEvolution core={core} />
 
       <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
         <Panel

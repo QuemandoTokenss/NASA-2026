@@ -1,0 +1,2617 @@
+{
+ "schema": "site-regret-height-audit/1",
+ "nature": "DIAGNOSTIC_AUDIT · no es un escenario del contrato site-regret/0.1",
+ "engine_sha256": "08e52de18993c465f1c0f7b94d815a50ef9643d8929c72c9ce426ec0e2062a54",
+ "script_sha256": "3dde11713546102848f50d892787459e81c310e49ce2ad1792aabeb1da07e05b",
+ "generated_at_utc": "2026-11-15T12:47:44+00:00",
+ "config": {
+  "sweep_heights_m": [
+   0,
+   0.1,
+   0.25,
+   0.5,
+   1,
+   2,
+   5,
+   10
+  ],
+  "sensitivity_heights_m": [
+   0,
+   0.5,
+   2
+  ],
+  "azimuth_step_deg": 0.25,
+  "radial_factor": 2,
+  "near_field_m": 50.0,
+  "time_step_minutes": 10,
+  "surface": "nominal"
+ },
+ "sites": {
+  "A": {
+   "local_geometry": {
+    "pixel_row": 1633.0,
+    "pixel_col": 1542.0,
+    "fractional_offset_px": [
+     0.0,
+     0.0
+    ],
+    "window_4x4_m": [
+     [
+      1956.366,
+      1956.296,
+      1956.222,
+      1956.11
+     ],
+     [
+      1956.468,
+      1956.391,
+      1956.326,
+      1956.17
+     ],
+     [
+      1956.541,
+      1956.443,
+      1956.338,
+      1956.192
+     ],
+     [
+      1956.61,
+      1956.494,
+      1956.363,
+      1956.212
+     ]
+    ],
+    "window_relief_m": 0.4998,
+    "bilinear_gradient_xy": [
+     -0.0130615234375,
+     -0.01052246056497097
+    ],
+    "bilinear_slope_deg": 0.9609,
+    "note": "x_m/y_m caen en el borde entre píxeles (offset 0,5 px): el observador se interpola entre 4 centros de píxel"
+   },
+   "published_slope_product": {
+    "slp_deg": 1.172697901725769,
+    "slperr_deg": 2.452915668487549,
+    "toterr_m": 0.2713887691497803,
+    "ldec": 0.0
+   },
+   "observer_ground_height_m": 1956.390869140625,
+   "cartesian_check_max_abs_deg": {
+    "0": {
+     "formula_float64_vs_cartesian_deg": 4.684046261971275e-09,
+     "engine_float32_vs_cartesian_deg": 9.973292414144908e-08
+    },
+    "0.5": {
+     "formula_float64_vs_cartesian_deg": 4.435374734157449e-09,
+     "engine_float32_vs_cartesian_deg": 3.4879662180742343e-07
+    },
+    "2": {
+     "formula_float64_vs_cartesian_deg": 2.7228637122789223e-09,
+     "engine_float32_vs_cartesian_deg": 9.749500478051232e-07
+    }
+   },
+   "facet_explanation_0m": {
+    "near_directions": 1302,
+    "near_directions_at_2_5m": 721,
+    "median_abs_diff_plane_vs_engine_deg_near": 0.265,
+    "max_plane_horizon_deg": 0.9609,
+    "azimuth_of_max_plane_deg": 8.25
+   },
+   "height_sweep": {
+    "0": {
+     "near_field_directions": 1302,
+     "horizon_mean_deg": 0.0237,
+     "horizon_max_deg": 1.663,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.333333,
+        "joint_hours": 312.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 329.833333
+       },
+       "sun_margin_min_deg": 0.2803,
+       "sun_margin_min_utc": "2026-12-07T16:30:00Z",
+       "sun_margin_min_azimuth_deg": 335.7704,
+       "sun_elevation_deg": 1.9432,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.1529,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 681.333333,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 38.666667,
+        "longest_no_earth_hours": 334.666667
+       },
+       "sun_margin_min_deg": -0.2311,
+       "sun_margin_min_utc": "2027-01-06T07:10:00Z",
+       "sun_margin_min_azimuth_deg": 335.7416,
+       "sun_elevation_deg": 1.4316,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.126,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "0.1": {
+     "near_field_directions": 1154,
+     "horizon_mean_deg": -0.3759,
+     "horizon_max_deg": 1.48,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 318.166667,
+        "joint_hours": 318.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 329.833333
+       },
+       "sun_margin_min_deg": 0.4633,
+       "sun_margin_min_utc": "2026-12-07T16:30:00Z",
+       "sun_margin_min_azimuth_deg": 335.7704,
+       "sun_elevation_deg": 1.9432,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.2527,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 712.666667,
+        "dte_center_hours": 389.5,
+        "joint_hours": 389.5,
+        "longest_dark_hours": 7.333333,
+        "longest_no_earth_hours": 328.833333
+       },
+       "sun_margin_min_deg": -0.0481,
+       "sun_margin_min_utc": "2027-01-06T07:10:00Z",
+       "sun_margin_min_azimuth_deg": 335.7416,
+       "sun_elevation_deg": 1.4316,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.0262,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "0.25": {
+     "near_field_directions": 845,
+     "horizon_mean_deg": -0.6484,
+     "horizon_max_deg": 1.2054,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 328.666667,
+        "joint_hours": 328.666667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 325.333333
+       },
+       "sun_margin_min_deg": 0.7379,
+       "sun_margin_min_utc": "2026-12-07T16:30:00Z",
+       "sun_margin_min_azimuth_deg": 335.7704,
+       "sun_elevation_deg": 1.9432,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.4025,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 397.333333,
+        "joint_hours": 397.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.666667
+       },
+       "sun_margin_min_deg": 0.2265,
+       "sun_margin_min_utc": "2027-01-06T07:10:00Z",
+       "sun_margin_min_azimuth_deg": 335.7416,
+       "sun_elevation_deg": 1.4316,
+       "obstacle_distance_m": 31.25,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.1235,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "0.5": {
+     "near_field_directions": 510,
+     "horizon_mean_deg": -0.9501,
+     "horizon_max_deg": 0.8122,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.833333
+       },
+       "sun_margin_min_deg": 1.1158,
+       "sun_margin_min_utc": "2026-12-07T23:20:00Z",
+       "sun_margin_min_azimuth_deg": 332.2985,
+       "sun_elevation_deg": 1.9273,
+       "obstacle_distance_m": 57.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 1.1199,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.333333
+       },
+       "sun_margin_min_deg": 0.6005,
+       "sun_margin_min_utc": "2027-01-06T14:00:00Z",
+       "sun_margin_min_azimuth_deg": 332.2711,
+       "sun_elevation_deg": 1.4124,
+       "obstacle_distance_m": 57.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.6027,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "1": {
+     "near_field_directions": 198,
+     "horizon_mean_deg": -1.2969,
+     "horizon_max_deg": 0.3146,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.833333
+       },
+       "sun_margin_min_deg": 1.6134,
+       "sun_margin_min_utc": "2026-12-07T23:20:00Z",
+       "sun_margin_min_azimuth_deg": 332.2985,
+       "sun_elevation_deg": 1.9273,
+       "obstacle_distance_m": 57.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 1.6196,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.333333
+       },
+       "sun_margin_min_deg": 1.0982,
+       "sun_margin_min_utc": "2027-01-06T14:00:00Z",
+       "sun_margin_min_azimuth_deg": 332.2711,
+       "sun_elevation_deg": 1.4124,
+       "obstacle_distance_m": 57.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 1.1022,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "2": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.5207,
+     "horizon_max_deg": 0.1391,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.833333
+       },
+       "sun_margin_min_deg": 1.8603,
+       "sun_margin_min_utc": "2026-11-20T13:50:00Z",
+       "sun_margin_min_azimuth_deg": 183.7487,
+       "sun_elevation_deg": 0.9964,
+       "obstacle_distance_m": 632.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 20.5439,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.333333
+       },
+       "sun_margin_min_deg": 1.3746,
+       "sun_margin_min_utc": "2027-01-04T07:00:00Z",
+       "sun_margin_min_azimuth_deg": 0.2,
+       "sun_elevation_deg": 1.5109,
+       "obstacle_distance_m": 417.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 10.0182,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "5": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.7277,
+     "horizon_max_deg": -0.2721,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.333333,
+        "joint_hours": 337.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.666667
+       },
+       "sun_margin_min_deg": 1.896,
+       "sun_margin_min_utc": "2026-11-21T07:40:00Z",
+       "sun_margin_min_azimuth_deg": 174.727,
+       "sun_elevation_deg": 0.9945,
+       "obstacle_distance_m": 159200.0,
+       "obstacle_source": "PGDA90_80m",
+       "equivalent_obstacle_height_error_m": 5270.2118,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.333333
+       },
+       "sun_margin_min_deg": 1.6182,
+       "sun_margin_min_utc": "2026-12-23T09:50:00Z",
+       "sun_margin_min_azimuth_deg": 144.5411,
+       "sun_elevation_deg": 0.7608,
+       "obstacle_distance_m": 134120.0,
+       "obstacle_source": "PGDA90_80m",
+       "equivalent_obstacle_height_error_m": 3788.8625,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    },
+    "10": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.9145,
+     "horizon_max_deg": -0.8544,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.333333,
+        "joint_hours": 337.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.666667
+       },
+       "sun_margin_min_deg": 1.8978,
+       "sun_margin_min_utc": "2026-11-21T07:40:00Z",
+       "sun_margin_min_azimuth_deg": 174.727,
+       "sun_elevation_deg": 0.9945,
+       "obstacle_distance_m": 159200.0,
+       "obstacle_source": "PGDA90_80m",
+       "equivalent_obstacle_height_error_m": 5275.2156,
+       "sun_elevation_range_deg": [
+        0.9937,
+        1.9996
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 399.0,
+        "joint_hours": 399.0,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.0
+       },
+       "sun_margin_min_deg": 1.6203,
+       "sun_margin_min_utc": "2026-12-23T09:50:00Z",
+       "sun_margin_min_azimuth_deg": 144.5411,
+       "sun_elevation_deg": 0.7608,
+       "obstacle_distance_m": 134120.0,
+       "obstacle_source": "PGDA90_80m",
+       "equivalent_obstacle_height_error_m": 3793.8595,
+       "sun_elevation_range_deg": [
+        0.6486,
+        1.5151
+       ]
+      }
+     }
+    }
+   },
+   "W2_0m_dark_streaks": [
+    {
+     "start_utc": "2027-01-05T03:30:00Z",
+     "stop_utc": "2027-01-06T18:10:00Z",
+     "hours": 38.6667,
+     "deepest_utc": "2027-01-06T07:10:00Z",
+     "sun_azimuth_deg": 335.7416,
+     "sun_elevation_deg": 1.4316,
+     "horizon_elevation_deg": 1.6627,
+     "sun_minus_horizon_deg": -0.2311,
+     "obstacle_distance_m": 31.25,
+     "obstacle_source": "PGDA78_5m",
+     "facet_plane_horizon_deg": 0.8078,
+     "horizon_at_heights_deg": {
+      "0.1": 1.4709,
+      "0.25": 1.1962,
+      "0.5": 0.7402,
+      "1": 0.2062,
+      "2": -0.2873
+     },
+     "sunlit_samples_of_streak_at_height": {
+      "0.1": 188,
+      "0.25": 232,
+      "0.5": 232,
+      "1": 232,
+      "2": 232,
+      "samples": 232
+     }
+    }
+   ],
+   "near_field_sensitivity": {
+    "engine_bilinear": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.333333,
+        "joint_hours": 312.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 681.333333,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 38.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1302,
+     "near_field_directions_0.5m": 510,
+     "near_field_directions_2m": 0
+    },
+    "nearest": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 707.166667,
+        "dte_center_hours": 282.333333,
+        "joint_hours": 282.333333,
+        "longest_dark_hours": 12.833333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 579.333333,
+        "dte_center_hours": 330.0,
+        "joint_hours": 330.0,
+        "longest_dark_hours": 121.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1439,
+     "near_field_directions_0.5m": 596,
+     "near_field_directions_2m": 0
+    },
+    "cubic_bspline": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 311.166667,
+        "joint_hours": 311.166667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 679.833333,
+        "dte_center_hours": 375.166667,
+        "joint_hours": 375.166667,
+        "longest_dark_hours": 40.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1325,
+     "near_field_directions_0.5m": 497,
+     "near_field_directions_2m": 0
+    },
+    "bilinear_float64": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.333333,
+        "joint_hours": 312.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 681.333333,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 38.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1302,
+     "near_field_directions_0.5m": 509,
+     "near_field_directions_2m": 0
+    },
+    "rmin_5m": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.5,
+        "joint_hours": 312.5,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 681.333333,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 38.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1286,
+     "near_field_directions_0.5m": 510,
+     "near_field_directions_2m": 0
+    },
+    "rmin_10m": {
+     "observer_ground_height_m": 1956.3909,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 313.333333,
+        "joint_hours": 313.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 681.333333,
+        "dte_center_hours": 379.5,
+        "joint_hours": 379.5,
+        "longest_dark_hours": 38.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1261,
+     "near_field_directions_0.5m": 510,
+     "near_field_directions_2m": 0
+    },
+    "shift_E_1.25m": {
+     "observer_ground_height_m": 1956.3745,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.833333,
+        "joint_hours": 312.833333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 682.666667,
+        "dte_center_hours": 378.5,
+        "joint_hours": 378.5,
+        "longest_dark_hours": 37.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1281,
+     "near_field_directions_0.5m": 487,
+     "near_field_directions_2m": 0
+    },
+    "shift_W_1.25m": {
+     "observer_ground_height_m": 1956.41,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.666667,
+        "joint_hours": 312.666667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 680.833333,
+        "dte_center_hours": 378.5,
+        "joint_hours": 378.5,
+        "longest_dark_hours": 39.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1303,
+     "near_field_directions_0.5m": 533,
+     "near_field_directions_2m": 0
+    },
+    "shift_N_1.25m": {
+     "observer_ground_height_m": 1956.3672,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.333333,
+        "joint_hours": 312.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 683.666667,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 36.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1306,
+     "near_field_directions_0.5m": 500,
+     "near_field_directions_2m": 0
+    },
+    "shift_S_1.25m": {
+     "observer_ground_height_m": 1956.4041,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 308.166667,
+        "joint_hours": 308.166667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 673.833333,
+        "dte_center_hours": 369.0,
+        "joint_hours": 369.0,
+        "longest_dark_hours": 46.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1338,
+     "near_field_directions_0.5m": 576,
+     "near_field_directions_2m": 0
+    },
+    "shift_E_2.5m": {
+     "observer_ground_height_m": 1956.3582,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 313.166667,
+        "joint_hours": 313.166667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 685.0,
+        "dte_center_hours": 379.5,
+        "joint_hours": 379.5,
+        "longest_dark_hours": 35.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1298,
+     "near_field_directions_0.5m": 483,
+     "near_field_directions_2m": 0
+    },
+    "shift_W_2.5m": {
+     "observer_ground_height_m": 1956.4292,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 313.0,
+        "joint_hours": 313.0,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 680.666667,
+        "dte_center_hours": 379.166667,
+        "joint_hours": 379.166667,
+        "longest_dark_hours": 39.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1299,
+     "near_field_directions_0.5m": 538,
+     "near_field_directions_2m": 0
+    },
+    "shift_N_2.5m": {
+     "observer_ground_height_m": 1956.3435,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 312.333333,
+        "joint_hours": 312.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 686.166667,
+        "dte_center_hours": 377.833333,
+        "joint_hours": 377.833333,
+        "longest_dark_hours": 33.833333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1303,
+     "near_field_directions_0.5m": 507,
+     "near_field_directions_2m": 0
+    },
+    "shift_S_2.5m": {
+     "observer_ground_height_m": 1956.4172,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 301.0,
+        "joint_hours": 301.0,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 337.166667,
+        "joint_hours": 337.166667,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 665.833333,
+        "dte_center_hours": 357.166667,
+        "joint_hours": 357.166667,
+        "longest_dark_hours": 54.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.666667,
+        "joint_hours": 398.666667,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1391,
+     "near_field_directions_0.5m": 633,
+     "near_field_directions_2m": 0
+    }
+   }
+  },
+  "B": {
+   "local_geometry": {
+    "pixel_row": 1547.0,
+    "pixel_col": 1639.0,
+    "fractional_offset_px": [
+     0.0,
+     0.0
+    ],
+    "window_4x4_m": [
+     [
+      1948.324,
+      1948.273,
+      1948.257,
+      1948.23
+     ],
+     [
+      1948.413,
+      1948.351,
+      1948.305,
+      1948.214
+     ],
+     [
+      1948.469,
+      1948.399,
+      1948.353,
+      1948.206
+     ],
+     [
+      1948.496,
+      1948.387,
+      1948.273,
+      1948.13
+     ]
+    ],
+    "window_relief_m": 0.366,
+    "bilinear_gradient_xy": [
+     -0.00925293006002903,
+     -0.009594726376235485
+    ],
+    "bilinear_slope_deg": 0.7637,
+    "note": "x_m/y_m caen en el borde entre píxeles (offset 0,5 px): el observador se interpola entre 4 centros de píxel"
+   },
+   "published_slope_product": {
+    "slp_deg": 0.9491509795188904,
+    "slperr_deg": 2.133216619491577,
+    "toterr_m": 0.3006587624549866,
+    "ldec": 0.0
+   },
+   "observer_ground_height_m": 1948.351318359375,
+   "cartesian_check_max_abs_deg": {
+    "0": {
+     "formula_float64_vs_cartesian_deg": 4.288791877193887e-09,
+     "engine_float32_vs_cartesian_deg": 1.6107585576463634e-07
+    },
+    "0.5": {
+     "formula_float64_vs_cartesian_deg": 3.7105269967696586e-09,
+     "engine_float32_vs_cartesian_deg": 4.165872784511748e-07
+    },
+    "2": {
+     "formula_float64_vs_cartesian_deg": 2.888150163471437e-09,
+     "engine_float32_vs_cartesian_deg": 9.92081091055752e-07
+    }
+   },
+   "facet_explanation_0m": {
+    "near_directions": 1429,
+    "near_directions_at_2_5m": 428,
+    "median_abs_diff_plane_vs_engine_deg_near": 0.1397,
+    "max_plane_horizon_deg": 0.7637,
+    "azimuth_of_max_plane_deg": 1.25
+   },
+   "height_sweep": {
+    "0": {
+     "near_field_directions": 1429,
+     "horizon_mean_deg": 0.0768,
+     "horizon_max_deg": 1.3915,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.333333,
+        "joint_hours": 309.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 330.0
+       },
+       "sun_margin_min_deg": 0.3524,
+       "sun_margin_min_utc": "2026-11-30T21:30:00Z",
+       "sun_margin_min_azimuth_deg": 58.7241,
+       "sun_elevation_deg": 1.7438,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.1537,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 705.333333,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 14.666667,
+        "longest_no_earth_hours": 337.833333
+       },
+       "sun_margin_min_deg": -0.0785,
+       "sun_margin_min_utc": "2026-12-30T12:00:00Z",
+       "sun_margin_min_azimuth_deg": 58.744,
+       "sun_elevation_deg": 1.313,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.0343,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "0.1": {
+     "near_field_directions": 1302,
+     "horizon_mean_deg": -0.4733,
+     "horizon_max_deg": 1.1628,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 328.833333,
+        "joint_hours": 328.833333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 325.5
+       },
+       "sun_margin_min_deg": 0.5811,
+       "sun_margin_min_utc": "2026-11-30T21:30:00Z",
+       "sun_margin_min_azimuth_deg": 58.7241,
+       "sun_elevation_deg": 1.7438,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.2536,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 396.833333,
+        "joint_hours": 396.833333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 323.166667
+       },
+       "sun_margin_min_deg": 0.1502,
+       "sun_margin_min_utc": "2026-12-30T12:00:00Z",
+       "sun_margin_min_azimuth_deg": 58.744,
+       "sun_elevation_deg": 1.313,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.0655,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "0.25": {
+     "near_field_directions": 921,
+     "horizon_mean_deg": -0.8197,
+     "horizon_max_deg": 0.8194,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.333333
+       },
+       "sun_margin_min_deg": 0.9245,
+       "sun_margin_min_utc": "2026-11-30T21:30:00Z",
+       "sun_margin_min_azimuth_deg": 58.7241,
+       "sun_elevation_deg": 1.7438,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.4034,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.0
+       },
+       "sun_margin_min_deg": 0.4936,
+       "sun_margin_min_utc": "2026-12-30T12:00:00Z",
+       "sun_margin_min_azimuth_deg": 58.744,
+       "sun_elevation_deg": 1.313,
+       "obstacle_distance_m": 25.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 0.2154,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "0.5": {
+     "near_field_directions": 650,
+     "horizon_mean_deg": -1.0963,
+     "horizon_max_deg": 0.713,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.333333
+       },
+       "sun_margin_min_deg": 1.2654,
+       "sun_margin_min_utc": "2026-12-05T10:50:00Z",
+       "sun_margin_min_azimuth_deg": 3.2592,
+       "sun_elevation_deg": 1.978,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 15.4074,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.0
+       },
+       "sun_margin_min_deg": 0.7805,
+       "sun_margin_min_utc": "2027-01-04T01:30:00Z",
+       "sun_margin_min_azimuth_deg": 3.2188,
+       "sun_elevation_deg": 1.4922,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 9.5024,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "1": {
+     "near_field_directions": 270,
+     "horizon_mean_deg": -1.4004,
+     "horizon_max_deg": 0.672,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.333333
+       },
+       "sun_margin_min_deg": 1.3064,
+       "sun_margin_min_utc": "2026-12-05T10:50:00Z",
+       "sun_margin_min_azimuth_deg": 3.2592,
+       "sun_elevation_deg": 1.978,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 15.907,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.0
+       },
+       "sun_margin_min_deg": 0.8215,
+       "sun_margin_min_utc": "2027-01-04T01:30:00Z",
+       "sun_margin_min_azimuth_deg": 3.2188,
+       "sun_elevation_deg": 1.4922,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 10.0019,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "2": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.522,
+     "horizon_max_deg": 0.59,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.333333
+       },
+       "sun_margin_min_deg": 1.3885,
+       "sun_margin_min_utc": "2026-12-05T10:50:00Z",
+       "sun_margin_min_azimuth_deg": 3.2592,
+       "sun_elevation_deg": 1.978,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 16.9063,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.0
+       },
+       "sun_margin_min_deg": 0.9036,
+       "sun_margin_min_utc": "2027-01-04T01:30:00Z",
+       "sun_margin_min_azimuth_deg": 3.2188,
+       "sun_elevation_deg": 1.4922,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 11.0009,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "5": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.6628,
+     "horizon_max_deg": 0.3438,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.333333
+       },
+       "sun_margin_min_deg": 1.6346,
+       "sun_margin_min_utc": "2026-12-05T10:50:00Z",
+       "sun_margin_min_azimuth_deg": 3.2592,
+       "sun_elevation_deg": 1.978,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 19.9048,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.166667,
+        "joint_hours": 398.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.833333
+       },
+       "sun_margin_min_deg": 1.1497,
+       "sun_margin_min_utc": "2027-01-04T01:30:00Z",
+       "sun_margin_min_azimuth_deg": 3.2188,
+       "sun_elevation_deg": 1.4922,
+       "obstacle_distance_m": 697.5,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 13.9983,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    },
+    "10": {
+     "near_field_directions": 0,
+     "horizon_mean_deg": -1.7893,
+     "horizon_max_deg": 0.0383,
+     "unknown_directions": 0,
+     "windows": {
+      "W1": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.5,
+        "joint_hours": 336.5,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 322.166667
+       },
+       "sun_margin_min_deg": 1.8981,
+       "sun_margin_min_utc": "2026-11-21T07:40:00Z",
+       "sun_margin_min_azimuth_deg": 174.9537,
+       "sun_elevation_deg": 1.0155,
+       "obstacle_distance_m": 158520.0,
+       "obstacle_source": "PGDA90_80m",
+       "equivalent_obstacle_height_error_m": 5253.2724,
+       "sun_elevation_range_deg": [
+        1.0148,
+        1.9783
+       ]
+      },
+      "W2": {
+       "metrics": {
+        "duration_hours": 720.0,
+        "known_hours": 720.0,
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.166667,
+        "joint_hours": 398.166667,
+        "longest_dark_hours": 0.0,
+        "longest_no_earth_hours": 321.833333
+       },
+       "sun_margin_min_deg": 1.4554,
+       "sun_margin_min_utc": "2027-01-04T00:30:00Z",
+       "sun_margin_min_azimuth_deg": 3.7264,
+       "sun_elevation_deg": 1.4925,
+       "obstacle_distance_m": 1065.0,
+       "obstacle_source": "PGDA78_5m",
+       "equivalent_obstacle_height_error_m": 27.0577,
+       "sun_elevation_range_deg": [
+        0.6564,
+        1.4937
+       ]
+      }
+     }
+    }
+   },
+   "W2_0m_dark_streaks": [
+    {
+     "start_utc": "2026-12-30T10:00:00Z",
+     "stop_utc": "2026-12-31T00:40:00Z",
+     "hours": 14.6667,
+     "deepest_utc": "2026-12-30T12:00:00Z",
+     "sun_azimuth_deg": 58.744,
+     "sun_elevation_deg": 1.313,
+     "horizon_elevation_deg": 1.3915,
+     "sun_minus_horizon_deg": -0.0785,
+     "obstacle_distance_m": 25.0,
+     "obstacle_source": "PGDA78_5m",
+     "facet_plane_horizon_deg": 0.4141,
+     "horizon_at_heights_deg": {
+      "0.1": 1.1622,
+      "0.25": 0.8189,
+      "0.5": 0.2466,
+      "1": -0.897,
+      "2": -1.5026
+     },
+     "sunlit_samples_of_streak_at_height": {
+      "0.1": 88,
+      "0.25": 88,
+      "0.5": 88,
+      "1": 88,
+      "2": 88,
+      "samples": 88
+     }
+    }
+   ],
+   "near_field_sensitivity": {
+    "engine_bilinear": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.333333,
+        "joint_hours": 309.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 705.333333,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 14.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1429,
+     "near_field_directions_0.5m": 650,
+     "near_field_directions_2m": 0
+    },
+    "nearest": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 282.666667,
+        "joint_hours": 282.666667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 677.5,
+        "dte_center_hours": 330.5,
+        "joint_hours": 330.5,
+        "longest_dark_hours": 28.5
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1440,
+     "near_field_directions_0.5m": 721,
+     "near_field_directions_2m": 0
+    },
+    "cubic_bspline": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 308.333333,
+        "joint_hours": 308.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 696.666667,
+        "dte_center_hours": 369.0,
+        "joint_hours": 369.0,
+        "longest_dark_hours": 23.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1431,
+     "near_field_directions_0.5m": 681,
+     "near_field_directions_2m": 0
+    },
+    "bilinear_float64": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.333333,
+        "joint_hours": 309.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 705.5,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 14.5
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1429,
+     "near_field_directions_0.5m": 650,
+     "near_field_directions_2m": 0
+    },
+    "rmin_5m": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.5,
+        "joint_hours": 309.5,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 705.333333,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 14.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1429,
+     "near_field_directions_0.5m": 650,
+     "near_field_directions_2m": 0
+    },
+    "rmin_10m": {
+     "observer_ground_height_m": 1948.3513,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 314.166667,
+        "joint_hours": 314.166667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 705.333333,
+        "dte_center_hours": 381.5,
+        "joint_hours": 381.5,
+        "longest_dark_hours": 14.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1403,
+     "near_field_directions_0.5m": 650,
+     "near_field_directions_2m": 0
+    },
+    "shift_E_1.25m": {
+     "observer_ground_height_m": 1948.3397,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 308.0,
+        "joint_hours": 308.0,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 712.333333,
+        "dte_center_hours": 368.333333,
+        "joint_hours": 368.333333,
+        "longest_dark_hours": 7.666667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1440,
+     "near_field_directions_0.5m": 653,
+     "near_field_directions_2m": 0
+    },
+    "shift_W_1.25m": {
+     "observer_ground_height_m": 1948.3667,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 310.0,
+        "joint_hours": 310.0,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 699.666667,
+        "dte_center_hours": 373.0,
+        "joint_hours": 373.0,
+        "longest_dark_hours": 20.333333
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1403,
+     "near_field_directions_0.5m": 647,
+     "near_field_directions_2m": 0
+    },
+    "shift_N_1.25m": {
+     "observer_ground_height_m": 1948.3318,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.5,
+        "joint_hours": 309.5,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 700.5,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 19.5
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1429,
+     "near_field_directions_0.5m": 635,
+     "near_field_directions_2m": 0
+    },
+    "shift_S_1.25m": {
+     "observer_ground_height_m": 1948.3633,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 305.0,
+        "joint_hours": 305.0,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 709.833333,
+        "dte_center_hours": 363.833333,
+        "joint_hours": 363.833333,
+        "longest_dark_hours": 10.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1440,
+     "near_field_directions_0.5m": 680,
+     "near_field_directions_2m": 0
+    },
+    "shift_E_2.5m": {
+     "observer_ground_height_m": 1948.3281,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 305.333333,
+        "joint_hours": 305.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 364.333333,
+        "joint_hours": 364.333333,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1440,
+     "near_field_directions_0.5m": 641,
+     "near_field_directions_2m": 0
+    },
+    "shift_W_2.5m": {
+     "observer_ground_height_m": 1948.382,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 310.5,
+        "joint_hours": 310.5,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 693.833333,
+        "dte_center_hours": 374.0,
+        "joint_hours": 374.0,
+        "longest_dark_hours": 26.166667
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1384,
+     "near_field_directions_0.5m": 642,
+     "near_field_directions_2m": 0
+    },
+    "shift_N_2.5m": {
+     "observer_ground_height_m": 1948.3124,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 309.5,
+        "joint_hours": 309.5,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 697.0,
+        "dte_center_hours": 371.833333,
+        "joint_hours": 371.833333,
+        "longest_dark_hours": 23.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1429,
+     "near_field_directions_0.5m": 630,
+     "near_field_directions_2m": 0
+    },
+    "shift_S_2.5m": {
+     "observer_ground_height_m": 1948.3752,
+     "windows": {
+      "W1": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 299.666667,
+        "joint_hours": 299.666667,
+        "longest_dark_hours": 0.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 336.333333,
+        "joint_hours": 336.333333,
+        "longest_dark_hours": 0.0
+       }
+      },
+      "W2": {
+       "0": {
+        "unknown_hours": 0.0,
+        "sun_hours": 717.0,
+        "dte_center_hours": 355.5,
+        "joint_hours": 355.5,
+        "longest_dark_hours": 3.0
+       },
+       "0.5": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       },
+       "2": {
+        "unknown_hours": 0.0,
+        "sun_hours": 720.0,
+        "dte_center_hours": 398.0,
+        "joint_hours": 398.0,
+        "longest_dark_hours": 0.0
+       }
+      }
+     },
+     "near_field_directions_0m": 1440,
+     "near_field_directions_0.5m": 678,
+     "near_field_directions_2m": 0
+    }
+   }
+  }
+ }
+}
