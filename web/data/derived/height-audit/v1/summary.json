@@ -1,0 +1,82 @@
+{
+ "schema": "site-regret-height-audit-summary/1",
+ "nature": "DIAGNOSTIC_AUDIT · no es un escenario del contrato site-regret/0.1",
+ "engine_sha256": "08e52de18993c465f1c0f7b94d815a50ef9643d8929c72c9ce426ec0e2062a54",
+ "script_sha256": "2387a2fb21875539f2f5b9e73050853560d0a6186e99b37be1282eb27669dd46",
+ "sites": {
+  "A": {
+   "toterr_m": 0.2713887691497803,
+   "W2_0m_dark_engine_h": 38.666667,
+   "W2_0m_dark_shift_range_h": [
+    33.833333,
+    54.166667
+   ],
+   "W2_0m_dark_nearest_h": 121.333333,
+   "W2_0m_dark_cubic_h": 40.166667,
+   "W2_0m_deepest": {
+    "utc": "2027-01-06T07:10:00Z",
+    "sun_minus_horizon_deg": -0.2311,
+    "obstacle_distance_m": 31.25,
+    "equivalent_height_m": 0.126
+   },
+   "dark_hours_max_at_0_5_and_2m_all_configs": 0.0,
+   "configs_tested": 14,
+   "sun_margin_min_deg": {
+    "0": {
+     "W1": 0.2803,
+     "W2": -0.2311
+    },
+    "0.5": {
+     "W1": 1.1158,
+     "W2": 0.6005
+    },
+    "2": {
+     "W1": 1.8603,
+     "W2": 1.3746
+    },
+    "10": {
+     "W1": 1.8978,
+     "W2": 1.6203
+    }
+   },
+   "first_height_without_dark_W2_m": 0.25
+  },
+  "B": {
+   "toterr_m": 0.3006587624549866,
+   "W2_0m_dark_engine_h": 14.666667,
+   "W2_0m_dark_shift_range_h": [
+    0.0,
+    26.166667
+   ],
+   "W2_0m_dark_nearest_h": 28.5,
+   "W2_0m_dark_cubic_h": 23.333333,
+   "W2_0m_deepest": {
+    "utc": "2026-12-30T12:00:00Z",
+    "sun_minus_horizon_deg": -0.0785,
+    "obstacle_distance_m": 25.0,
+    "equivalent_height_m": 0.0343
+   },
+   "dark_hours_max_at_0_5_and_2m_all_configs": 0.0,
+   "configs_tested": 14,
+   "sun_margin_min_deg": {
+    "0": {
+     "W1": 0.3524,
+     "W2": -0.0785
+    },
+    "0.5": {
+     "W1": 1.2654,
+     "W2": 0.7805
+    },
+    "2": {
+     "W1": 1.3885,
+     "W2": 0.9036
+    },
+    "10": {
+     "W1": 1.8981,
+     "W2": 1.4554
+    }
+   },
+   "first_height_without_dark_W2_m": 0.1
+  }
+ }
+}
