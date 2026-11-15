@@ -1,0 +1,252 @@
+[
+ {
+  "case": "regret-W1-0m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-2m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-10m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-0m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-10m-dark",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-earth",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-0m-inverted",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-0m-sun-clone",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-demo",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-dark-en",
+  "viewport": "1440x900",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "viewport": "1440x900",
+  "consoleErrors": []
+ },
+ {
+  "case": "regret-W1-0m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=0&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-2m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=2&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-10m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=10&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-0m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=0&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-10m-dark",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=10&v=nominal&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-earth",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=max_dte_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-0m-inverted",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=0&v=correlated_plus&c=min_longest_dark_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W1-0m-sun-clone",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W1&h=0&v=published_0001&c=max_sun_hours",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-demo",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours#demo",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "case": "regret-W2-2m-dark-en",
+  "viewport": "390x844",
+  "url": "https://site-regret.vercel.app/regret-lab/?s=A&w=W2&h=2&v=nominal&c=min_longest_dark_hours&lang=en",
+  "verdict": null,
+  "verdictText": null,
+  "hint": null,
+  "changes": null,
+  "demoPaused": false,
+  "overflowX": false
+ },
+ {
+  "viewport": "390x844",
+  "consoleErrors": []
+ }
+]
