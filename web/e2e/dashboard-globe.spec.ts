@@ -117,6 +117,23 @@ test.describe("PC-24 · Dashboard · globo lunar", () => {
     await noHorizontalOverflow(page);
   });
 
+  for (const [w, h] of [[375, 667], [390, 844], [720, 450]] as const)
+    for (const lang of ["es", "en"] as const)
+      test(`pantalla baja ${w}×${h} (${lang}): la pregunta y la acción principal caben en la primera pantalla, con la Luna`, async ({ page }) => {
+        await page.setViewportSize({ width: w, height: h });
+        await page.goto(`/?lang=${lang}`);
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(lang === "es" ? "¿Dónde alunizarías?" : "Where would you land?");
+        await expect(page.locator("[data-testid=moon-globe][data-ready=true]")).toBeVisible({ timeout: 60_000 });
+        for (const box of [await page.getByRole("heading", { level: 1 }).boundingBox(), await page.getByTestId("hero-cta").boundingBox()]) {
+          expect(box!.y).toBeGreaterThanOrEqual(0);
+          expect(box!.y + box!.height).toBeLessThanOrEqual(h);
+        }
+        const moon = (await page.getByTestId("hero-globe-area").boundingBox())!;
+        expect(moon.height).toBeGreaterThanOrEqual(200);
+        if (h > 500) expect(moon.y).toBeLessThan(h / 2);
+        await noHorizontalOverflow(page);
+      });
+
   test("movimiento reducido: el enfoque al polo es un salto, sin animación", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");

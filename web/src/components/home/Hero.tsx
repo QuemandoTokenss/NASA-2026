@@ -64,7 +64,7 @@ export function Hero() {
       <div aria-hidden className={`absolute inset-0 -z-10 bg-gradient-to-r from-black via-black/75 to-black/0 transition-opacity duration-700 sm:via-black/55 ${globe === "ready" ? "opacity-0" : ""}`} />
 
       <div className="grid lg:min-h-[clamp(470px,calc(100dvh-150px),640px)] lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
-        <div className="relative z-10 order-2 flex flex-col justify-center gap-4 px-6 pt-5 pb-8 sm:px-10 lg:order-1 lg:py-10 lg:pr-2">
+        <div className="relative z-10 order-2 flex flex-col [@media(max-height:500px)]:order-1 justify-center gap-4 px-6 pt-5 pb-8 sm:px-10 lg:order-1 lg:py-10 lg:pr-2">
           <p className="text-xs font-bold tracking-[0.22em] text-accent uppercase">{L("Polo sur lunar · NASA Space Apps 2026", "Lunar south pole · NASA Space Apps 2026")}</p>
           <h1 className="text-5xl leading-[1.02] font-bold tracking-tight text-ink sm:text-6xl xl:text-7xl">{L("¿Dónde alunizarías?", "Where would you land?")}</h1>
           <p className="max-w-md text-lg leading-snug text-ink sm:text-xl" data-testid="hero-pitch">
@@ -114,7 +114,8 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="relative order-1 h-[360px] sm:h-[440px] lg:order-2 lg:h-auto" data-testid="hero-globe-area">
+        {/* Pantallas bajas: la Luna cede altura (235 px a 375×667) para que el botón quede a la vista; por debajo de 500 px de alto, la pregunta y el botón van antes. */}
+        <div className="relative order-1 h-[clamp(200px,calc(100dvh-432px),360px)] sm:h-[clamp(200px,calc(100dvh-432px),440px)] lg:order-2 lg:h-auto [@media(max-height:500px)]:order-2" data-testid="hero-globe-area">
           {showGlobe ? (
             <div className="absolute inset-0 lg:[mask-image:linear-gradient(to_right,transparent,black_16%)]">
               <MoonGlobe

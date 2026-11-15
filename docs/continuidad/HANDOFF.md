@@ -1,7 +1,28 @@
 # HANDOFF · SITE REGRET · Operación final de integración
 
-**Punto de control:** PC-26 en rama (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
+**Punto de control:** PC-27 en rama (§0-septies); PC-26 (§0-sexies); #21 y #20 fusionadas en `main` (§0-quinquies, §0-quater), PC-25 (§0-ter) y PC-24 (§0-bis) sobre PC-23 · 2026-11-14 (+01:00, Europe/Madrid) · **Estado: EN_CURSO · candidato en la rama `feat/operacion-final-integracion`, SIN fusionar ni publicar. Producción sigue en `main` = `aae19b2`.**
 Documento principal del relevo. Si contradice al código o a `git status`, mandan el código y Git. **El estado vigente es la sección 0; las secciones 1–10 son históricas (PC-13 a PC-21) y sus referencias a ramas, HEAD y «sin push/sin despliegue» están superadas.**
+
+## 0-septies. PC-27 · cuatro hallazgos de la revisión del jurado — EN RAMA, sin fusionar (leer primero)
+
+**2026-11-15.** Rama `fix/jurado-idioma-portada-demo` desde `origin/main` = `ddbbf6c` (versión auditada; incluye las PR #22 y #24). Commit local; **sin push ni PR**. Solo cambia idioma, portada y demo guiada; datos, motor, cifras, mapas y escenas 3D intactos.
+
+| Hallazgo | Archivo | Qué cambió |
+|---|---|---|
+| 1 · El inglés se perdía al recargar | `web/src/lib/I18nProvider.tsx` | Un `?lang=` válido se guarda como preferencia (mismo `try/catch` que el selector) y manda sobre la guardada; `?lang=es` vuelve al español; un valor no válido no cambia nada. **Los enlaces públicos que se entreguen deben llevar `?lang=en`** (p. ej. `https://site-regret.vercel.app/?lang=en`) para abrir en inglés en un navegador nuevo |
+| 2 · Botón de portada fuera de pantalla en móviles cortos | `web/src/components/home/Hero.tsx` | El área de la Luna mide `clamp(200px, 100dvh − 432px, 360px)` (440 px desde `sm`): 235 px a 375×667, 360 px desde 792 px de alto. Por debajo de 500 px de alto, la pregunta y el botón van antes que la Luna. Escritorio (`lg`) sin cambios |
+| 3 · A/B sin teclado | `web/src/components/story/LandingDemo.tsx` | Patrón radiogroup como `Segmented`: flechas (los dos sentidos, con vuelta) mueven selección y foco, `tabindex` itinerante, Enter/Espacio y clic eligen. Al reiniciar, el foco vuelve a la tarjeta A. La región viva (`role=status`, `aria-atomic`) es solo el texto del resultado (`demo-result`); los botones quedan fuera |
+| 4 · Resultado del giro | `LandingDemo.tsx` | Si las dos tarjetas marcan `exceeds`: «En esta prueba, ambos sitios superan el límite de 24 h.» / “In this test, both sites are over the 24 h limit.” (de `DEMO_LIMIT_HOURS` y los estados del escenario). Mensaje de las 16 h 30 min, íntegro. Botón: «Prueba otro mapa del terreno» / “Try a different terrain map”. «hipótesis del equipo» sigue en la etiqueta de la foto |
+
+**Medido en navegador (servidor de desarrollo, es y en):** 375×667 botón en y = 597–649 (antes 722–774), Luna 235 px; 390×844 botón 722–774, Luna 360 px (igual que antes); 720×450 título 150–211 y botón 298–350, Luna debajo; 1280×720 y 1440×900 idénticos a producción (botón 425–477 y 460–512).
+
+**Pruebas:** nuevas en `e2e/i18n.spec.ts` (enlace en inglés → misión → Evidencia → recarga; `?lang=es`; valor no válido), `e2e/landing-demo.spec.ts` (teclado completo, región viva, frase de «ambos superan» en B y en A) y `e2e/dashboard-globe.spec.ts` (375×667, 390×844 y 720×450 en ambos idiomas). Texto del botón actualizado en `landing-demo.spec.ts` y `jurado-pc25.spec.ts`.
+
+**Verificación (`npm run verify`, código final):** tipos y lint limpios · Vitest 156/156 · build PASS · Playwright **120 PASS, 2 FAIL, 1 omitida** (6,4 min). Los dos fallos son esperas agotadas en Engineer, no tocado (`engineer-heights` «volver a 10 m…» y `engineer-pc24` «caso 2 · Sol oculto»): esas dos specs repetidas ×2, **20/20 PASS**. La pasada anterior, con el mismo código de la app, dio 121 PASS y un único fallo en una aserción de la prueba nueva de idioma (el título de Evidencia es «Scientific Evidence» en ambos idiomas), corregida: `i18n.spec.ts` ×3, 12/12. No hubo una pasada completa con salida 0.
+
+**Pendiente:** revisión humana; lector de pantalla real (la región viva está comprobada por atributos, no por voz); móvil físico. El título fijo en inglés de Evidencia es anterior y queda fuera de este encargo.
+
+**Siguiente paso:** revisar en local (`cd web && npm run build && npm run serve` → http://127.0.0.1:4173/?lang=en); si se aprueba, `git push -u origin fix/jurado-idioma-portada-demo` y PR contra `main` (fusionar publica en producción).
 
 ## 0-sexies. PC-26 · Timeline en dos filas con el Cielo local ampliado — EN RAMA, sin fusionar (leer primero)
 

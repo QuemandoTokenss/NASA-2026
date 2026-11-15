@@ -5,10 +5,22 @@ import { LOCALE_STORAGE_KEY, isLocale, setLocaleUnsafe, type Locale } from "./i1
 
 const Ctx = createContext<{ locale: Locale; setLocale: (l: Locale) => void }>({ locale: "es", setLocale: () => {} });
 
-function initialLocale(): Locale | null {
+function storeLocale(l: Locale) {
   try {
-    const q = new URLSearchParams(window.location.search).get("lang");
-    if (isLocale(q)) return q;
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, l);
+  } catch {
+    /* preferencia no persistente */
+  }
+}
+
+/** Un `?lang=` válido manda sobre la preferencia guardada y pasa a ser la preferencia. */
+function initialLocale(): Locale | null {
+  const q = new URLSearchParams(window.location.search).get("lang");
+  if (isLocale(q)) {
+    storeLocale(q);
+    return q;
+  }
+  try {
     const s = window.localStorage.getItem(LOCALE_STORAGE_KEY);
     if (isLocale(s)) return s;
   } catch {
@@ -19,7 +31,8 @@ function initialLocale(): Locale | null {
 
 /**
  * Idioma de la interfaz. El export estático se genera en español; en el
- * cliente se adopta `?lang=en` o la preferencia guardada. Cambiar de idioma
+ * cliente se adopta `?lang=en` (que además se guarda, para que sobreviva a la
+ * navegación y a la recarga) o la preferencia guardada. Cambiar de idioma
  * remonta la interfaz (la selección vive por encima y se conserva).
  */
 export function I18nProvider({ children }: { children: ReactNode }) {
@@ -38,11 +51,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, [locale]);
 
   const setLocale = useCallback((l: Locale) => {
-    try {
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, l);
-    } catch {
-      /* preferencia no persistente */
-    }
+    storeLocale(l);
     setLocaleState(l);
   }, []);
 
