@@ -165,7 +165,8 @@ test.describe("PC-25 · Regret Lab: empates a 0 h y control de otras métricas",
       await page.goto(`/regret-lab/?w=${w}&h=${h}&v=nominal&c=min_longest_dark_hours`);
       await waitForData(page);
       await expect(page.getByTestId("regret-kpi-choice")).toContainText("Empate");
-      await expect(page.getByTestId("regret-zero-tie")).toHaveText(/En esta ventana y a esta altura, ninguno de los dos sitios tiene un tramo sin Sol según el modelo\. Por eso empatan en este criterio\./);
+      await expect(page.getByTestId("regret-verdict")).toHaveAttribute("data-kind", "tie_no_dark");
+      await expect(page.getByTestId("regret-verdict-text")).toContainText(`Ninguno de los dos sitios tiene un tramo sin Sol en ${w} a ${h} m`);
       await expect(page.getByText("El escenario de referencia empata, así que no hay una elección inicial que comparar")).toBeVisible();
       await expect(page.getByText("Elige un sitio a conservar")).toBeVisible();
     }
@@ -175,13 +176,13 @@ test.describe("PC-25 · Regret Lab: empates a 0 h y control de otras métricas",
     expect(metric("A", "W2", 10, "dte_center_hours")).toBe(399);
     await expect(page.getByTestId("regret-kpi-a")).toContainText("399 h");
     await expect(page.getByTestId("regret-kpi-b")).toContainText("398 h 10 min");
-    await expect(page.getByTestId("regret-zero-tie")).toHaveCount(0);
+    await expect(page.getByTestId("regret-verdict")).toHaveAttribute("data-kind", "decisive");
     // W2 · 0 m · racha sin Sol: 38 h 40 min frente a 14 h 40 min, sin texto de empate.
     await page.goto("/regret-lab/?w=W2&h=0&v=nominal&c=min_longest_dark_hours");
     await waitForData(page);
     await expect(page.getByTestId("regret-kpi-a")).toContainText(hm(metric("A", "W2", 0, "longest_dark_hours")));
     await expect(page.getByTestId("regret-kpi-a")).toContainText("38 h 40 min");
     await expect(page.getByTestId("regret-kpi-b")).toContainText("14 h 40 min");
-    await expect(page.getByTestId("regret-zero-tie")).toHaveCount(0);
+    await expect(page.getByTestId("regret-verdict")).toHaveAttribute("data-kind", "decisive");
   });
 });
